@@ -97,6 +97,9 @@ dependencies {
 
     //webRTC 종속성 추가
     implementation ("com.mesibo.api:webrtc:1.0.5")
+
+    //Gson 종속성 추가
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 kapt {
