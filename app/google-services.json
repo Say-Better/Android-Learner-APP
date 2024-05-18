@@ -8,38 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:819073912503:android:a390e2076adc7fe1f64732",
+        "mobilesdk_app_id": "1:819073912503:android:c9ad221e0553cf58f64732",
         "android_client_info": {
-          "package_name": "gdsc.solutionchallenge.saybetter.data"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "819073912503-j325kgle0rb9jr2lo4tanhvlod0k1mt8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBqONYTTBwC93gbyrhFf6wBfy8aLQ7j4s0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "819073912503-j325kgle0rb9jr2lo4tanhvlod0k1mt8.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:819073912503:android:29bdb9930a9d47d6f64732",
-        "android_client_info": {
-          "package_name": "gdsc.solutionchallenge.saybetter.saybetterleaner"
+          "package_name": "gdsc.solutionchallenge.saybetter.saybetterlearner"
         }
       },
       "oauth_client": [
