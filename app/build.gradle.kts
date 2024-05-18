@@ -6,6 +6,10 @@ plugins {
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+
+    //Hilt 종속성 추가
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -85,6 +89,13 @@ dependencies {
 
     // Add the dependency for the Firebase SDK for Google Analytics
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    //Hilt 종속성 추가
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-android-compiler:2.46")
+
+    //webRTC 종속성 추가
+    implementation ("com.mesibo.api:webrtc:1.0.5")
 }
 
 kapt {
