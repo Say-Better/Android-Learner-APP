@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
 
     id("kotlin-kapt")
+
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -77,6 +80,12 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended:1.6.1")
     implementation ("androidx.activity:activity-compose:1.8.2")
     kapt ("com.google.dagger:hilt-compiler:2.44")
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+    implementation("com.google.firebase:firebase-analytics-ktx")
 }
 
 kapt {
