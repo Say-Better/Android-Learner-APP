@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
@@ -69,13 +70,19 @@ class MenuActivity: ComponentActivity()  {
             LazyRow {
                 items(menuList) { menuEntity ->
                     MenuItem(menuEntity, clickMenu = {
+                        val intent : Intent
                         when (menuEntity.title) {
                             "솔루션" -> {
-                                val intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
-                                startActivity(intent)
+                                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
                             }
-                            // 다른 아이템에 대한 처리 추가
+                            "챗봇" -> {
+                                intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
+                            }
+                            else -> {
+                                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                            }
                         }
+                        startActivity(intent)
                     })
                     if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
                 }
