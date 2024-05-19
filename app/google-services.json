@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:819073912503:android:a390e2076adc7fe1f64732",
         "android_client_info": {
-          "package_name": "gdsc.solutionchallenge.saybetter.data"
+          "package_name": "gdsc.solutionchallenge.saybetter.saybetterlearner"
         }
       },
       "oauth_client": [
@@ -39,7 +39,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:819073912503:android:29bdb9930a9d47d6f64732",
         "android_client_info": {
-          "package_name": "gdsc.solutionchallenge.saybetter.saybetterleaner"
+          "package_name": "gdsc.solutionchallenge.saybetter.saybetterlearner"
         }
       },
       "oauth_client": [

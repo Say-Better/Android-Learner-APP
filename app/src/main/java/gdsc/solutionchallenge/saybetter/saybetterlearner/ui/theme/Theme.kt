@@ -14,6 +14,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.compose.material3.Typography
+
+val defaultTypography = Typography()
+
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -22,7 +26,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = MainGreen,
     secondary = PurpleGrey40,
     tertiary = Pink40
 
@@ -64,7 +68,7 @@ fun SayBetterEducatorTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = defaultTypography,
         content = content
     )
 }

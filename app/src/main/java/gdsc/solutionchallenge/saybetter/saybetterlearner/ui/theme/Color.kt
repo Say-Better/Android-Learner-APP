@@ -11,6 +11,9 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val MainGreen = Color(0xFF5FD399)
+val SubGreen = Color(0xFF5FD399)
+val MainBlue = Color(0xFF499BE9)
+val SubGrey = Color(0xFF5B5B5B)
 
 val Gray50 = Color(0xFFF9FAFB)
 val Gray100 = Color(0xFFF3F4F6)
@@ -27,7 +30,7 @@ val GrayW40 = Color(0xFFB4B9B9)
 val DeepDarkGray = Color(0xFF1F1F1F)
 
 val White = Color(0xFFFFFFFF)
-val Black = Color(0xFF060A27)
+val Black = Color(0xFF000000)
 val Gray = Color(0xFFDDE0FF)
 val Error = Color(0xFFFF2727)
 
