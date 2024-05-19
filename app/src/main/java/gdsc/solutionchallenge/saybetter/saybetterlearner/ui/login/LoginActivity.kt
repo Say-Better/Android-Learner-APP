@@ -32,17 +32,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginActivity: ComponentActivity() {
+
+    @Inject lateinit var mainRepository : MainRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LoginScreen(login = {
                 finish()
+                mainRepository.testAccess()
                 val intent = Intent(this, MenuActivity::class.java)
                 startActivity(intent)
             })
