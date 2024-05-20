@@ -6,6 +6,10 @@ plugins {
 
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+
+    //Hilt 종속성 추가
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -64,7 +68,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+
     implementation(libs.androidx.media3.common)
+
+    implementation(libs.firebase.database.ktx)
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -79,13 +87,23 @@ dependencies {
 
     implementation ("androidx.compose.material:material-icons-extended:1.6.1")
     implementation ("androidx.activity:activity-compose:1.8.2")
-    kapt ("com.google.dagger:hilt-compiler:2.44")
+    kapt ("com.google.dagger:hilt-compiler:2.46")
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
 
     // Add the dependency for the Firebase SDK for Google Analytics
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    //Hilt 종속성 추가
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-android-compiler:2.46")
+
+    //webRTC 종속성 추가
+    implementation ("com.mesibo.api:webrtc:1.0.5")
+
+    //Gson 종속성 추가
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 kapt {
