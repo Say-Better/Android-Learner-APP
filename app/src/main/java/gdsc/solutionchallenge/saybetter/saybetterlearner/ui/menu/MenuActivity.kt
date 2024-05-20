@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +36,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.menu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 
@@ -48,12 +52,13 @@ class MenuActivity: ComponentActivity()  {
     @Composable
     fun MenuPreview() {
         val menuList = listOf(
-            menu("홈", R.drawable.ic_home),
-            menu("챗봇", R.drawable.ic_chatbot),
-            menu("솔루션", R.drawable.ic_solution),
-            menu("마이페이지", R.drawable.ic_my),)
+            menu("레벨 테스트", R.drawable.menu_level),
+            menu("그림 상징 의사소통", R.drawable.menu_symbol),
+            menu("텍스트 의사소통", R.drawable.menu_text),
+            menu("AI 챗봇", R.drawable.menu_chatbot),
+            menu("설정", R.drawable.menu_setting),)
 
-        Surface(color = MainGreen,
+        Surface(color = White,
             modifier = Modifier.fillMaxSize()
         ){
             MenuBar(menuList = menuList)
@@ -62,30 +67,44 @@ class MenuActivity: ComponentActivity()  {
 
     @Composable
     fun MenuBar(menuList : List<menu>) {
-        Column(modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            LazyRow {
-                items(menuList) { menuEntity ->
-                    MenuItem(menuEntity, clickMenu = {
-                        val intent : Intent
-                        when (menuEntity.title) {
-                            "솔루션" -> {
-                                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+        Box {
+            Column (modifier = Modifier.fillMaxWidth()
+                .padding(top = 100.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Image(painter = painterResource(id = R.drawable.ic_say_better),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(70.dp)
+                        .width(300.dp),)
+            }
+
+            Column(modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                LazyRow {
+                    items(menuList) { menuEntity ->
+                        MenuItem(menuEntity, clickMenu = {
+                            val intent : Intent
+                            when (menuEntity.title) {
+                                "그림 상징 의사소통" -> {
+                                    intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                                }
+                                "AI 챗봇" -> {
+                                    intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
+                                }
+                                else -> {
+                                    intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                                }
                             }
-                            "챗봇" -> {
-                                intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
-                            }
-                            else -> {
-                                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
-                            }
-                        }
-                        startActivity(intent)
-                    })
-                    if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
+                            startActivity(intent)
+                        })
+                        if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
+                    }
                 }
             }
         }
+
     }
 
     @Composable
@@ -97,19 +116,18 @@ class MenuActivity: ComponentActivity()  {
             ) {
                 clickMenu()
             }){
-            Box(modifier = Modifier
-                .width(270.dp)
-                .height(270.dp)
-                .background(Color.White, shape = RoundedCornerShape(50.dp)),
-                contentAlignment = Alignment.Center) {
                 Image(
                     painter = painterResource(id = menuEntity.img),
                     contentDescription = null,
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(200.dp)
+                        .background(Color.White, shape = RoundedCornerShape(50.dp))
                 )
-            }
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = menuEntity.title,
-                fontSize = 25.sp)
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600)
         }
     }
 }
