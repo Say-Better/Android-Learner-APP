@@ -14,6 +14,7 @@ val MainGreen = Color(0xFF5FD399)
 val SubGreen = Color(0xFF5FD399)
 val MainBlue = Color(0xFF499BE9)
 val SubGrey = Color(0xFF5B5B5B)
+val Red = Color(0xFFF04646)
 
 val Gray50 = Color(0xFFF9FAFB)
 val Gray100 = Color(0xFFF3F4F6)
