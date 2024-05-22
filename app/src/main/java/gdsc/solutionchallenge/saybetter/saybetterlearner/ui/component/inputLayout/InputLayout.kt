@@ -40,7 +40,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
 fun ChatInput() {
-    var inputMode by remember { mutableStateOf(true) }
+    var inputMode by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf("") }
     val hangul = remember { HangulAutomaton() }
 

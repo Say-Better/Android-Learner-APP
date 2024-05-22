@@ -71,7 +71,8 @@ dependencies {
 
     implementation(libs.androidx.media3.common)
 
-    implementation(libs.firebase.database.ktx)
+    implementation (libs.firebase.database.ktx.v2000)
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
