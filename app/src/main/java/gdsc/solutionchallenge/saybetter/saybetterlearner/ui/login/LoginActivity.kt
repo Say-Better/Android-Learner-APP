@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +39,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 import javax.inject.Inject
 
@@ -69,90 +72,63 @@ class LoginActivity: ComponentActivity() {
     @Composable
     fun LoginScreen(login: () -> Unit) {
         Surface {
-            Row (modifier = Modifier.fillMaxSize()){
-                Column (modifier = Modifier
-                    .padding(start = 90.dp, top = 80.dp, bottom = 80.dp)
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight()){
+            Box {
+                Column (modifier = Modifier){
+                    Row (modifier = Modifier.fillMaxSize()){
+                        Column (modifier = Modifier
+                            .fillMaxWidth(0.45f)
+                            .fillMaxHeight()
+                            .padding(start = 50.dp, top = 80.dp, end = 50.dp)){
 
-                    Text(text = "Say Better Life, Say Better dream",
-                        color = MainGreen,
-                        fontSize = 25.sp)
+                            Text(text = "Say Better Life, Say Better dream",
+                                color = MainGreen,
+                                fontSize = 25.sp)
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(20.dp))
 
-                    Text(text = "반가워요!\nSay Better를 시작해볼까요?",
-                        fontSize = 50.sp)
+                            Text(text = "반가워요!\nSay Better를 시작해볼까요?",
+                                fontSize = 40.sp,
+                                fontWeight = FontWeight.W800)
+                        }
+                        Image(painter = painterResource(id = R.drawable.img_login),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize())
+                    }
+                }
+                Row (modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 50.dp, vertical = 50.dp),
+                    verticalAlignment = Alignment.Bottom){
+                    Box (modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .border((1.5).dp, Color.Black, RoundedCornerShape(100.dp))
+                        .background(White)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = CustomClickEvent
+                        ) { login() }
+                    ){
+                        Row (modifier = Modifier
+                            .fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center){
 
-                    Row (modifier = Modifier
-                        .fillMaxSize(),
-                        verticalAlignment = Alignment.Bottom){
-                        Box (modifier = Modifier
-                            .width(500.dp)
-                            .height(80.dp)
-                            .border(1.dp, Color.Black, RoundedCornerShape(100.dp))
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = CustomClickEvent
-                            ) { login() }
-                        ){
-                            Row (modifier = Modifier
-                                .fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically){
+                            Spacer(modifier = Modifier.width(40.dp))
 
-                                Spacer(modifier = Modifier.width(40.dp))
+                            Image(painter = painterResource(id = R.drawable.google_logo),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(40.dp))
 
-                                Image(painter = painterResource(id = R.drawable.google_logo),
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(50.dp))
-
-                                Text(modifier = Modifier.padding(start = 20.dp), text = "Google로 로그인하기",
-                                    fontSize = 35.sp)
-                            }
+                            Text(modifier = Modifier.padding(start = 20.dp), text = "Google로 로그인하기",
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.W600)
                         }
                     }
                 }
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 80.dp, start = 20.dp, bottom = 80.dp)) {
-                    Row (modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 100.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.Bottom){
-                        Image(painter = painterResource(id = R.drawable.rectangle_1631),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(250.dp))
-
-                        Spacer(modifier = Modifier.width(40.dp))
-
-                        Image(painter = painterResource(id = R.drawable.rectangle_1632),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(100.dp))
-                    }
-
-                    Row (modifier = Modifier.padding(top = 100.dp)){
-                        Image(painter = painterResource(id = R.drawable.rectangle_1629),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(350.dp))
-                    }
-
-                    Image(
-                        painter = painterResource(id = R.drawable.rectangle_1630),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(400.dp)
-                            .align(Alignment.BottomCenter)
-                    )
-                }
-
             }
         }
-
     }
 
 }

@@ -1,8 +1,7 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.input
+package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.inputLayout
 
 import HangulAutomaton
 import android.util.Log
-import android.view.inputmethod.InputConnection
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,12 +36,11 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
 fun ChatInput() {
-    var inputMode by remember { mutableStateOf(true) }
+    var inputMode by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf("") }
     val hangul = remember { HangulAutomaton() }
 

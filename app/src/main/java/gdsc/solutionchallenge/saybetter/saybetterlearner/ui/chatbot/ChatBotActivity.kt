@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,15 +27,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,36 +38,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.input.ChatInput
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMenu
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.inputLayout.ChatInput
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray500
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGreen
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
-
-data class ChatMessage(
-    val isUser: Boolean,
-    val timestamp:String,
-    val message: String,
-    val symbol : Int
-)
-
-data class ChatMenu(
-    val title:String,
-    val img : Int
-)
-
-data class ChatRoom(
-    val title : String,
-    val last_date : String,
-    val img:Int
-)
 
 class ChatBotActivity: ComponentActivity() {
 

@@ -3,6 +3,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +20,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,10 +40,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.symbolLayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.GrayW40
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 
 class VideoCallActivity : ComponentActivity()  {
@@ -52,7 +59,7 @@ class VideoCallActivity : ComponentActivity()  {
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun ViewPreview() {
-        var isStart by remember { mutableStateOf(false) }
+        var isStart by remember { mutableStateOf(true) }
         Surface (){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -104,10 +111,34 @@ class VideoCallActivity : ComponentActivity()  {
                         ) {
                             clickBack()
                         })
-                Text(text = "홍길동 교육자와 솔루션 진행",
-                    color = Color.White,
-                    fontSize = 20.sp,
-                    modifier = Modifier.weight(1f))
+                Row (modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Text(text = "홍길동 교육자와 솔루션 진행",
+                        color = Color.White,
+                        fontSize = 20.sp,)
+
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(vertical = 15.dp, horizontal = 10.dp)
+                    ) {
+                        drawLine(
+                            color = Gray400,
+                            start = Offset(0f, 0f),
+                            end = Offset(0f, size.height),
+                            strokeWidth = 2f
+                        )
+                    }
+
+                    Text(text = "TV 보는 상황 솔루션",
+                        color = Color.White,
+                        fontSize = 20.sp)
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(text = "중재 단계 5회기",
+                        color = Color.Gray,
+                        fontSize = 15.sp,)
+                }
+
                 Row (horizontalArrangement = Arrangement.End){
                     Image(painter = painterResource(id = R.drawable.ic_detail),
                         contentDescription = null,
@@ -153,31 +184,29 @@ class VideoCallActivity : ComponentActivity()  {
 
     @Composable
     fun StartMainScreen() {
-        Box (modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.8f),
-            contentAlignment = Alignment.Center){
-            Column (modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .background(DeepDarkGray, RoundedCornerShape(24.dp)),
-            ){
-                Column (
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp, start = 30.dp)){
-                    Text(text = "TV 보는 상황 솔루션",
-                        color = Color.White,
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold)
-                    Text(text = "중재 단계 5회기",
-                        color = Color.Gray,
-                        fontSize = 15.sp,)
-                }
-                //여기에 레이아웃 만들기
-            }
+        val items = List(5) { it } // 임시로 10개의 아이템을 생성
 
+        Row (modifier = Modifier
+            .fillMaxHeight(0.8f)
+            .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically){
+            if (items.size <5) {
+                items.forEach{i->
+                    Symbol(modifier = Modifier.weight(1f).padding(8.dp))
+                }
+            }else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(4), // 한 행에 4개의 아이템을 배치
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    items(items.size) { index ->
+                        Symbol(modifier = Modifier.padding(8.dp))
+                    }
+                }
+            }
         }
+
+
     }
 
 
@@ -383,6 +412,66 @@ class VideoCallActivity : ComponentActivity()  {
                             color = Color.White,
                             fontSize = 20.sp
                         )
+                    }
+                }
+                Row (horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .padding(start = 20.dp)
+                        .weight(1f),) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Box(modifier = Modifier
+                        .background(MainGreen, RoundedCornerShape(36.dp))
+                        .padding(horizontal = 30.dp, vertical = 12.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = CustomClickEvent
+                        ) {
+                            reverseClick()
+                        }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_correct),
+                                contentDescription = null,
+                                modifier = Modifier.size(25.dp)
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = "네",
+                                color = Color.White,
+                                fontSize = 20.sp
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Box(modifier = Modifier
+                        .background(Red, RoundedCornerShape(36.dp))
+                        .padding(horizontal = 30.dp, vertical = 12.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = CustomClickEvent
+                        ) {
+                            reverseClick()
+                        }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_incorrect),
+                                contentDescription = null,
+                                modifier = Modifier.size(25.dp)
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = "아니오",
+                                color = Color.White,
+                                fontSize = 20.sp
+                            )
+                        }
                     }
                 }
             }
