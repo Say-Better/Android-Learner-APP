@@ -34,30 +34,17 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 
 
-data class Upperlatter(
-    val first : Char,
-    val second : Char
-)
-
 @Composable
 fun InputKeyboard(modifier: Modifier,
                   onCharacterClick: (Char) -> Unit,
-                  onBackClick:() -> Unit,) {
+                  onBackClick:() -> Unit,
+                  onSpaceClick:() -> Unit
+) {
     val num = listOf('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
-    val list1 = listOf(
-        Upperlatter('ㅃ', 'ㅂ'),
-        Upperlatter('ㅉ', 'ㅈ'),
-        Upperlatter('ㄸ', 'ㄷ'),
-        Upperlatter('ㄲ', 'ㄱ'),
-        Upperlatter('ㅆ', 'ㅅ'),
-        Upperlatter('ㅛ', 'ㅛ'),
-        Upperlatter('ㅕ', 'ㅕ'),
-        Upperlatter('ㅑ', 'ㅑ'),
-        Upperlatter('ㅒ', 'ㅐ'),
-        Upperlatter('ㅖ', 'ㅔ'),
-    )
-    val list2 = listOf('ㅁ', 'ㄴ', 'ㅇ', 'ㄹ' ,'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ', ' ')
-    val list3 = listOf(' ', 'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', ',', '.')
+    val list1 = listOf('ㅃ', 'ㅉ', 'ㄸ', 'ㄲ' ,'ㅆ', 'ㅒ', 'ㅖ', '~', '!', ' ')
+    val list2 = listOf('ㅂ', 'ㅈ', 'ㄷ', 'ㄱ' ,'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ')
+    val list3 = listOf('ㅁ', 'ㄴ', 'ㅇ', 'ㄹ' ,'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ', ',')
+    val list4 = listOf(' ', 'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', '.')
 
     Column(modifier = modifier
         .fillMaxWidth(0.83f)
@@ -77,7 +64,7 @@ fun InputKeyboard(modifier: Modifier,
                             onCharacterClick(key)
                         }
                 ) {
-                    Text(
+                    androidx.compose.material3.Text(
                         text = key.toString(),
                         fontSize = 32.sp,
                         fontWeight = FontWeight.W700,
@@ -92,65 +79,18 @@ fun InputKeyboard(modifier: Modifier,
         }
         Spacer(modifier = modifier.height(2.dp))
         LazyRow() {
-            itemsIndexed(list1) { index, key ->
-                Box(
-                    modifier = modifier
-                        .width(70.dp)
-                        .height(100.dp)
-                        .background(White, RoundedCornerShape(7.dp))
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onPress = {
-                                    val pressStartTime = System.currentTimeMillis()
-                                    val pressDuration = 300 // 기준 시간을 300ms로 설정
-                                    tryAwaitRelease()
-                                    val pressEndTime = System.currentTimeMillis()
-                                    val isLongPress = (pressEndTime - pressStartTime) >= pressDuration
-                                    if (isLongPress) {
-                                        onCharacterClick(key.first)
-                                    } else {
-                                        onCharacterClick(key.second)
-                                    }
-                                }
-                            )
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column {
-                        Text(
-                            text = key.first.toString(),
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.W700,
-                        )
-                        if (key.second != key.first) {
-                            Text(
-                                text = key.second.toString(),
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.W700,
-                            )
-                        }
-                    }
-                }
-                if (index != num.lastIndex) {
-                    Spacer(modifier = modifier.width(2.dp)) // 아이템 사이의 간격 조절
-                }
-            }
-        }
-        Spacer(modifier = modifier.height(2.dp))
-
-        LazyRow() {
-            itemsIndexed(list2) { index, latter ->
+            itemsIndexed(list1) { index, latter ->
                 if (index != num.lastIndex) {
                     Box(
                         modifier = modifier
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
-                            .height(70.dp)
+                            .height(60.dp)
                             .background(White, RoundedCornerShape(7.dp))
                             .clickable {
                                 onCharacterClick(latter)
                             },
                     ) {
-                        Text(
+                        androidx.compose.material3.Text(
                             text = latter.toString(),
                             fontSize = 32.sp,
                             fontWeight = FontWeight.W700,
@@ -162,7 +102,7 @@ fun InputKeyboard(modifier: Modifier,
                 }else {
                     Box(
                         modifier = modifier
-                            .height(70.dp)
+                            .height(60.dp)
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .background(MainGreen, RoundedCornerShape(7.dp))
                             .clickable {
@@ -177,6 +117,30 @@ fun InputKeyboard(modifier: Modifier,
                 }
             }
         }
+        Spacer(modifier = modifier.height(2.dp))
+
+        LazyRow() {
+            itemsIndexed(list2) { index, latter ->
+                Box(
+                    modifier = modifier
+                        .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
+                        .height(60.dp)
+                        .background(White, RoundedCornerShape(7.dp))
+                        .clickable {
+                            onCharacterClick(latter)
+                        },
+                ) {
+                    androidx.compose.material3.Text(
+                        text = latter.toString(),
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.W700,
+                        modifier = modifier
+                            .align(Alignment.Center)
+                    )
+                }
+                Spacer(modifier = modifier.width(2.dp))
+            }
+        }
 
         Spacer(modifier = modifier.height(2.dp))
 
@@ -185,7 +149,7 @@ fun InputKeyboard(modifier: Modifier,
                 if (latter == ' ') {
                     Box(
                         modifier = modifier
-                            .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
+                            .width(60.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .height(70.dp)
                             .background(Color.Transparent, RoundedCornerShape(7.dp))
                     ) {
@@ -195,17 +159,61 @@ fun InputKeyboard(modifier: Modifier,
                 }else {
                     Box(
                         modifier = modifier
-                            .height(70.dp)
+                            .height(60.dp)
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
-                            .background(
-                                if (latter == ',' || latter == '.') MainGreen
-                                else White, RoundedCornerShape(7.dp))
+                            .background(White, RoundedCornerShape(7.dp))
                             .clickable {
                                 onCharacterClick(latter)
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
+                        androidx.compose.material3.Text(
+                            text = latter.toString(),
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.W700,
+                            modifier = modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                    Spacer(modifier = modifier.width(2.dp))
+                }
+            }
+        }
+        Spacer(modifier = modifier.height(2.dp))
+
+        LazyRow() {
+            itemsIndexed(list4) { index, latter ->
+                if (latter == ' ') {
+                    Box(
+                        modifier = modifier
+                            .width(140.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
+                            .height(60.dp)
+                            .background(White, RoundedCornerShape(7.dp))
+                            .clickable {
+                                onSpaceClick()
+                            },
+                    ) {
+                        androidx.compose.material3.Text(
+                            text = "스페이스",
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.W700,
+                            modifier = modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                    Spacer(modifier = modifier.width(2.dp))
+                }else {
+                    Box(
+                        modifier = modifier
+                            .height(60.dp)
+                            .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
+                            .background(White, RoundedCornerShape(7.dp))
+                            .clickable {
+                                onCharacterClick(latter)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        androidx.compose.material3.Text(
                             text = latter.toString(),
                             fontSize = 32.sp,
                             fontWeight = FontWeight.W700,
