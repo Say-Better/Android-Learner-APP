@@ -2,6 +2,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -32,22 +33,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.menu
+import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MenuActivity: ComponentActivity()  {
+
+    private var userid : String? = null
+
+    val TAG : String = "ServiceDebug"
+
+    //Hilt 종속성 주입
+    @Inject lateinit var mainRepository : MainRepository
+    @Inject lateinit var mainServiceRepository : MainServiceRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MenuPreview()
         }
+
+        Log.d(TAG, "oncreate")
+        startMyService()
     }
+
+    private fun startMyService() {
+        Log.d(TAG, "startMyService")
+        userid = "testid123"
+        mainServiceRepository.startService(userid!!)
+    }
+
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun MenuPreview() {
