@@ -24,8 +24,6 @@ open class HangulAutomaton {
     protected var state = 0
 
     var content : String = ""
-    var text: String = ""
-        private set
 
     fun clear() {
         cho = '\u0000'
@@ -34,7 +32,6 @@ open class HangulAutomaton {
         jonFlag = '\u0000'
         doubleJonFlag = '\u0000'
         junFlag = '\u0000'
-        text = ""
     }
 
     fun makeHan(): Char {
@@ -61,80 +58,85 @@ open class HangulAutomaton {
         }
         when (state) {
             0 -> {
-                if (juns.indexOf(c.toInt()) >= 0) {
+                if (juns.indexOf(c.toInt()) >= 0) { //중성
                     content += c
                     clear()
                 } else { // 초성일 경우
                     state = 1
                     cho = c
-                    text = cho.toString()
+                    content += cho
                 }
             }
             1 -> {
-                if (chos.indexOf(c.toInt()) >= 0) {
-                    content += cho.toString()
+                if (chos.indexOf(c.toInt()) >= 0) { //두번째로 초성
                     clear()
                     cho = c
-                    text = cho.toString()
-                } else { // 중성일 경우
+                    content += cho.toString()
+                } else { // 두번째 중성일 경우
                     state = 2
                     jun = c
-                    text = makeHan().toString()
+                    content = content.dropLast(1)
+                    content += makeHan().toString()
                 }
             }
             2 -> {
-                if (juns.indexOf(c.toInt()) >= 0) {
+                if (juns.indexOf(c.toInt()) >= 0) { //종성
                     if (doubleJunEnable(c)) {
-                        text = makeHan().toString()
-                    } else {
+                        content = content.dropLast(1)
+                        content += makeHan().toString()
+                    } else {    //중성인데 합칠 수 없음
+                        content = content.dropLast(1)
                         content += makeHan().toString() + c.toString()
                         clear()
                         state = 0
                     }
                 } else if (jons.indexOf(c.toInt()) >= 0) { // 종성이 들어왔을 경우
                     jon = c
-                    text = makeHan().toString()
                     state = 3
+                    content = content.dropLast(1)
+                    content += makeHan().toString()
                 } else {
                     directlyCommit()
                     cho = c
                     state = 1
-                    text = makeHan().toString()
+                    content = content.dropLast(1)
+                    content += makeHan().toString()
                 }
             }
             3 -> {
-                if (jons.indexOf(c.toInt()) >= 0) {
-                    if (doubleJonEnable(c)) {
-                        text = makeHan().toString()
-                    } else {
+                if (jons.indexOf(c.toInt()) >= 0) { //종성
+                    if (doubleJonEnable(c)) {   //합칠 수 있으면
+                        content = content.dropLast(1)
                         content += makeHan().toString()
+                    } else {    //합칠 수 없으면
                         clear()
                         state = 1
                         cho = c
-                        text = cho.toString()
+                        content += makeHan().toString()
                     }
-                } else if (chos.indexOf(c.toInt()) >= 0) {
-                    content += makeHan().toString()
+                } else if (chos.indexOf(c.toInt()) >= 0) {  //초성
                     state = 1
                     clear()
                     cho = c
-                    text = cho.toString()
+                    content += makeHan().toString()
                 } else { // 중성이 들어올 경우
                     var temp: Char = '\u0000'
-                    if (doubleJonFlag == '\u0000') {
+                    if (doubleJonFlag == '\u0000') {    //이중종성이 아니라면
+                        content = content.dropLast(1)
                         temp = jon
                         jon = '\u0000'
                         content += makeHan().toString()
-                    } else {
+                    } else {    //이중종성일때
                         temp = doubleJonFlag
                         jon = jonFlag
+                        content = content.dropLast(1)
                         content += makeHan().toString()
                     }
                     state = 2
                     clear()
                     cho = temp
                     jun = c
-                    text = makeHan().toString()
+                    content += makeHan().toString()
                 }
             }
         }
@@ -147,6 +149,7 @@ open class HangulAutomaton {
 
     open fun directlyCommit() {
         if (state == 0) return
+        content = content.dropLast(1)
         content += makeHan().toString()
         state = 0
         clear()
@@ -162,32 +165,35 @@ open class HangulAutomaton {
             1 -> {
                 cho = '\u0000'
                 state = 0
-                text = ""
+                content = content.dropLast(1)
             }
             2 -> {
-                if (junFlag != '\u0000') {
+                if (junFlag != '\u0000') {//이중중성 일때
                     jun = junFlag
                     junFlag = '\u0000'
                     state = 2
-                    text = makeHan().toString()
-                } else {
+                    content = content.dropLast(1)
+                    content += makeHan().toString()
+                } else {    //이중종성이 아니라면
                     jun = '\u0000'
                     junFlag = '\u0000'
                     state = 1
-                    text = cho.toString()
+                    content = content.dropLast(1)
+                    content += cho.toString()
                 }
             }
             3 -> {
-                if (doubleJonFlag == '\u0000') {
+                if (doubleJonFlag == '\u0000') {    //이중종성 아님
                     jon = '\u0000'
                     state = 2
-                } else {
+                } else {    //이중종성
                     jon = jonFlag
                     jonFlag = '\u0000'
                     doubleJonFlag = '\u0000'
                     state = 3
                 }
-                text = makeHan().toString()
+                content = content.dropLast(1)
+                content += makeHan().toString()
             }
         }
     }

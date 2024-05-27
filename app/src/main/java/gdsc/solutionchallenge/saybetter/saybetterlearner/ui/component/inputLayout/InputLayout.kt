@@ -40,20 +40,23 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
 fun ChatInput() {
-    var inputMode by remember { mutableStateOf(false) }
+    var inputMode by remember { mutableStateOf(true) }
     var inputText by remember { mutableStateOf("") }
     val hangul = remember { HangulAutomaton() }
 
     val onCharacterClick: (Char) -> Unit = { char ->
         hangul.commit(char)
         inputText = hangul.content
-        Log.d("Hangul", hangul.text)
     }
 
     val onBackClick: () -> Unit = {
         hangul.delete()
         inputText = hangul.content
-        Log.d("Hangul", hangul.text)
+    }
+
+    val onSpaceClick: () -> Unit = {
+        hangul.commitSpace()
+        inputText = hangul.content
     }
 
     Canvas(
@@ -118,7 +121,8 @@ fun ChatInput() {
             else InputKeyboard(
                 modifier = Modifier,
                 onCharacterClick = onCharacterClick,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                onSpaceClick = onSpaceClick
             )
             Spacer(modifier = Modifier.width(20.dp))
             Column(

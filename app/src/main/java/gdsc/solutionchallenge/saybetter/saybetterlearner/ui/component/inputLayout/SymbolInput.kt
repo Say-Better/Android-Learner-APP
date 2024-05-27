@@ -92,6 +92,7 @@ fun SymbolLayout(modifier: Modifier, currentPage: Int, items: List<Int>, itemsPe
         horizontalArrangement = Arrangement.Center
     ) {
         items(pageItems.size) { index ->
+            //clickable 지정해서 input text에 넣어주기
             Image(
                 painter = painterResource(id = R.drawable.symbol_big),
                 contentDescription = null,
