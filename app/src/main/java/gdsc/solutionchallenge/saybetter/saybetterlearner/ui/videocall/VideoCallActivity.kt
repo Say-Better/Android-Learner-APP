@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -69,7 +70,7 @@ class VideoCallActivity : ComponentActivity()  {
                     finish()
                 }, clickDeatil = {
 
-                })
+                }, isStart)
                 if (!isStart) {
                     ReadyMainScreen()
                     ReadyBottomMenuBar(
@@ -89,7 +90,7 @@ class VideoCallActivity : ComponentActivity()  {
     }
 
     @Composable
-    fun VideoCallTopbar(clickBack:()->Unit, clickDeatil:()->Unit) {
+    fun VideoCallTopbar(clickBack:()->Unit, clickDeatil:()->Unit, isStart : Boolean) {
         Row (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.1f)
@@ -117,29 +118,80 @@ class VideoCallActivity : ComponentActivity()  {
                         color = Color.White,
                         fontSize = 20.sp,)
 
-                    Canvas(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(vertical = 15.dp, horizontal = 10.dp)
-                    ) {
-                        drawLine(
-                            color = Gray400,
-                            start = Offset(0f, 0f),
-                            end = Offset(0f, size.height),
-                            strokeWidth = 2f
+                    if (isStart) {
+
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(vertical = 15.dp, horizontal = 10.dp)
+                        ) {
+                            drawLine(
+                                color = Gray400,
+                                start = Offset(0f, 0f),
+                                end = Offset(0f, size.height),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        Text(
+                            text = "TV 보는 상황 솔루션",
+                            color = Color.White,
+                            fontSize = 20.sp
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(
+                            text = "중재 단계 5회기",
+                            color = Color.Gray,
+                            fontSize = 15.sp,
+                        )
+                    }
+                }
+
+                Row (horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically){
+                    if(isStart ) {
+                        Text(
+                            text = "의사소통기회",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+
+                        Text(
+                            text = "0/10",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(vertical = 15.dp, horizontal = 10.dp)
+                        ) {
+                            drawLine(
+                                color = Gray400,
+                                start = Offset(0f, 0f),
+                                end = Offset(0f, size.height),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        Text(
+                            text = "타이머",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+
+                        Text(
+                            text = "00:10",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 60.dp)
                         )
                     }
 
-                    Text(text = "TV 보는 상황 솔루션",
-                        color = Color.White,
-                        fontSize = 20.sp)
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = "중재 단계 5회기",
-                        color = Color.Gray,
-                        fontSize = 15.sp,)
-                }
-
-                Row (horizontalArrangement = Arrangement.End){
                     Image(painter = painterResource(id = R.drawable.ic_detail),
                         contentDescription = null,
                         Modifier
@@ -184,23 +236,29 @@ class VideoCallActivity : ComponentActivity()  {
 
     @Composable
     fun StartMainScreen() {
-        val items = List(5) { it } // 임시로 10개의 아이템을 생성
+        val items = List(10) { it } // 임시로 10개의 아이템을 생성
 
         Row (modifier = Modifier
             .fillMaxHeight(0.8f)
             .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically){
-            if (items.size <5) {
-                items.forEach{i->
-                    Symbol(modifier = Modifier.weight(1f).padding(8.dp))
+            if (items.size <=2) {
+                items.forEach{ i->
+                    Symbol(modifier = Modifier.padding(8.dp).width(500.dp).height(580.dp))
                 }
-            }else {
+            }else if (items.size == 4) {
+                items.forEach{ i->
+                    Symbol(modifier = Modifier.padding(8.dp).weight(1f).height(340.dp))
+                }
+            } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(4), // 한 행에 4개의 아이템을 배치
-                    horizontalArrangement = Arrangement.Center
+                    columns = GridCells.Fixed(5), // 한 행에 4개의 아이템을 배치
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(items.size) { index ->
-                        Symbol(modifier = Modifier.padding(8.dp))
+                        Symbol(modifier = Modifier.padding(8.dp).weight(1f).height(250.dp))
                     }
                 }
             }
@@ -292,7 +350,7 @@ class VideoCallActivity : ComponentActivity()  {
             }
 
             Spacer(modifier = Modifier.width(20.dp))
-            Box (modifier = androidx.compose.ui.Modifier
+            Box (modifier = Modifier
                 .background(MainGreen, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
                 .clickable(

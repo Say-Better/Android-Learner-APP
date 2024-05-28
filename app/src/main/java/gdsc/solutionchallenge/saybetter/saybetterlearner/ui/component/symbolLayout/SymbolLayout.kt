@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,34 +38,31 @@ fun Symbol(modifier: Modifier) {
     BoxWithConstraints(
         modifier = modifier
             .background(DarkGray, RoundedCornerShape(10.dp))
-            .border(1.dp, SubGrey, RoundedCornerShape(10.dp))
-            .padding(20.dp)
-            .aspectRatio(1f),
+            .border(1.dp, SubGrey, RoundedCornerShape(10.dp)),
         contentAlignment = Alignment.Center
     ) {
-        val boxSize = maxHeight // 최대 너비를 기준으로 크기 조정
+        val boxSize = maxHeight *0.9f // 최대 너비를 기준으로 크기 조정
         val fontSize = boxSize.value * 0.1f / 2 // 박스 크기의 10%로 폰트 크기 조정
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.symbol_big),
                 contentDescription = null,
-                modifier = Modifier.size(boxSize * 0.9f), // 박스 크기의 50%로 이미지 크기 조정
-                contentScale = ContentScale.FillWidth
+                modifier = Modifier.size(boxSize)
+                    .padding(15.dp), // 박스 크기의 50%로 이미지 크기 조정
+                contentScale = ContentScale.FillBounds
             )
-            Spacer(modifier = Modifier.height(10.dp))
             Box(
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
                 Text(
                     text = "~로 가요",
                     fontSize = fontSize.sp,
                     color = White,
-                    fontWeight = FontWeight.W600,
-                    modifier = Modifier
+                    fontWeight = FontWeight.W600
                 )
             }
         }
