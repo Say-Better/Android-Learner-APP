@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,12 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.symbolLayout.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
@@ -60,6 +61,7 @@ class VideoCallActivity : ComponentActivity()  {
     @Composable
     fun ViewPreview() {
         var isStart by remember { mutableStateOf(true) }
+        var iconState by remember { mutableStateOf(false) }
         Surface (){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -69,7 +71,7 @@ class VideoCallActivity : ComponentActivity()  {
                     finish()
                 }, clickDeatil = {
 
-                })
+                }, isStart, iconState)
                 if (!isStart) {
                     ReadyMainScreen()
                     ReadyBottomMenuBar(
@@ -78,7 +80,9 @@ class VideoCallActivity : ComponentActivity()  {
                         reverseClick = {},
                         greetClick = {isStart = true})
                 }else {
-                    StartMainScreen()
+                    StartMainScreen(iconState) { newState ->
+                        iconState = newState // 아이콘 상태 업데이트
+                    }
                     StartBottomMenuBar(
                         micClick = {},
                         cameraClick = {},
@@ -89,7 +93,7 @@ class VideoCallActivity : ComponentActivity()  {
     }
 
     @Composable
-    fun VideoCallTopbar(clickBack:()->Unit, clickDeatil:()->Unit) {
+    fun VideoCallTopbar(clickBack:()->Unit, clickDeatil:()->Unit, isStart : Boolean, iconState: Boolean ) {
         Row (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.1f)
@@ -117,29 +121,89 @@ class VideoCallActivity : ComponentActivity()  {
                         color = Color.White,
                         fontSize = 20.sp,)
 
-                    Canvas(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(vertical = 15.dp, horizontal = 10.dp)
-                    ) {
-                        drawLine(
-                            color = Gray400,
-                            start = Offset(0f, 0f),
-                            end = Offset(0f, size.height),
-                            strokeWidth = 2f
+                    if (isStart) {
+
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(vertical = 15.dp, horizontal = 10.dp)
+                        ) {
+                            drawLine(
+                                color = Gray400,
+                                start = Offset(0f, 0f),
+                                end = Offset(0f, size.height),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        Text(
+                            text = "TV 보는 상황 솔루션",
+                            color = Color.White,
+                            fontSize = 20.sp
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(
+                            text = "중재 단계 5회기",
+                            color = Color.Gray,
+                            fontSize = 15.sp,
                         )
                     }
-
-                    Text(text = "TV 보는 상황 솔루션",
-                        color = Color.White,
-                        fontSize = 20.sp)
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = "중재 단계 5회기",
-                        color = Color.Gray,
-                        fontSize = 15.sp,)
                 }
 
-                Row (horizontalArrangement = Arrangement.End){
+                Row (horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically){
+                    if(isStart ) {
+                        Text(
+                            text = "의사소통기회",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+
+                        Text(
+                            text = "0/10",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(vertical = 15.dp, horizontal = 10.dp)
+                        ) {
+                            drawLine(
+                                color = Gray400,
+                                start = Offset(0f, 0f),
+                                end = Offset(0f, size.height),
+                                strokeWidth = 2f
+                            )
+                        }
+
+                        Text(
+                            text = "타이머",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
+
+                        Text(
+                            text = "00:10",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 20.dp)
+                        )
+                    }
+                    if (isStart) {
+                        Image(
+                            painter = painterResource(id = if (iconState) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off),
+                            contentDescription = null,
+                            Modifier
+                                .size(35.dp)
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                    }
+
                     Image(painter = painterResource(id = R.drawable.ic_detail),
                         contentDescription = null,
                         Modifier
@@ -183,24 +247,45 @@ class VideoCallActivity : ComponentActivity()  {
     }
 
     @Composable
-    fun StartMainScreen() {
-        val items = List(5) { it } // 임시로 10개의 아이템을 생성
+    fun StartMainScreen(iconState: Boolean, onSymbolClick: (Boolean) -> Unit) {
+        val items = List(10) { it } // 임시로 10개의 아이템을 생성
 
         Row (modifier = Modifier
             .fillMaxHeight(0.8f)
             .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically){
-            if (items.size <5) {
-                items.forEach{i->
-                    Symbol(modifier = Modifier.weight(1f).padding(8.dp))
+            if (items.size <=2) {
+                items.forEach{ i->
+                    Symbol(modifier = Modifier
+                        .padding(8.dp)
+                        .width(500.dp)
+                        .height(580.dp)) {
+                        onSymbolClick(!iconState)
+                    }
                 }
-            }else {
+            }else if (items.size == 4) {
+                items.forEach{ i->
+                    Symbol(modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f)
+                        .height(340.dp)){
+                        onSymbolClick(!iconState)
+                    }
+                }
+            } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(4), // 한 행에 4개의 아이템을 배치
-                    horizontalArrangement = Arrangement.Center
+                    columns = GridCells.Fixed(5), // 한 행에 4개의 아이템을 배치
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     items(items.size) { index ->
-                        Symbol(modifier = Modifier.padding(8.dp))
+                        Symbol(modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .height(250.dp)){
+                            onSymbolClick(!iconState)
+                        }
                     }
                 }
             }
@@ -292,7 +377,7 @@ class VideoCallActivity : ComponentActivity()  {
             }
 
             Spacer(modifier = Modifier.width(20.dp))
-            Box (modifier = androidx.compose.ui.Modifier
+            Box (modifier = Modifier
                 .background(MainGreen, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
                 .clickable(
@@ -493,5 +578,7 @@ class VideoCallActivity : ComponentActivity()  {
         }
     }
 
-
+    private fun SaveClickLog(symbol : Symbol) {
+        //뷰모델로 관리 -> 클릭하면 이 함수를 호출해서 뷰모델의 list 데이터열에 추가!
+    }
 }
