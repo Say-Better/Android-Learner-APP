@@ -3,6 +3,8 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.symbolLay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -19,6 +21,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,16 +33,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorder
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 
 
 @Composable
-fun Symbol(modifier: Modifier) {
+fun Symbol(modifier: Modifier, symbolClick:(Boolean) -> Unit) {
+    val isClicked = remember { mutableStateOf(false) }
+
+    val borderColor = if (isClicked.value) HighlightBorder else SubGrey
+    val textColor = if (isClicked.value) HighlightBorder else White
     BoxWithConstraints(
         modifier = modifier
             .background(DarkGray, RoundedCornerShape(10.dp))
-            .border(1.dp, SubGrey, RoundedCornerShape(10.dp)),
+            .border(1.dp, borderColor, RoundedCornerShape(10.dp))
+            .clickable (
+                interactionSource = remember { MutableInteractionSource() },
+                indication = CustomClickEvent
+            ){
+                symbolClick(isClicked.value)
+                isClicked.value = !isClicked.value
+                //tts 음성 산출까지
+            },
         contentAlignment = Alignment.Center
     ) {
         val boxSize = maxHeight *0.9f // 최대 너비를 기준으로 크기 조정
@@ -61,7 +79,7 @@ fun Symbol(modifier: Modifier) {
                 Text(
                     text = "~로 가요",
                     fontSize = fontSize.sp,
-                    color = White,
+                    color = textColor,
                     fontWeight = FontWeight.W600
                 )
             }

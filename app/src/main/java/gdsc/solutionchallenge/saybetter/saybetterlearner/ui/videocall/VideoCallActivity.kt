@@ -61,6 +61,7 @@ class VideoCallActivity : ComponentActivity()  {
     @Composable
     fun ViewPreview() {
         var isStart by remember { mutableStateOf(true) }
+        var iconState by remember { mutableStateOf(false) }
         Surface (){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -70,7 +71,7 @@ class VideoCallActivity : ComponentActivity()  {
                     finish()
                 }, clickDeatil = {
 
-                }, isStart)
+                }, isStart, iconState)
                 if (!isStart) {
                     ReadyMainScreen()
                     ReadyBottomMenuBar(
@@ -79,7 +80,9 @@ class VideoCallActivity : ComponentActivity()  {
                         reverseClick = {},
                         greetClick = {isStart = true})
                 }else {
-                    StartMainScreen()
+                    StartMainScreen(iconState) { newState ->
+                        iconState = newState // 아이콘 상태 업데이트
+                    }
                     StartBottomMenuBar(
                         micClick = {},
                         cameraClick = {},
@@ -90,7 +93,7 @@ class VideoCallActivity : ComponentActivity()  {
     }
 
     @Composable
-    fun VideoCallTopbar(clickBack:()->Unit, clickDeatil:()->Unit, isStart : Boolean) {
+    fun VideoCallTopbar(clickBack:()->Unit, clickDeatil:()->Unit, isStart : Boolean, iconState: Boolean ) {
         Row (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.1f)
@@ -188,9 +191,15 @@ class VideoCallActivity : ComponentActivity()  {
                             text = "00:10",
                             color = Color.White,
                             fontSize = 20.sp,
-                            modifier = Modifier.padding(end = 60.dp)
+                            modifier = Modifier.padding(end = 20.dp)
                         )
                     }
+
+                    Image(painter = painterResource(id = if (iconState) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off),
+                        contentDescription = null,
+                        Modifier
+                            .size(35.dp))
+                    Spacer(modifier = Modifier.width(20.dp))
 
                     Image(painter = painterResource(id = R.drawable.ic_detail),
                         contentDescription = null,
@@ -235,7 +244,7 @@ class VideoCallActivity : ComponentActivity()  {
     }
 
     @Composable
-    fun StartMainScreen() {
+    fun StartMainScreen(iconState: Boolean, onSymbolClick: (Boolean) -> Unit) {
         val items = List(10) { it } // 임시로 10개의 아이템을 생성
 
         Row (modifier = Modifier
@@ -244,11 +253,21 @@ class VideoCallActivity : ComponentActivity()  {
             verticalAlignment = Alignment.CenterVertically){
             if (items.size <=2) {
                 items.forEach{ i->
-                    Symbol(modifier = Modifier.padding(8.dp).width(500.dp).height(580.dp))
+                    Symbol(modifier = Modifier
+                        .padding(8.dp)
+                        .width(500.dp)
+                        .height(580.dp)) {
+                        onSymbolClick(!iconState)
+                    }
                 }
             }else if (items.size == 4) {
                 items.forEach{ i->
-                    Symbol(modifier = Modifier.padding(8.dp).weight(1f).height(340.dp))
+                    Symbol(modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f)
+                        .height(340.dp)){
+                        onSymbolClick(!iconState)
+                    }
                 }
             } else {
                 LazyVerticalGrid(
@@ -258,7 +277,12 @@ class VideoCallActivity : ComponentActivity()  {
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(items.size) { index ->
-                        Symbol(modifier = Modifier.padding(8.dp).weight(1f).height(250.dp))
+                        Symbol(modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .height(250.dp)){
+                            onSymbolClick(!iconState)
+                        }
                     }
                 }
             }
