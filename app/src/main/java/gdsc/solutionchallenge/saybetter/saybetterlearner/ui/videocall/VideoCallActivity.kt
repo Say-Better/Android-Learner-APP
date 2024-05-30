@@ -36,12 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.symbolLayout.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
@@ -194,12 +194,15 @@ class VideoCallActivity : ComponentActivity()  {
                             modifier = Modifier.padding(end = 20.dp)
                         )
                     }
-
-                    Image(painter = painterResource(id = if (iconState) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off),
-                        contentDescription = null,
-                        Modifier
-                            .size(35.dp))
-                    Spacer(modifier = Modifier.width(20.dp))
+                    if (isStart) {
+                        Image(
+                            painter = painterResource(id = if (iconState) R.drawable.ic_speaker_on else R.drawable.ic_speaker_off),
+                            contentDescription = null,
+                            Modifier
+                                .size(35.dp)
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                    }
 
                     Image(painter = painterResource(id = R.drawable.ic_detail),
                         contentDescription = null,
@@ -575,5 +578,7 @@ class VideoCallActivity : ComponentActivity()  {
         }
     }
 
-
+    private fun SaveClickLog(symbol : Symbol) {
+        //뷰모델로 관리 -> 클릭하면 이 함수를 호출해서 뷰모델의 list 데이터열에 추가!
+    }
 }

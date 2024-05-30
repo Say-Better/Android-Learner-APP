@@ -1,7 +1,6 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.inputLayout
+package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.ChatBotInputLayout
 
 import HangulAutomaton
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,7 +39,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
 fun ChatInput() {
-    var inputMode by remember { mutableStateOf(true) }
+    var inputMode by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf("") }
     val hangul = remember { HangulAutomaton() }
 
@@ -57,6 +56,10 @@ fun ChatInput() {
     val onSpaceClick: () -> Unit = {
         hangul.commitSpace()
         inputText = hangul.content
+    }
+    val SymbolClick: (String) -> Unit = { input->
+        hangul.content += (" " + input)
+        inputText += (" " + input)
     }
 
     Canvas(
@@ -117,7 +120,7 @@ fun ChatInput() {
         }
         Spacer(modifier = Modifier.height(10.dp))
         Row {
-            if (!inputMode) InputSymbol(Modifier)
+            if (!inputMode) InputSymbol(Modifier, SymbolClick)
             else InputKeyboard(
                 modifier = Modifier,
                 onCharacterClick = onCharacterClick,

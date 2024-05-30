@@ -41,7 +41,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMenu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.inputLayout.ChatInput
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.ChatBotInputLayout.ChatInput
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
