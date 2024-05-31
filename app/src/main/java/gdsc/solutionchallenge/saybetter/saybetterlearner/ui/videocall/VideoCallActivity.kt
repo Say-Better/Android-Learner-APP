@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSListener
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
@@ -50,9 +53,14 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 
-class VideoCallActivity : ComponentActivity()  {
+class VideoCallActivity : ComponentActivity(), TTSListener {
+
+    private lateinit var ttsManager: TTSManager
+    private var iconState by mutableStateOf(false) // 이 부분을 추가해주세요.
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ttsManager = TTSManager(this@VideoCallActivity, this)
         setContent {
             ViewPreview()
         }
@@ -61,7 +69,6 @@ class VideoCallActivity : ComponentActivity()  {
     @Composable
     fun ViewPreview() {
         var isStart by remember { mutableStateOf(true) }
-        var iconState by remember { mutableStateOf(false) }
         Surface (){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -249,6 +256,7 @@ class VideoCallActivity : ComponentActivity()  {
     @Composable
     fun StartMainScreen(iconState: Boolean, onSymbolClick: (Boolean) -> Unit) {
         val items = List(10) { it } // 임시로 10개의 아이템을 생성
+        val selectedItemIndex = remember { mutableStateOf<Int?>(null) }
 
         Row (modifier = Modifier
             .fillMaxHeight(0.8f)
@@ -256,21 +264,31 @@ class VideoCallActivity : ComponentActivity()  {
             verticalAlignment = Alignment.CenterVertically){
             if (items.size <=2) {
                 items.forEach{ i->
-                    Symbol(modifier = Modifier
-                        .padding(8.dp)
-                        .width(500.dp)
-                        .height(580.dp)) {
-                        onSymbolClick(!iconState)
-                    }
+                    Symbol(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .height(250.dp),
+                        isSelected = i == selectedItemIndex.value,
+                        onSymbolClick = {
+                            selectedItemIndex.value = i
+                        },
+                        context = this@VideoCallActivity
+                    )
                 }
             }else if (items.size == 4) {
                 items.forEach{ i->
-                    Symbol(modifier = Modifier
-                        .padding(8.dp)
-                        .weight(1f)
-                        .height(340.dp)){
-                        onSymbolClick(!iconState)
-                    }
+                    Symbol(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .height(250.dp),
+                        isSelected = i == selectedItemIndex.value,
+                        onSymbolClick = {
+                            selectedItemIndex.value = i
+                        },
+                        context = this@VideoCallActivity
+                    )
                 }
             } else {
                 LazyVerticalGrid(
@@ -279,13 +297,19 @@ class VideoCallActivity : ComponentActivity()  {
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(items.size) { index ->
-                        Symbol(modifier = Modifier
-                            .padding(8.dp)
-                            .weight(1f)
-                            .height(250.dp)){
-                            onSymbolClick(!iconState)
-                        }
+                    itemsIndexed(items) { index, _ ->
+                        Symbol(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .weight(1f)
+                                .height(250.dp),
+                            isSelected = index == selectedItemIndex.value,
+                            onSymbolClick = {
+                                selectedItemIndex.value = index
+                                ttsManager.speak("학교가요 밥먹으러")
+                            },
+                            context = this@VideoCallActivity
+                        )
                     }
                 }
             }
@@ -580,5 +604,15 @@ class VideoCallActivity : ComponentActivity()  {
 
     private fun SaveClickLog(symbol : Symbol) {
         //뷰모델로 관리 -> 클릭하면 이 함수를 호출해서 뷰모델의 list 데이터열에 추가!
+    }
+
+    override fun onTTSStarted() {
+        // Update iconState to true when TTS starts
+        iconState = true
+    }
+
+    override fun onTTSStopped() {
+        // Update iconState to false when TTS stops
+        iconState = false
     }
 }
