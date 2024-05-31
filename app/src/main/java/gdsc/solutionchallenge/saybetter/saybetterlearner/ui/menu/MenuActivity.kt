@@ -64,12 +64,18 @@ class MenuActivity: ComponentActivity()  {
         }
 
         Log.d(TAG, "oncreate")
+        init()
+    }
+
+    private fun init(){
+        userid = intent.getStringExtra("userid")
+        if(userid == null) finish()
+
+        //foreground service 시작
         startMyService()
     }
 
     private fun startMyService() {
-        Log.d(TAG, "startMyService")
-        userid = "testid123"
         mainServiceRepository.startService(userid!!)
     }
 

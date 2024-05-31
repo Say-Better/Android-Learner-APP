@@ -2,6 +2,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -48,13 +49,23 @@ class LoginActivity: ComponentActivity() {
 
     @Inject lateinit var mainRepository : MainRepository
 
+    val testid : String = "helloid"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LoginScreen(login = {
                 finish()
-                mainRepository.testAccess()
+                mainRepository.login(testid) { isDone, reason ->
+                    if(!isDone){
+                        Log.d("login", "로그인 실패")
+                    } else {
+                        Log.d("login", "로그인 실패")
+                    }
+
+                }
                 val intent = Intent(this, MenuActivity::class.java)
+                intent.putExtra("userid", testid)//임시방편
                 startActivity(intent)
             })
         }
