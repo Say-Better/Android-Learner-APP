@@ -1,5 +1,6 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorder
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
@@ -32,26 +34,28 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.Custo
 
 
 @Composable
-fun Symbol(modifier: Modifier, symbolClick:(Boolean) -> Unit) {
-    val isClicked = remember { mutableStateOf(false) }
+fun Symbol(
+    modifier: Modifier,
+    isSelected: Boolean,
+    onSymbolClick: () -> Unit,
+    context: Context
+) {
+    val borderColor = if (isSelected) HighlightBorder else SubGrey
+    val textColor = if (isSelected) HighlightBorder else White
 
-    val borderColor = if (isClicked.value) HighlightBorder else SubGrey
-    val textColor = if (isClicked.value) HighlightBorder else White
     BoxWithConstraints(
         modifier = modifier
             .background(DarkGray, RoundedCornerShape(10.dp))
             .border(1.dp, borderColor, RoundedCornerShape(10.dp))
-            .clickable (
+            .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = CustomClickEvent
-            ){
-                symbolClick(isClicked.value)
-                isClicked.value = !isClicked.value
-                //tts 음성 산출까지
+            ) {
+                onSymbolClick()
             },
         contentAlignment = Alignment.Center
     ) {
-        val boxSize = maxHeight *0.9f // 최대 너비를 기준으로 크기 조정
+        val boxSize = maxHeight * 0.9f // 최대 너비를 기준으로 크기 조정
         val fontSize = boxSize.value * 0.1f / 2 // 박스 크기의 10%로 폰트 크기 조정
 
         Column(
@@ -60,7 +64,8 @@ fun Symbol(modifier: Modifier, symbolClick:(Boolean) -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.symbol_big),
                 contentDescription = null,
-                modifier = Modifier.size(boxSize)
+                modifier = Modifier
+                    .size(boxSize)
                     .padding(15.dp), // 박스 크기의 50%로 이미지 크기 조정
                 contentScale = ContentScale.FillBounds
             )
@@ -78,6 +83,7 @@ fun Symbol(modifier: Modifier, symbolClick:(Boolean) -> Unit) {
         }
     }
 }
+
 
 @Composable
 fun RedaySymbol(modifier: Modifier) {
