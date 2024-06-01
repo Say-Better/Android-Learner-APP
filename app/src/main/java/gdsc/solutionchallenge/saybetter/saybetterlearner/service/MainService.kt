@@ -5,17 +5,25 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
+import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.service.MainServiceActions.START_SERVICE
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataModel
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainService : Service() {
+class MainService : Service(), MainRepository.Listener {
+    val TAG : String = "MainService"
+
     private var isServiceRunning = false
     private var userid : String? = null
 
     private lateinit var notificationManager : NotificationManager
+
+    @Inject lateinit var mainRepository : MainRepository
 
     //생성되면 NotificationManager 가져오기
     override fun onCreate() {
@@ -43,6 +51,8 @@ class MainService : Service() {
             startServiceWithNotification()
 
             //setup my clients
+            mainRepository.listener = this
+            mainRepository.initFirebase()
         }
     }
 
@@ -61,7 +71,12 @@ class MainService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
         return null
     }
+
+    override fun onLatestEventReceived(data: DataModel) {
+        Log.d(TAG, "onLatestEventReceived: $data")
+    }
+
+
 }
