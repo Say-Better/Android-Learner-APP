@@ -6,10 +6,10 @@ import com.google.firebase.database.ValueEventListener
 
 open class MyEventListener : ValueEventListener {
     override fun onDataChange(snapshot: DataSnapshot) {
-        TODO("Not yet implemented")
+        return
     }
 
     override fun onCancelled(error: DatabaseError) {
-        TODO("Not yet implemented")
+
     }
 }

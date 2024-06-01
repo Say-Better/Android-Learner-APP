@@ -21,6 +21,7 @@ class FirebaseClient @Inject constructor(
 
     private var currentUserid : String? = null
     private fun setUserid(userid : String) {
+        Log.d("FirebaseClient", "userId: $userid")
         this.currentUserid = userid
     }
 
@@ -63,16 +64,20 @@ class FirebaseClient @Inject constructor(
     //자신의 Latest Event 항목의 변화를 청취
     fun subscribeForLatestEvent(listener : Listener){
         try{
+            Log.d("FirebaseClient", "currUID: $currentUserid")
             dbRef.child(currentUserid!!).child(LATEST_EVENT).addValueEventListener(
                 object : MyEventListener() {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         super.onDataChange(snapshot)
+                        val snapshotValueString : String = snapshot.value.toString()
+                        Log.d("FirebaseClient", "snapshot value: $snapshotValueString")
                         val event  = try {
                             gson.fromJson(snapshot.value.toString(), DataModel::class.java)
                         }catch (e : Exception) {
                             e.printStackTrace()
                             null
                         }
+                        Log.d("FirebaseClient", "event: $event")
 
                         event?.let {
                             listener.onLatestEventReceived(it)

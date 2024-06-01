@@ -71,7 +71,6 @@ class MainService : Service(), MainRepository.Listener {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("Not yet implemented")
         return null
     }
 

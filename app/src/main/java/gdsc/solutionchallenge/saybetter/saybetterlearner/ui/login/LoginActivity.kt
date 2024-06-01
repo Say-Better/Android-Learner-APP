@@ -49,7 +49,7 @@ class LoginActivity: ComponentActivity() {
 
     @Inject lateinit var mainRepository : MainRepository
 
-    val testid : String = "helloid"
+    val testid : String = "helloYI"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,16 +57,15 @@ class LoginActivity: ComponentActivity() {
             LoginScreen(login = {
                 finish()
                 mainRepository.login(testid) { isDone, reason ->
-                    if(!isDone){
-                        Log.d("login", "로그인 실패")
+                    if (!isDone) {
+                        Log.d("login", "로그인 실패, $reason")
                     } else {
-                        Log.d("login", "로그인 실패")
+                        Log.d("login", "로그인 성공")
+                        startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
+                            putExtra("userid", testid)
+                        })
                     }
-
                 }
-                val intent = Intent(this, MenuActivity::class.java)
-                intent.putExtra("userid", testid)//임시방편
-                startActivity(intent)
             })
         }
     }
