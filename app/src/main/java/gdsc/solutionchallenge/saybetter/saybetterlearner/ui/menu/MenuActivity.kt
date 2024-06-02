@@ -42,7 +42,9 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActiv
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FeatureThatRequiresCameraPermission
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -79,6 +81,12 @@ class MenuActivity: ComponentActivity()  {
         mainServiceRepository.startService(userid!!)
     }
 
+    //Video call 클릭되었을 때
+    @Composable
+    private fun StartVideoCall(userid : String) {
+        FeatureThatRequiresCameraPermission()
+    }
+
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun MenuPreview() {
@@ -99,7 +107,8 @@ class MenuActivity: ComponentActivity()  {
     @Composable
     fun MenuBar(menuList : List<menu>) {
         Box {
-            Column (modifier = Modifier.fillMaxWidth()
+            Column (modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 100.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
@@ -120,6 +129,7 @@ class MenuActivity: ComponentActivity()  {
                             when (menuEntity.title) {
                                 "그림 상징 의사소통" -> {
                                     intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                                    //StartVideoCall(userid = "helloid")
                                 }
                                 "AI 챗봇" -> {
                                     intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
@@ -159,7 +169,7 @@ class MenuActivity: ComponentActivity()  {
             Text(text = menuEntity.title,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600)
-        }
+            }
     }
 }
 
