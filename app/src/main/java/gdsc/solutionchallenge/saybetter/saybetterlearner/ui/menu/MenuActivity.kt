@@ -129,7 +129,6 @@ class MenuActivity: ComponentActivity()  {
                             when (menuEntity.title) {
                                 "그림 상징 의사소통" -> {
                                     intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
-                                    //StartVideoCall(userid = "helloid")
                                 }
                                 "AI 챗봇" -> {
                                     intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
@@ -140,6 +139,7 @@ class MenuActivity: ComponentActivity()  {
                             }
                             startActivity(intent)
                         })
+                        StartVideoCall(userid = "helloid")
                         if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
                     }
                 }
