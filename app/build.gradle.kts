@@ -105,6 +105,9 @@ dependencies {
 
     //Gson 종속성 추가
     implementation("com.google.code.gson:gson:2.10.1")
+
+    //권한 요청 관련 모듈
+    implementation("com.google.accompanist:accompanist-permissions:0.35.1-alpha")
 }
 
 kapt {

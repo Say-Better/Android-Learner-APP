@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Camera 권한 설정 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- Camera 가 필수 기능이 아님을 명시함 -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
