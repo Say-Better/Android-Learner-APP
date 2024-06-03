@@ -1,12 +1,12 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS
 
-// TTSManager.kt
-
 import android.content.Context
+import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import java.util.*
 
-class TTSManager(context: Context, private val ttsListener: TTSListener) : TextToSpeech.OnInitListener, TextToSpeech.OnUtteranceCompletedListener {
+class TTSManager(context: Context, private val ttsListener: TTSListener) : TextToSpeech.OnInitListener {
 
     private var tts: TextToSpeech = TextToSpeech(context, this)
     private var isInitialized: Boolean = false
@@ -15,6 +15,22 @@ class TTSManager(context: Context, private val ttsListener: TTSListener) : TextT
         if (status == TextToSpeech.SUCCESS) {
             val result = tts.setLanguage(Locale.KOREA)
             isInitialized = !(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED)
+
+            if (isInitialized) {
+                tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                        notifyTTSStarted()
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                        notifyTTSStopped()
+                    }
+
+                    override fun onError(utteranceId: String?) {
+                        notifyTTSStopped()
+                    }
+                })
+            }
         } else {
             isInitialized = false
         }
@@ -22,22 +38,15 @@ class TTSManager(context: Context, private val ttsListener: TTSListener) : TextT
 
     fun speak(text: String) {
         if (isInitialized) {
-            notifyTTSStarted()
-            val params = HashMap<String, String>()
-            params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = "utteranceId"
-            tts.setOnUtteranceCompletedListener(this)
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, params)
+            val params = Bundle()
+            params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "utteranceId")
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "utteranceId")
         }
     }
 
     fun shutdown() {
         tts.stop()
         tts.shutdown()
-    }
-
-    // 이 메서드는 말하기가 완료될 때 호출됩니다.
-    override fun onUtteranceCompleted(utteranceId: String) {
-        notifyTTSStopped()
     }
 
     private fun notifyTTSStarted() {

@@ -80,10 +80,10 @@ class ChatBotActivity: ComponentActivity() {
         )
 
         val chatMenuList = listOf(
-            ChatMenu("그림", R.drawable.img_chatbot),
-            ChatMenu("텍스트", R.drawable.img_chatbot),
-            ChatMenu("챗봇", R.drawable.img_chatbot),
-            ChatMenu("홈", R.drawable.img_chatbot),
+            ChatMenu("그림 상징", R.drawable.menu_symbol),
+            ChatMenu("텍스트", R.drawable.menu_text),
+            ChatMenu("챗봇", R.drawable.menu_chatbot),
+            ChatMenu("설정", R.drawable.menu_setting),
         )
 
         val chatRoomList = listOf(
@@ -123,7 +123,7 @@ class ChatBotActivity: ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth(0.05f)
                 .fillMaxHeight()
-                .background(Black),
+                .background(DarkGray),
             verticalArrangement = Arrangement.Bottom
         ) {
             LazyColumn(
@@ -139,7 +139,7 @@ class ChatBotActivity: ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.img_chatbot),
+                            painter = painterResource(id = chatmenu.img),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -183,18 +183,6 @@ class ChatBotActivity: ComponentActivity() {
                     contentDescription = null
                 )
             }
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp)
-            ) {
-                drawLine(
-                    color = Gray400,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = 3f
-                )
-            }
             // ChatRoomList 스크롤 가능한 컬럼
             LazyColumn(
                 modifier = Modifier
@@ -202,8 +190,7 @@ class ChatBotActivity: ComponentActivity() {
                     .fillMaxWidth()
             ) {
                 item {
-                    ChatRoomList(0, chatRoomList)
-                    ChatRoomList(1, chatRoomList)
+                    ChatRoomList(chatRoomList)
                 }
             }
             // 새로운 대화 상자 고정
@@ -226,30 +213,12 @@ class ChatBotActivity: ComponentActivity() {
     }
 
     @Composable
-    fun ChatRoomList(mode: Int, chatRoomList: List<ChatRoom>) {
+    fun ChatRoomList(chatRoomList: List<ChatRoom>) {
         Column(
             Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp)
         ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (mode == 0) "진행중 학습"
-                    else "완료된 학습",
-                    color = Gray500,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W600
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.ic_down_arrow),
-                    contentDescription = null
-                )
             }
             chatRoomList.forEach { chatRoom ->
                 ChatRoom(chatRoom)
@@ -395,6 +364,6 @@ class ChatBotActivity: ComponentActivity() {
 
 
 
-}
+
 
 
