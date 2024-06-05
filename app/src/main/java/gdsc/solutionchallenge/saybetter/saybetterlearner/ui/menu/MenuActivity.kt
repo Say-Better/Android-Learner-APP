@@ -46,6 +46,8 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActiv
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialog
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialogViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FeatureThatRequiresCameraPermission
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 
@@ -62,11 +64,16 @@ class MenuActivity: ComponentActivity()  {
     @Inject lateinit var mainRepository : MainRepository
     @Inject lateinit var mainServiceRepository : MainServiceRepository
 
+    private val viewModel : CustomAlertDialogViewModel = CustomAlertDialogViewModel()
+    var toggle : Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         setContent {
             MenuPreview()
+            toggle = true
         }
 
         Log.d(TAG, "oncreate")
@@ -88,7 +95,13 @@ class MenuActivity: ComponentActivity()  {
     //Video call 클릭되었을 때
     @Composable
     private fun StartVideoCall(userid : String) {
-        FeatureThatRequiresCameraPermission()
+        FeatureThatRequiresCameraPermission(viewModel)
+        mainRepository.sendConnectionRequest(userid) {
+            if(it) {
+                //videocall 시작해야함
+
+            }
+        }
     }
 
 
@@ -144,7 +157,7 @@ class MenuActivity: ComponentActivity()  {
                             }
                             startActivity(intent)
                         })
-                        FeatureThatRequiresCameraPermission()
+                        if(toggle) FeatureThatRequiresCameraPermission(viewModel)
                         if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
                     }
                 }

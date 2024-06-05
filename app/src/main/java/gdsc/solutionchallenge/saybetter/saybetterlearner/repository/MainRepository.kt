@@ -3,6 +3,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.repository
 import com.google.gson.Gson
 import gdsc.solutionchallenge.saybetter.saybetterlearner.firebaseClient.FirebaseClient
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataModelType
 import gdsc.solutionchallenge.saybetter.saybetterlearner.webrtc.WebRTCClient
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,6 +34,15 @@ class MainRepository @Inject constructor(
             }
 
         })
+    }
+
+    fun sendConnectionRequest(target : String, success : (Boolean) -> Unit) {
+        firebaseClient.sendMessageToOtherClient(
+            DataModel(
+                type = DataModelType.StartVideoCall,
+                target = target
+            ), success
+        )
     }
 
     interface Listener {
