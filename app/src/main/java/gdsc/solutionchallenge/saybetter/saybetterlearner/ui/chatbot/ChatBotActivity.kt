@@ -42,6 +42,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.ChatBotInputLayout.ChatInput
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.NaviBar.NaviMenu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
@@ -79,12 +80,6 @@ class ChatBotActivity: ComponentActivity() {
             ChatMessage(true, "19:16", "", R.drawable.ic_chatbot)
         )
 
-        val chatMenuList = listOf(
-            ChatMenu("그림 상징", R.drawable.menu_symbol),
-            ChatMenu("텍스트", R.drawable.menu_text),
-            ChatMenu("챗봇", R.drawable.menu_chatbot),
-            ChatMenu("설정", R.drawable.menu_setting),
-        )
 
         val chatRoomList = listOf(
             ChatRoom("학교에 등교하기 위해 밥 먹고 가는 상황입니다", "최근 방문 1일전", R.drawable.symbol),
@@ -95,7 +90,7 @@ class ChatBotActivity: ComponentActivity() {
         )
         Surface {
             Row(modifier = Modifier.fillMaxSize()) {
-                ChatMenu(chatMenuList)
+                NaviMenu(2)
 
                 ChatList(chatRoomList)
 
@@ -115,47 +110,6 @@ class ChatBotActivity: ComponentActivity() {
 
         }
         // 전체 영역을 Column 으로 배치
-    }
-
-    @Composable
-    fun ChatMenu(chatMenuList: List<ChatMenu>) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.05f)
-                .fillMaxHeight()
-                .background(DarkGray),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                items(chatMenuList) { chatmenu ->
-                    Column(
-                        modifier = Modifier,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = chatmenu.img),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                                .padding(7.dp)
-                        )
-                        Text(
-                            text = chatmenu.title,
-                            fontSize = 10.sp,
-                            color = White
-                        )
-                    }
-
-                }
-            }
-        }
     }
 
     @Composable

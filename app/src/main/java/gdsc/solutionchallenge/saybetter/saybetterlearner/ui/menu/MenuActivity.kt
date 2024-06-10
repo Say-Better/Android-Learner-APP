@@ -39,6 +39,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
@@ -133,6 +134,9 @@ class MenuActivity: ComponentActivity()  {
                                 }
                                 "AI 챗봇" -> {
                                     intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
+                                }
+                                "설정" -> {
+                                    intent = Intent(this@MenuActivity, SettingActivity::class.java)
                                 }
                                 else -> {
                                     intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
