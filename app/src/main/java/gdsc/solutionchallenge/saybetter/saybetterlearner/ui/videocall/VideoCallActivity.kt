@@ -62,7 +62,40 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         super.onCreate(savedInstanceState)
         ttsManager = TTSManager(this@VideoCallActivity, this)
         setContent {
-            ViewPreview()
+            VideoCallView()
+        }
+    }
+
+    @Composable
+    fun VideoCallView() {
+        var isStart by remember { mutableStateOf(true) }
+        Surface (){
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                VideoCallTopbar(clickBack = {
+                    finish()
+                }, clickDeatil = {
+
+                }, isStart, iconState)
+                if (!isStart) {
+                    ReadyMainScreen()
+                    ReadyBottomMenuBar(
+                        micClick = {},
+                        cameraClick = {},
+                        reverseClick = {},
+                        greetClick = {isStart = true})
+                }else {
+                    StartMainScreen(iconState) { newState ->
+                        iconState = newState // 아이콘 상태 업데이트
+                    }
+                    StartBottomMenuBar(
+                        micClick = {},
+                        cameraClick = {},
+                        reverseClick = {isStart = false})
+                }
+            }
         }
     }
     @Preview(widthDp = 1280, heightDp = 800)
@@ -124,24 +157,15 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                         })
                 Row (modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically){
-                    Text(text = "홍길동 교육자와 솔루션 진행",
-                        color = Color.White,
-                        fontSize = 20.sp,)
+                    if(!isStart) {
+                        Text(
+                            text = "홍길동 교육자와 솔루션 진행",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                        )
 
+                    }
                     if (isStart) {
-
-                        Canvas(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(vertical = 15.dp, horizontal = 10.dp)
-                        ) {
-                            drawLine(
-                                color = Gray400,
-                                start = Offset(0f, 0f),
-                                end = Offset(0f, size.height),
-                                strokeWidth = 2f
-                            )
-                        }
 
                         Text(
                             text = "TV 보는 상황 솔루션",

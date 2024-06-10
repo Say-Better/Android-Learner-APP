@@ -42,6 +42,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.ChatBotInputLayout.ChatInput
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.NaviBar.NaviMenu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
@@ -79,12 +80,6 @@ class ChatBotActivity: ComponentActivity() {
             ChatMessage(true, "19:16", "", R.drawable.ic_chatbot)
         )
 
-        val chatMenuList = listOf(
-            ChatMenu("그림", R.drawable.img_chatbot),
-            ChatMenu("텍스트", R.drawable.img_chatbot),
-            ChatMenu("챗봇", R.drawable.img_chatbot),
-            ChatMenu("홈", R.drawable.img_chatbot),
-        )
 
         val chatRoomList = listOf(
             ChatRoom("학교에 등교하기 위해 밥 먹고 가는 상황입니다", "최근 방문 1일전", R.drawable.symbol),
@@ -95,7 +90,7 @@ class ChatBotActivity: ComponentActivity() {
         )
         Surface {
             Row(modifier = Modifier.fillMaxSize()) {
-                ChatMenu(chatMenuList)
+                NaviMenu(2)
 
                 ChatList(chatRoomList)
 
@@ -115,47 +110,6 @@ class ChatBotActivity: ComponentActivity() {
 
         }
         // 전체 영역을 Column 으로 배치
-    }
-
-    @Composable
-    fun ChatMenu(chatMenuList: List<ChatMenu>) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.05f)
-                .fillMaxHeight()
-                .background(Black),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.5f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                items(chatMenuList) { chatmenu ->
-                    Column(
-                        modifier = Modifier,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_chatbot),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                                .padding(7.dp)
-                        )
-                        Text(
-                            text = chatmenu.title,
-                            fontSize = 10.sp,
-                            color = White
-                        )
-                    }
-
-                }
-            }
-        }
     }
 
     @Composable
@@ -183,18 +137,6 @@ class ChatBotActivity: ComponentActivity() {
                     contentDescription = null
                 )
             }
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp)
-            ) {
-                drawLine(
-                    color = Gray400,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = 3f
-                )
-            }
             // ChatRoomList 스크롤 가능한 컬럼
             LazyColumn(
                 modifier = Modifier
@@ -202,8 +144,7 @@ class ChatBotActivity: ComponentActivity() {
                     .fillMaxWidth()
             ) {
                 item {
-                    ChatRoomList(0, chatRoomList)
-                    ChatRoomList(1, chatRoomList)
+                    ChatRoomList(chatRoomList)
                 }
             }
             // 새로운 대화 상자 고정
@@ -226,30 +167,12 @@ class ChatBotActivity: ComponentActivity() {
     }
 
     @Composable
-    fun ChatRoomList(mode: Int, chatRoomList: List<ChatRoom>) {
+    fun ChatRoomList(chatRoomList: List<ChatRoom>) {
         Column(
             Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp)
         ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = if (mode == 0) "진행중 학습"
-                    else "완료된 학습",
-                    color = Gray500,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W600
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.ic_down_arrow),
-                    contentDescription = null
-                )
             }
             chatRoomList.forEach { chatRoom ->
                 ChatRoom(chatRoom)
@@ -395,6 +318,6 @@ class ChatBotActivity: ComponentActivity() {
 
 
 
-}
+
 
 

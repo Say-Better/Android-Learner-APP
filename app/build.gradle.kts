@@ -88,6 +88,8 @@ dependencies {
 
     implementation ("androidx.compose.material:material-icons-extended:1.6.1")
     implementation ("androidx.activity:activity-compose:1.8.2")
+    // Compose Foundation (필요한 종속성 추가)
+    implementation ("androidx.compose.foundation:foundation:1.4.0")
     kapt ("com.google.dagger:hilt-compiler:2.46")
 
     // Import the Firebase BoM

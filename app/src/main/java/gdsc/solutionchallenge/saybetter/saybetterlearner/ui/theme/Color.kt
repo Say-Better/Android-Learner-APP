@@ -16,6 +16,7 @@ val MainBlue = Color(0xFF499BE9)
 val SubGrey = Color(0xFF5B5B5B)
 val Red = Color(0xFFF04646)
 val HighlightBorder = Color(0xFFBEFF7E)
+val BoxBackground = Color(0xFFF6F6F6)
 
 val Gray50 = Color(0xFFF9FAFB)
 val Gray100 = Color(0xFFF3F4F6)
