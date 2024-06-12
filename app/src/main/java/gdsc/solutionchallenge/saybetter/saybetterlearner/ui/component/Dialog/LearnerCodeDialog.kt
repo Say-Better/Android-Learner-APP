@@ -23,6 +23,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +47,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray300
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import kotlinx.coroutines.delay
 
 class LearnerCodeDialog {
 
@@ -56,6 +61,17 @@ class LearnerCodeDialog {
         code : String,
         onClickCancel: () -> Unit
     ) {
+        val sec = remember {
+            mutableIntStateOf(180)
+        }
+
+        LaunchedEffect(Unit) {
+            while (sec.value > 0) {
+                delay(1000)
+                sec.intValue -= 1
+            }
+        }
+
         Dialog(
             onDismissRequest = { onClickCancel() },
             properties = DialogProperties(
@@ -88,7 +104,8 @@ class LearnerCodeDialog {
                         Image(
                             painter = painterResource(id = R.drawable.dialog_cancel_ic),
                             contentDescription = null,
-                            Modifier.size(48.dp)
+                            Modifier
+                                .size(48.dp)
                                 .clickable {
                                     onClickCancel()
                                 }
@@ -118,7 +135,7 @@ class LearnerCodeDialog {
                             color = Red,
                             fontSize = 18.sp)
                         Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = "03:00",
+                        Text(text = String.format("%02d:%02d", sec.intValue/60, sec.intValue%60),
                             color = Red,
                             fontSize = 18.sp)
                     }
