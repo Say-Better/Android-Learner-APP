@@ -14,8 +14,8 @@ class CustomAlertDialogViewModel : ViewModel() {
     fun showCustomAlertDialog() {
         customAlertDialogState.value = CustomAlertDialogState(
             isVisible = true,
-            title = "정말로 삭제하시겠습니깡?",
-            description = "삭제하면 복구할 수 없습니당.",
+            title = "정말로 삭제하시겠습니까?",
+            description = "삭제하면 복구할 수 없습니다.",
             onClickConfirm = {
                 resetDialogState()
             },

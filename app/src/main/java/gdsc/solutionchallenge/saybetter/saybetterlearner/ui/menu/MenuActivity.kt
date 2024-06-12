@@ -65,7 +65,7 @@ class MenuActivity: ComponentActivity()  {
     @Inject lateinit var mainServiceRepository : MainServiceRepository
 
     private val viewModel : CustomAlertDialogViewModel = CustomAlertDialogViewModel()
-    var toggle : Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,7 +73,6 @@ class MenuActivity: ComponentActivity()  {
 
         setContent {
             MenuPreview()
-            toggle = true
         }
 
         Log.d(TAG, "oncreate")
@@ -157,7 +156,8 @@ class MenuActivity: ComponentActivity()  {
                             }
                             startActivity(intent)
                         })
-                        if(toggle) FeatureThatRequiresCameraPermission(viewModel)
+                        Log.d("permission", "call FeatureThatRequiresCameraPermission")
+                        FeatureThatRequiresCameraPermission(viewModel)
                         if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
                     }
                 }
