@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.login.LoginActivity
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import kotlinx.coroutines.delay
 
 class SplashActivity : ComponentActivity() {

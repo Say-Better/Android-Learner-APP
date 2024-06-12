@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -23,6 +24,9 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.LearnerCodeDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.NaviBar.NaviMenu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
@@ -43,11 +48,34 @@ import java.nio.file.WatchEvent
 
 class SettingActivity: ComponentActivity()  {
 
+    data class CustomAlertDialogState(
+        val code: String = "",
+        val onClickCancel: () -> Unit = {},
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            SettingPreview()
+            val customAlertDialogState = remember { mutableStateOf(CustomAlertDialogState()) }
+            Surface {
+                Row(Modifier.fillMaxSize()) {
+                    NaviMenu(mode = 3)
+                    SettingScreen(customAlertDialogState)
+                }
+                if (customAlertDialogState.value.code.isNotEmpty()) {
+                    LearnerCodeDialog().LearnerCodeDialogScreen(
+                        code = customAlertDialogState.value.code,
+                        onClickCancel = { resetDialogState(customAlertDialogState) }
+                    )
+                }
+            }
         }
+    }
+
+
+    fun resetDialogState(state: MutableState<CustomAlertDialogState>) {
+        state.value = CustomAlertDialogState()
     }
 
     @Preview(widthDp = 1280, heightDp = 800)
@@ -56,12 +84,12 @@ class SettingActivity: ComponentActivity()  {
         Surface {
             Row(Modifier.fillMaxSize()) {
                 NaviMenu(mode = 3)
-                SettingScreen()
+                //SettingScreen()
             }
         }
     }
     @Composable
-    fun SettingScreen() {
+    fun SettingScreen(customAlertDialogState: MutableState<CustomAlertDialogState>) {
         Column (modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)){
@@ -130,7 +158,15 @@ class SettingActivity: ComponentActivity()  {
             Box(modifier = Modifier
                 .background(MainGreen, shape = RoundedCornerShape(30.dp))
                 .height(50.dp)
-                .width(120.dp)) {
+                .width(120.dp)
+                .clickable {
+                    customAlertDialogState.value = CustomAlertDialogState(
+                        code = "NTR139",
+                        onClickCancel = {
+                            resetDialogState(customAlertDialogState)
+                        }
+                    )
+                }) {
                 Row (modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
