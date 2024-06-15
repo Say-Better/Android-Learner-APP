@@ -40,11 +40,10 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainReposito
 import gdsc.solutionchallenge.saybetter.saybetterlearner.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FeatureThatRequiresCameraPermission
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 
 import javax.inject.Inject
 

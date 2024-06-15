@@ -110,6 +110,12 @@ dependencies {
 
     //권한 요청 관련 모듈
     implementation("com.google.accompanist:accompanist-permissions:0.35.1-alpha")
+
+    // Google Play services
+    implementation ("com.google.gms:google-services:4.3.15")
+    implementation ("com.google.firebase:firebase-auth:22.0.0")
+    implementation ("com.google.firebase:firebase-bom:32.0.0")
+    implementation ("com.google.android.gms:play-services-auth:21.2.0")
 }
 
 kapt {
