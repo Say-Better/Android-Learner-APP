@@ -25,12 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorder
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 
 
 @Composable

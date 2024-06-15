@@ -51,7 +51,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.GrayW40
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 
 class VideoCallActivity : ComponentActivity(), TTSListener {
 
