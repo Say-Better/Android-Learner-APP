@@ -55,7 +55,7 @@
 
         <!-- 시그널링 서버와 지속적으로 데이터를 주고받아야 하므로 DataSync type으로 명시 -->
         <service
-            android:name=".service.MainService"
+            android:name=".utils.webrtc.service.MainService"
             android:foregroundServiceType="dataSync"/>
     </application>
 

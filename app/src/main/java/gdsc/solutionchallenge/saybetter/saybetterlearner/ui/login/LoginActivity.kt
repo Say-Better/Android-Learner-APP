@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White

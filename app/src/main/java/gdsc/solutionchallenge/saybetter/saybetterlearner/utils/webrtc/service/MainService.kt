@@ -1,4 +1,4 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.service
+package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,9 +8,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
-import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
-import gdsc.solutionchallenge.saybetter.saybetterlearner.service.MainServiceActions.START_SERVICE
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.START_SERVICE
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
 import javax.inject.Inject
 
 

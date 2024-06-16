@@ -1,14 +1,14 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.firebaseClient
+package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.firebaseClient
 
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.gson.Gson
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FirebaseFieldNames.LATEST_EVENT
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FirebaseFieldNames.STATUS
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.MyEventListener
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.UserStatus
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.UserStatus
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton

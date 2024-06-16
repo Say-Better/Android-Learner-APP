@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.menu
-import gdsc.solutionchallenge.saybetter.saybetterlearner.repository.MainRepository
-import gdsc.solutionchallenge.saybetter.saybetterlearner.service.MainServiceRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
