@@ -1,4 +1,4 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.utils
+package gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto
 
 enum class DataModelType {
     StartAudioCall, StartVideoCall, Offer, Answer, IceCandidates, EndCall
