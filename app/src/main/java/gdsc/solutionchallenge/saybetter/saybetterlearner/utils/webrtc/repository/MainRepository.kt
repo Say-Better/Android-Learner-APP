@@ -1,9 +1,9 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.repository
+package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository
 
 import com.google.gson.Gson
-import gdsc.solutionchallenge.saybetter.saybetterlearner.firebaseClient.FirebaseClient
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataModel
-import gdsc.solutionchallenge.saybetter.saybetterlearner.webrtc.WebRTCClient
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.firebaseClient.FirebaseClient
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
 import javax.inject.Inject
 import javax.inject.Singleton
 
