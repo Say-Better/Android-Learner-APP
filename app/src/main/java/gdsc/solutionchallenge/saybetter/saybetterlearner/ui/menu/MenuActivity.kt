@@ -21,14 +21,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,13 +39,10 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialog
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialogViewModel
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FeatureThatRequiresCameraPermission
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.PermissionCheckDialog
 
 import javax.inject.Inject
 
@@ -63,8 +56,6 @@ class MenuActivity: ComponentActivity()  {
     //Hilt 종속성 주입
     @Inject lateinit var mainRepository : MainRepository
     @Inject lateinit var mainServiceRepository : MainServiceRepository
-
-    private val viewModel : CustomAlertDialogViewModel = CustomAlertDialogViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +85,6 @@ class MenuActivity: ComponentActivity()  {
     //Video call 클릭되었을 때
     @Composable
     private fun StartVideoCall(userid : String) {
-        FeatureThatRequiresCameraPermission(viewModel)
         mainRepository.sendConnectionRequest(userid) {
             if(it) {
                 //videocall 시작해야함
@@ -157,8 +147,9 @@ class MenuActivity: ComponentActivity()  {
                             startActivity(intent)
                         })
                         Log.d("permission", "call FeatureThatRequiresCameraPermission")
-                        FeatureThatRequiresCameraPermission(viewModel)
                         if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
+
+                        PermissionCheckDialog()
                     }
                 }
             }

@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId = "gdsc.solutionchallenge.saybetter.saybetterlearner"
-        minSdk = 30
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
