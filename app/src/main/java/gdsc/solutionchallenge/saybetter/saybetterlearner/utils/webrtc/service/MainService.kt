@@ -4,13 +4,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.Composable
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.START_SERVICE
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
+import org.webrtc.SurfaceViewRenderer
 import javax.inject.Inject
 
 
@@ -24,6 +28,13 @@ class MainService : Service(), MainRepository.Listener {
     private lateinit var notificationManager : NotificationManager
 
     @Inject lateinit var mainRepository : MainRepository
+
+    companion object {
+        var listener : Listener? = null
+//        var endCallListener : EndCallListener? = null
+//        var localSurfaceView : SurfaceViewRenderer? = null
+//        var remoteSurfaceView : SurfaceViewRenderer? = null
+    }
 
     //생성되면 NotificationManager 가져오기
     override fun onCreate() {
@@ -43,6 +54,7 @@ class MainService : Service(), MainRepository.Listener {
         return START_STICKY
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleStartService(incomingIntent: Intent) {
         //Service 시작 시점에서 toggle on
         if(!isServiceRunning) {
@@ -57,6 +69,7 @@ class MainService : Service(), MainRepository.Listener {
     }
 
     //Notification Manager에게 정의한 notificationChannel 전달하여 생성하기
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun startServiceWithNotification() {
         val notificationChannel = NotificationChannel(
             "channel1", "foreground", NotificationManager.IMPORTANCE_HIGH
@@ -74,8 +87,16 @@ class MainService : Service(), MainRepository.Listener {
         return null
     }
 
+
     override fun onLatestEventReceived(data: DataModel) {
         Log.d(TAG, "onLatestEventReceived: $data")
+        listener?.onCallReceived(data)
+
+    }
+
+    //MainActivity에서 구현됨
+    interface Listener {
+        fun onCallReceived(model: DataModel)
     }
 
 
