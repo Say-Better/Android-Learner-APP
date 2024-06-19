@@ -118,6 +118,10 @@ dependencies {
     implementation ("com.google.firebase:firebase-bom:32.0.0")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
+    implementation ("androidx.credentials:credentials:1.2.2")
+    implementation ("androidx.credentials:credentials-play-services-auth:1.2.2")
+    implementation ("com.google.android.libraries.identity.googleid:googleid:1.1.0")
+
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
