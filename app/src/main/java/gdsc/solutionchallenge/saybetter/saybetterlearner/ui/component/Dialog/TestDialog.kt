@@ -55,10 +55,10 @@ class TestDialog {
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun DialogPreview() {
-        LearnerCodeDialogScreen({  }, {  })
+        CallTestDialog({  }, {  })
     }
     @Composable
-    fun LearnerCodeDialogScreen(
+    fun CallTestDialog(
         onClickSure:() -> Unit,
         onClickCancel: () -> Unit
     ) {
@@ -98,7 +98,10 @@ class TestDialog {
                             .fillMaxWidth()
                             .background(Red, RoundedCornerShape(8.dp))
                             .height(60.dp)
-                            .weight(1f),
+                            .weight(1f)
+                            .clickable {
+                                onClickCancel()
+                            },
                             contentAlignment = Alignment.Center) {
                             Text(text = "거절",
                                 color= White)

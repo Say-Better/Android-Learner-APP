@@ -3,6 +3,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
@@ -30,11 +31,12 @@ class MainService : Service(), MainRepository.Listener {
     @Inject lateinit var mainRepository : MainRepository
 
     companion object {
-        var listener : Listener? = null
+        var listener : CallEventListener? = null
 //        var endCallListener : EndCallListener? = null
 //        var localSurfaceView : SurfaceViewRenderer? = null
 //        var remoteSurfaceView : SurfaceViewRenderer? = null
     }
+
 
     //생성되면 NotificationManager 가져오기
     override fun onCreate() {
@@ -44,6 +46,7 @@ class MainService : Service(), MainRepository.Listener {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let { incomingIntent ->
             when(incomingIntent.action) {
@@ -95,7 +98,7 @@ class MainService : Service(), MainRepository.Listener {
     }
 
     //MainActivity에서 구현됨
-    interface Listener {
+    interface CallEventListener {
         fun onCallReceived(model: DataModel)
     }
 

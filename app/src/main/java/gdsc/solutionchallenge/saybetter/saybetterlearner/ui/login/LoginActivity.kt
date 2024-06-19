@@ -58,7 +58,7 @@ class LoginActivity: ComponentActivity() {
 
     private lateinit var googleSignInHelper: GoogleSignInHelper
 
-    val testid : String = "helloYI"
+    val testid : String = "testUser1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
