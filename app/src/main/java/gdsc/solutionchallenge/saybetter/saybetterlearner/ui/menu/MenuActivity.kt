@@ -61,6 +61,8 @@ class MenuActivity: ComponentActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         setContent {
             MenuPreview()
         }
@@ -84,8 +86,14 @@ class MenuActivity: ComponentActivity()  {
     //Video call 클릭되었을 때
     @Composable
     private fun StartVideoCall(userid : String) {
-        FeatureThatRequiresCameraPermission()
+        mainRepository.sendConnectionRequest(userid) {
+            if(it) {
+                //videocall 시작해야함
+
+            }
+        }
     }
+
 
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
@@ -129,7 +137,6 @@ class MenuActivity: ComponentActivity()  {
                             when (menuEntity.title) {
                                 "그림 상징 의사소통" -> {
                                     intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
-                                    //StartVideoCall(userid = "helloid")
                                 }
                                 "AI 챗봇" -> {
                                     intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
@@ -143,7 +150,10 @@ class MenuActivity: ComponentActivity()  {
                             }
                             startActivity(intent)
                         })
+                        Log.d("permission", "call FeatureThatRequiresCameraPermission")
                         if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
+
+                        PermissionCheckDialog()
                     }
                 }
             }
