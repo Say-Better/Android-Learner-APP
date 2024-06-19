@@ -1,6 +1,7 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -53,17 +54,36 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 
+const val TAG = "VideoCall"
+
 class VideoCallActivity : ComponentActivity(), TTSListener {
 
     private lateinit var ttsManager: TTSManager
     private var iconState by mutableStateOf(false) // 이 부분을 추가해주세요.
 
+    private var target: String? = null
+    private var isCaller: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ttsManager = TTSManager(this@VideoCallActivity, this)
+        init()
         setContent {
             VideoCallView()
         }
+    }
+
+    private fun init() {
+        intent.getStringExtra("target")?.let {
+            this.target = it
+        }?: kotlin.run {
+            finish()
+        }
+
+        isCaller = intent.getBooleanExtra("isCaller", true)
+
+        Log.d(TAG, "target: $target\nisCaller: $isCaller")
+
     }
 
     @Composable
