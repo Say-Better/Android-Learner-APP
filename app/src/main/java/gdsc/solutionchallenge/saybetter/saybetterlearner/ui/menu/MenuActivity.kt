@@ -55,7 +55,7 @@ import javax.inject.Inject
 class MenuActivity: ComponentActivity()  {
 
     private var userid : String? = null
-
+    private val testUser: String = "testUser1"
     val TAG : String = "ServiceDebug"
 
     //Hilt 종속성 주입
@@ -85,11 +85,14 @@ class MenuActivity: ComponentActivity()  {
     }
 
     //Video call 클릭되었을 때
-    private fun StartVideoCall(userid : String) {
-        mainRepository.sendConnectionRequest(userid) {
+    private fun StartVideoCall(targetUserid : String) {
+        mainRepository.sendConnectionRequest(targetUserid) {
             if(it) {
                 //videocall 시작해야함
-
+                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                intent.putExtra("target", targetUserid)
+                intent.putExtra("isCaller", true)
+                startActivity(intent)
             }
         }
     }
@@ -114,7 +117,7 @@ class MenuActivity: ComponentActivity()  {
             /** 권한 요청시 동의 했을 경우 **/
             if (areGranted) {
                 Log.d("test5", "권한이 동의되었습니다.")
-                StartVideoCall(userid!!)
+                StartVideoCall(testUser)
             }
             /** 권한 요청시 거부 했을 경우 **/
             else {
@@ -139,7 +142,7 @@ class MenuActivity: ComponentActivity()  {
                         permissions,
                         launcherMultiplePermissions,
                         onPermissionsGranted = {    //권한이 이미 다 있을 때
-                            StartVideoCall(userid!!)
+                            StartVideoCall(testUser)
                         }
                     )
                     // 권환을 받아야할 때

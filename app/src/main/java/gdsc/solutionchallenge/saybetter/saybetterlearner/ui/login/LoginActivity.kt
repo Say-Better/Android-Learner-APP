@@ -82,6 +82,11 @@ class LoginActivity: ComponentActivity() {
                     } else {
                         Log.d("login", "로그인 성공")
                         googleSignInHelper.login()
+                        //Todo: Credential 오류 해결하고 적용하기
+//                        finish()
+//                        startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
+//                            putExtra("userid", testid)
+//                        })
                     }
                 }
             })
