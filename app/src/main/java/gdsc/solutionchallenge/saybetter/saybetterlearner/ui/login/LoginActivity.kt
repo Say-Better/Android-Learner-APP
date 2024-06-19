@@ -2,12 +2,14 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.login
 
 import android.content.ContentValues
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,15 +66,12 @@ class LoginActivity: ComponentActivity() {
 
     val testid : String = "helloYI"
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val googleAuthLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            googleSignInHelper.handleGoogleSignInResult(task)
-        }
 
-        googleSignInHelper = GoogleSignInHelper(this, this, googleAuthLauncher) {googleIdToken ->
+        googleSignInHelper = GoogleSignInHelper(this) {googleIdToken ->
             if(googleIdToken !=null) {
                 finish()
                 startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
@@ -89,7 +88,7 @@ class LoginActivity: ComponentActivity() {
                         Log.d("login", "로그인 실패, $reason")
                     } else {
                         Log.d("login", "로그인 성공")
-                        googleSignInHelper.loginWithGoogle()
+                        googleSignInHelper.login()
                     }
                 }
             })
