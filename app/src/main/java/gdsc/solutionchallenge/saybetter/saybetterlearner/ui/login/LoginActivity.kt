@@ -1,10 +1,13 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.login
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,40 +38,88 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity: ComponentActivity() {
 
     @Inject lateinit var mainRepository : MainRepository
+    var googleIdToken: String? = ""
+
+    private val googleSignInClient: GoogleSignInClient by lazy { getGoogleClient() }
+    private val googleAuthLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            handleGoogleSignInResult(task)
+        } catch(e: ApiException) {
+            Log.e(ContentValues.TAG, "google 로그인 실패", e)
+        }
+    }
 
     val testid : String = "helloYI"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             LoginScreen(login = {
-                finish()
                 mainRepository.login(testid) { isDone, reason ->
                     if (!isDone) {
                         Log.d("login", "로그인 실패, $reason")
                     } else {
                         Log.d("login", "로그인 성공")
-                        startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
-                            putExtra("userid", testid)
-                        })
+                        login_google()
                     }
                 }
             })
         }
     }
+    private fun handleGoogleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+
+            // Google 로그인 성공
+            googleIdToken = account?.idToken
+            Log.d("googleToken", googleIdToken.toString())
+            startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
+                putExtra("userid", testid)
+            })
+            finish()
+        } catch (e: ApiException) {
+            // Google 로그인 실패
+            Log.e(ContentValues.TAG, "Google 로그인 실패", e)
+        }
+    }
+
+    private fun getGoogleClient(): GoogleSignInClient {
+        val googleSignInOption = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail() // 이메일도 요청 가능
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .build()
+        Log.d("googleSignInOption", googleSignInOption.serverClientId.toString())
+
+        return GoogleSignIn.getClient(this@LoginActivity, googleSignInOption)
+    }
+
+    private fun login_google() {
+        googleSignInClient.signOut()
+        val signInIntent = googleSignInClient.signInIntent
+        googleAuthLauncher.launch(signInIntent)
+    }
+
 
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable

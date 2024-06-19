@@ -35,7 +35,6 @@ class MainRepository @Inject constructor(
 
         })
     }
-
     fun sendConnectionRequest(target : String, success : (Boolean) -> Unit) {
         firebaseClient.sendMessageToOtherClient(
             DataModel(
