@@ -1,10 +1,13 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,8 +46,8 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActiv
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FeatureThatRequiresCameraPermission
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
 
 import javax.inject.Inject
 
@@ -60,8 +64,6 @@ class MenuActivity: ComponentActivity()  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
 
         setContent {
             MenuPreview()
@@ -84,7 +86,6 @@ class MenuActivity: ComponentActivity()  {
     }
 
     //Video call 클릭되었을 때
-    @Composable
     private fun StartVideoCall(userid : String) {
         mainRepository.sendConnectionRequest(userid) {
             if(it) {
@@ -98,6 +99,30 @@ class MenuActivity: ComponentActivity()  {
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun MenuPreview() {
+
+        val context = LocalContext.current
+
+        /** 요청할 권한 **/
+        val permissions = arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+
+        val launcherMultiplePermissions = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissionsMap ->
+            val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+            /** 권한 요청시 동의 했을 경우 **/
+            if (areGranted) {
+                Log.d("test5", "권한이 동의되었습니다.")
+                startActivity(intent)
+            }
+            /** 권한 요청시 거부 했을 경우 **/
+            else {
+                Log.d("test5", "권한이 거부되었습니다.")
+            }
+        }
+
         val menuList = listOf(
             menu("레벨 테스트", R.drawable.menu_level),
             menu("그림 상징 의사소통", R.drawable.menu_symbol),
@@ -108,12 +133,35 @@ class MenuActivity: ComponentActivity()  {
         Surface(color = White,
             modifier = Modifier.fillMaxSize()
         ){
-            MenuBar(menuList = menuList)
+            MenuBar(menuList = menuList,
+                ClickSymbol = {
+                    checkAndRequestPermissions(
+                        context,
+                        permissions,
+                        launcherMultiplePermissions,
+                        onPermissionsGranted = {
+                            intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                            startActivity(intent)
+                        }
+                    )
+                    intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                },
+                ClickChatbot = {
+                    intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
+                    startActivity(intent)
+                },
+                ClickSetting = {
+                    intent = Intent(this@MenuActivity, SettingActivity::class.java)
+                    startActivity(intent)
+                })
         }
     }
 
     @Composable
-    fun MenuBar(menuList : List<menu>) {
+    fun MenuBar(menuList : List<menu>,
+                ClickSymbol: () ->Unit,
+                ClickChatbot:() ->Unit,
+                ClickSetting:() -> Unit) {
         Box {
             Column (modifier = Modifier
                 .fillMaxWidth()
@@ -133,27 +181,23 @@ class MenuActivity: ComponentActivity()  {
                 LazyRow {
                     items(menuList) { menuEntity ->
                         MenuItem(menuEntity, clickMenu = {
-                            val intent : Intent
                             when (menuEntity.title) {
                                 "그림 상징 의사소통" -> {
-                                    intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                                    ClickSymbol()
                                 }
                                 "AI 챗봇" -> {
-                                    intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
+                                    ClickChatbot()
                                 }
                                 "설정" -> {
-                                    intent = Intent(this@MenuActivity, SettingActivity::class.java)
+                                    ClickSetting()
                                 }
                                 else -> {
-                                    intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
                                 }
                             }
-                            startActivity(intent)
                         })
                         Log.d("permission", "call FeatureThatRequiresCameraPermission")
                         if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
 
-                        PermissionCheckDialog()
                     }
                 }
             }
