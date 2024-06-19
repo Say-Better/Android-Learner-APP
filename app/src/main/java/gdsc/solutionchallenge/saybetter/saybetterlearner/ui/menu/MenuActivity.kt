@@ -76,7 +76,6 @@ class MenuActivity: ComponentActivity()  {
     private fun init(){
         userid = intent.getStringExtra("userid")
         if(userid == null) finish()
-
         //foreground service 시작
         startMyService()
     }
@@ -115,7 +114,7 @@ class MenuActivity: ComponentActivity()  {
             /** 권한 요청시 동의 했을 경우 **/
             if (areGranted) {
                 Log.d("test5", "권한이 동의되었습니다.")
-                startActivity(intent)
+                StartVideoCall(userid!!)
             }
             /** 권한 요청시 거부 했을 경우 **/
             else {
@@ -139,12 +138,11 @@ class MenuActivity: ComponentActivity()  {
                         context,
                         permissions,
                         launcherMultiplePermissions,
-                        onPermissionsGranted = {
-                            intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
-                            startActivity(intent)
+                        onPermissionsGranted = {    //권한이 이미 다 있을 때
+                            StartVideoCall(userid!!)
                         }
                     )
-                    intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                    // 권환을 받아야할 때
                 },
                 ClickChatbot = {
                     intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
