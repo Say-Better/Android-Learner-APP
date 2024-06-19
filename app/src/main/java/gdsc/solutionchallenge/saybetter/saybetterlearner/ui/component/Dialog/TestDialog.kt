@@ -45,6 +45,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray300
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import kotlinx.coroutines.delay
@@ -54,24 +55,13 @@ class TestDialog {
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun DialogPreview() {
-        LearnerCodeDialogScreen("NTR139", {  })
+        LearnerCodeDialogScreen({  }, {  })
     }
     @Composable
     fun LearnerCodeDialogScreen(
-        code : String,
+        onClickSure:() -> Unit,
         onClickCancel: () -> Unit
     ) {
-        val sec = remember {
-            mutableIntStateOf(180)
-        }
-
-        LaunchedEffect(Unit) {
-            while (sec.value > 0) {
-                delay(1000)
-                sec.intValue -= 1
-            }
-        }
-
         Dialog(
             onDismissRequest = { onClickCancel() },
             properties = DialogProperties(
@@ -81,8 +71,8 @@ class TestDialog {
         ) {
             Box(
                 modifier = Modifier
-                    .height(320.dp)
-                    .width(520.dp)
+                    .height(150.dp)
+                    .width(300.dp)
                     .background(White, RoundedCornerShape(20.dp))// Card의 모든 꼭지점에 8.dp의 둥근 모서리 적용
             )
             {
@@ -92,61 +82,42 @@ class TestDialog {
                         .padding(20.dp)){
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth(),
                     ) {
                         Text(
-                            text = "학습자 등록 코드",
+                            text = "학습 진행 test",
                             fontSize = 20.sp,
                             color = Black
                         )
-                        Image(
-                            painter = painterResource(id = R.drawable.dialog_cancel_ic),
-                            contentDescription = null,
-                            Modifier
-                                .size(48.dp)
-                                .clickable {
-                                    onClickCancel()
-                                }
-                        )
                     }
                     Spacer(modifier = Modifier.height(30.dp))
-                    Row (verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()){
-                        Text(text = code,
-                            fontSize = 48.sp,
-                            fontWeight = FontWeight.W600,
-                            color = Black)
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Row (verticalAlignment = Alignment.CenterVertically){
-                            Image(painter = painterResource(id = R.drawable.ic_copy),
-                                contentDescription = null)
-                            Text(text = "복사하기",
-                                color = Gray400)
+                    Row {
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Red, RoundedCornerShape(8.dp))
+                            .height(60.dp)
+                            .weight(1f),
+                            contentAlignment = Alignment.Center) {
+                            Text(text = "거절",
+                                color= White)
+                        }
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MainGreen, RoundedCornerShape(8.dp))
+                            .height(60.dp)
+                            .weight(1f)
+                            .clickable {
+                                onClickSure()
+                            },
+                            contentAlignment = Alignment.Center) {
+                            Text(text = "수락")
                         }
                     }
-                    Spacer(modifier = Modifier.height(40.dp))
-                    Row (verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()){
-                        Text(text = "유효시간",
-                            color = Red,
-                            fontSize = 18.sp)
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = String.format("%02d:%02d", sec.intValue/60, sec.intValue%60),
-                            color = Red,
-                            fontSize = 18.sp)
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(BoxBackground, RoundedCornerShape(8.dp))
-                        .height(60.dp),
-                        contentAlignment = Alignment.Center) {
-                        Text(text = "코드 다시 요청하기")
-                    }
+
                 }
 
             }
