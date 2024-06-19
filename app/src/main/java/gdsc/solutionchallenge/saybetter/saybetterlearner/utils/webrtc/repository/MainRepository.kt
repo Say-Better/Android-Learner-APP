@@ -3,6 +3,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repositor
 import com.google.gson.Gson
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.firebaseClient.FirebaseClient
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModelType
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,6 +34,14 @@ class MainRepository @Inject constructor(
             }
 
         })
+    }
+    fun sendConnectionRequest(target : String, success : (Boolean) -> Unit) {
+        firebaseClient.sendMessageToOtherClient(
+            DataModel(
+                type = DataModelType.StartVideoCall,
+                target = target
+            ), success
+        )
     }
 
     interface Listener {
