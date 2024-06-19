@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.media3.common)
 
     implementation (libs.firebase.database.ktx)
+    implementation(libs.androidx.camera.view)
 
 
     testImplementation("junit:junit:4.13.2")
@@ -113,10 +114,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.35.1-alpha")
 
     // Google Play services
-    implementation ("com.google.gms:google-services:4.3.15")
     implementation ("com.google.firebase:firebase-auth:22.0.0")
     implementation ("com.google.firebase:firebase-bom:32.0.0")
-    implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation ("androidx.credentials:credentials:1.2.2")
     implementation ("androidx.credentials:credentials-play-services-auth:1.2.2")
@@ -131,6 +130,10 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
+    implementation("androidx.camera:camera-lifecycle:1.4.0-alpha02")
+    implementation ("androidx.camera:camera-view:1.4.0-alpha02")
 }
 
 kapt {

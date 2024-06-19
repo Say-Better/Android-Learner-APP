@@ -1,4 +1,4 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.utils
+package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Module
 
 import android.content.Context
 import com.google.firebase.database.DatabaseReference

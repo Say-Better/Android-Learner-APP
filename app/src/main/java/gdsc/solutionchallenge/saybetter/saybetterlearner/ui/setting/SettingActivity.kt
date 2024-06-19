@@ -74,7 +74,7 @@ class SettingActivity: ComponentActivity()  {
     }
 
 
-    fun resetDialogState(state: MutableState<CustomAlertDialogState>) {
+    private fun resetDialogState(state: MutableState<CustomAlertDialogState>) {
         state.value = CustomAlertDialogState()
     }
 
