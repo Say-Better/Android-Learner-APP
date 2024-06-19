@@ -85,7 +85,7 @@ fun Symbol(
 
 
 @Composable
-fun RedaySymbol(modifier: Modifier) {
+fun ReadySymbol(modifier: Modifier) {
     val isClicked = remember { mutableStateOf(false) }
 
     BoxWithConstraints(
