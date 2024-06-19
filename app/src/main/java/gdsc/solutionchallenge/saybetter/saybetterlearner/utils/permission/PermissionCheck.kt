@@ -2,7 +2,10 @@
 
 package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,83 +28,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 
-const val TAG = "PermissionCheck"
-
-@Composable
-fun PermissionCheckDialog() {
-
-    val cameraPermissionState = rememberPermissionState(
-        permission = android.Manifest.permission.CAMERA
-    )
-    var dialogVisible by remember { mutableStateOf(true) }
-
-    // 카메라 권한이 없을때만 표시
-    if(!cameraPermissionState.status.isGranted and dialogVisible) {
-        AlertDialog(
-            onDismissRequest = { dialogVisible = false },
-            content = {
-                CardExample(
-                    onDismissRequest = {},
-                    onConfirmClick = {}
-                )
-            }
-        )
-    } else {
-        Log.d(TAG, "Permission Already Granted.")
-    }
-
-}
-
-@Composable
-fun CardExample(
-    onDismissRequest: () -> Unit,
-    onConfirmClick: () -> Unit
+fun checkAndRequestPermissions(
+    context: Context,
+    permissions: Array<String>,
+    launcher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>,
+    onPermissionsGranted: () -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        elevation = 8.dp,
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "Card example",
-                style = MaterialTheme.typography.h6
-            )
-            Text(
-                text = "This is an example of a card with buttons.",
-                style = MaterialTheme.typography.body1
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                TextButton(
-                    onClick = onDismissRequest
-                ) {
-                    Text("Dismiss")
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                TextButton(
-                    onClick = onConfirmClick
-                ) {
-                    Text("Confirm")
-                }
-            }
-        }
+    /** 권한이 이미 있는 경우 **/
+    if (permissions.all {
+            ContextCompat.checkSelfPermission(
+                context,
+                it
+            ) == PackageManager.PERMISSION_GRANTED
+        }) {
+        Log.d("test5", "권한이 이미 존재합니다.")
+        onPermissionsGranted()
     }
-}
 
-@Preview
-@Composable
-fun PermissionCheckDialogPreview() {
-    PermissionCheckDialog()
+    /** 권한이 없는 경우 **/
+    else {
+        launcher.launch(permissions)
+        Log.d("test5", "권한을 요청하였습니다.")
+    }
 }

@@ -7,6 +7,8 @@
     <!-- Camera 가 필수 기능이 아님을 명시함 -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <!-- 안드로이드 14타겟팅하는 경우 Foreground Service 사용시 목적에 맞는 타입을 반드시 명시해야 함 -->

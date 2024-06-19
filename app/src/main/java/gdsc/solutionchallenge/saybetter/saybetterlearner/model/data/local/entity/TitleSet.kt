@@ -1,7 +1,6 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 
-data class ChatMenu(
+data class TitleSet(
     val title:String,
-    val img : Int,
-    val img_off : Int
+    val description:String
 )

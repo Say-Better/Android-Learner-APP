@@ -77,6 +77,7 @@ class LoginActivity: ComponentActivity() {
                 finish()
                 startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
                     putExtra("userid", testid)
+                    putExtra("googleToken", googleIdToken)
                 })
             }
         }
