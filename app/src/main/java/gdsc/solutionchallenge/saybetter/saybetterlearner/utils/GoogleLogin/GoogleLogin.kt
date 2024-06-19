@@ -51,7 +51,6 @@ class GoogleSignInHelper(
         .addCredentialOption(googleIdOption)
         .build()
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun login() {
         coroutineScope.launch {
             try {
@@ -60,7 +59,7 @@ class GoogleSignInHelper(
                     context = context,
                 )
                 handleSignIn(result)
-            } catch (e: GetCredentialException) {
+            } catch(e : Exception) {
                 handleFailure(e)
             }
         }

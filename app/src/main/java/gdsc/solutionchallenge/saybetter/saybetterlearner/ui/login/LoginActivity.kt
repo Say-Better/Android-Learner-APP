@@ -66,7 +66,6 @@ class LoginActivity: ComponentActivity() {
 
     val testid : String = "helloYI"
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
