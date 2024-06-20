@@ -58,10 +58,8 @@ class LoginActivity: ComponentActivity() {
 
     private lateinit var googleSignInHelper: GoogleSignInHelper
 
-    val testid : String = "helloYI"
+    val testid : String = "testUser1"
 
-//    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

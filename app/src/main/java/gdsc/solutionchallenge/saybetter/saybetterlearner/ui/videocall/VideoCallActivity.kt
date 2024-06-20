@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.camera.core.CameraSelector
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,21 +32,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.ui.viewinterop.AndroidView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.CamCoder.CameraComponet
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSListener
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSManager
@@ -53,10 +63,13 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.GrayW40
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import javax.inject.Inject
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 const val TAG = "VideoCall"
 
@@ -96,7 +109,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
     @Composable
     fun VideoCallView() {
-        var isStart by remember { mutableStateOf(true) }
+        var isStart by remember { mutableStateOf(false) }
+        var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
         Surface (){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -108,44 +122,16 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
                 }, isStart, iconState)
                 if (!isStart) {
-                    ReadyMainScreen()
+                    ReadyMainScreen(cameraSelectorState)
                     ReadyBottomMenuBar(
                         micClick = {},
                         cameraClick = {},
-                        reverseClick = {},
-                        greetClick = {isStart = true})
-                }else {
-                    StartMainScreen(iconState) { newState ->
-                        iconState = newState // 아이콘 상태 업데이트
-                    }
-                    StartBottomMenuBar(
-                        micClick = {},
-                        cameraClick = {},
-                        reverseClick = {isStart = false})
-                }
-            }
-        }
-    }
-    @Preview(widthDp = 1280, heightDp = 800)
-    @Composable
-    fun ViewPreview() {
-        var isStart by remember { mutableStateOf(true) }
-        Surface (){
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Black),
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                VideoCallTopbar(clickBack = {
-                    finish()
-                }, clickDeatil = {
-
-                }, isStart, iconState)
-                if (!isStart) {
-                    ReadyMainScreen()
-                    ReadyBottomMenuBar(
-                        micClick = {},
-                        cameraClick = {},
-                        reverseClick = {},
+                        reverseClick = {
+                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
+                                CameraSelector.DEFAULT_FRONT_CAMERA
+                            else
+                                CameraSelector.DEFAULT_BACK_CAMERA
+                        },
                         greetClick = {isStart = true})
                 }else {
                     StartMainScreen(iconState) { newState ->
@@ -276,32 +262,28 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     @Composable
-    fun ReadyMainScreen() {
+    fun ReadyMainScreen(cameraSelectorState : CameraSelector) {
         Box (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.85f),
             contentAlignment = Alignment.Center){
-            Row (modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .background(DeepDarkGray, RoundedCornerShape(24.dp)),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement =  Arrangement.Center,){
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(0.48f))
-                Spacer(modifier = Modifier.fillMaxWidth(0.07f))//임시
+                Row (modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp)
+                    .background(Transparent, RoundedCornerShape(0.dp)),
+                    verticalAlignment = Alignment.CenterVertically){
+                    CameraComponet(context = this@VideoCallActivity,
+                        modifier = Modifier
+                            .weight(1f),
+                        cameraSelectorState = cameraSelectorState)
 
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth())
+                    Spacer(modifier = Modifier.width(10.dp))
 
-            }
-
+                    Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .weight(1f))
+                }
         }
     }
 
@@ -372,10 +354,11 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
 
     @Composable
-    fun ReadyBottomMenuBar(micClick:()->Unit,
-                           cameraClick:()->Unit,
-                           reverseClick:()->Unit,
-                           greetClick:()->Unit) {
+    fun ReadyBottomMenuBar(
+        micClick:()->Unit,
+        cameraClick:()->Unit,
+        reverseClick:()->Unit,
+        greetClick:()->Unit) {
         var micClicked: Boolean by remember{ mutableStateOf(false) }
         var cameraClicked: Boolean by remember{ mutableStateOf(false) }
         Row (modifier = Modifier
@@ -383,7 +366,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
             .fillMaxHeight()
             .padding(top = 30.dp),
             horizontalArrangement = Arrangement.Center,){
-            Box (modifier = androidx.compose.ui.Modifier
+            Box (modifier = Modifier
                 .background(DarkGray, RoundedCornerShape(36.dp))
                 .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -407,7 +390,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
             }
             Spacer(modifier = Modifier.width(20.dp))
 
-            Box (modifier = androidx.compose.ui.Modifier
+            Box (modifier = Modifier
                 .background(DarkGray, RoundedCornerShape(36.dp))
                 .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -430,7 +413,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                 }
             }
             Spacer(modifier = Modifier.width(20.dp))
-            Box (modifier = androidx.compose.ui.Modifier
+            Box (modifier = Modifier
                 .background(DarkGray, RoundedCornerShape(36.dp))
                 .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)

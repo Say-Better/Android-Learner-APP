@@ -27,6 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,27 +42,41 @@ import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.menu
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.LearnerCodeDialog
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.TestDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MenuActivity: ComponentActivity()  {
+class MenuActivity: ComponentActivity() , MainService.CallEventListener {
+
+    data class TestDialogState(
+        val isClick : Boolean = false,
+        val onClickSure: () -> Unit = {},
+        val onClickCancel: () -> Unit = {},
+    )
 
     private var userid : String? = null
-    private val testUser: String = "testUser1"
+    private val testUser: String = "helloYI"
     val TAG : String = "ServiceDebug"
+
+    var count: Int = 0
 
     //Hilt 종속성 주입
     @Inject lateinit var mainRepository : MainRepository
     @Inject lateinit var mainServiceRepository : MainServiceRepository
+
+    private val customAlertDialogState = mutableStateOf(TestDialogState())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +92,8 @@ class MenuActivity: ComponentActivity()  {
     private fun init(){
         userid = intent.getStringExtra("userid")
         if(userid == null) finish()
-        //foreground service 시작
+
+        MainService.listener =this
         startMyService()
     }
 
@@ -89,6 +106,7 @@ class MenuActivity: ComponentActivity()  {
         mainRepository.sendConnectionRequest(targetUserid) {
             if(it) {
                 //videocall 시작해야함
+                //educator 되면 수정
                 intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
                 intent.putExtra("target", targetUserid)
                 intent.putExtra("isCaller", true)
@@ -101,7 +119,6 @@ class MenuActivity: ComponentActivity()  {
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun MenuPreview() {
-
         val context = LocalContext.current
 
         /** 요청할 권한 **/
@@ -117,6 +134,7 @@ class MenuActivity: ComponentActivity()  {
             /** 권한 요청시 동의 했을 경우 **/
             if (areGranted) {
                 Log.d("test5", "권한이 동의되었습니다.")
+                resetDialogState(customAlertDialogState)
                 StartVideoCall(testUser)
             }
             /** 권한 요청시 거부 했을 경우 **/
@@ -135,6 +153,22 @@ class MenuActivity: ComponentActivity()  {
         Surface(color = White,
             modifier = Modifier.fillMaxSize()
         ){
+            if (customAlertDialogState.value.isClick) {
+                TestDialog().CallTestDialog(
+                    onClickSure = {
+                        checkAndRequestPermissions(
+                            context,
+                            permissions,
+                            launcherMultiplePermissions,
+                            onPermissionsGranted = {    //권한이 이미 다 있을 때
+                                resetDialogState(customAlertDialogState)
+                                StartVideoCall(testUser)
+                            }
+                        )
+                       },
+                    onClickCancel = { resetDialogState(customAlertDialogState) }
+                )
+            }
             MenuBar(menuList = menuList,
                 ClickSymbol = {
                     checkAndRequestPermissions(
@@ -229,5 +263,22 @@ class MenuActivity: ComponentActivity()  {
                 fontWeight = FontWeight.W600)
             }
     }
+
+    override fun onCallReceived(model: DataModel) {
+        count += 1
+        if(count >= 2) {
+            customAlertDialogState.value = TestDialogState(
+                isClick = true,
+                onClickCancel = {},
+                onClickSure = {}
+            )
+            count -= 1
+        }
+    }
+
+    fun resetDialogState(state: MutableState<TestDialogState>) {
+        state.value = TestDialogState()
+    }
+
 }
 

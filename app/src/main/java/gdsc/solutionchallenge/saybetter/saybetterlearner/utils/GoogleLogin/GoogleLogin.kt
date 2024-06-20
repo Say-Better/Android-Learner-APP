@@ -1,32 +1,16 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.utils
 
-import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
-import android.credentials.GetCredentialException
-import android.os.Build
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
-import androidx.credentials.PasswordCredential
-import androidx.credentials.PublicKeyCredential
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
+import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.TAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,16 +26,15 @@ class GoogleSignInHelper(
 
 
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-        .setFilterByAuthorizedAccounts(true)
+        .setFilterByAuthorizedAccounts(false)
         .setServerClientId(context.getString(R.string.default_web_client_id))
-        .setAutoSelectEnabled(true)
+        .setAutoSelectEnabled(false)
         .build()
 
     private val request: GetCredentialRequest = GetCredentialRequest.Builder()
         .addCredentialOption(googleIdOption)
         .build()
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun login() {
         coroutineScope.launch {
             try {
@@ -60,7 +43,7 @@ class GoogleSignInHelper(
                     context = context,
                 )
                 handleSignIn(result)
-            } catch (e: GetCredentialException) {
+            } catch(e : NoCredentialException) {
                 handleFailure(e)
             }
         }
@@ -70,19 +53,6 @@ class GoogleSignInHelper(
         val credential = result.credential
 
         when (credential) {
-            // Passkey credential
-            is PublicKeyCredential -> {
-                val responseJson = credential.authenticationResponseJson
-                // Handle the response JSON as needed
-                onSignInSuccess(responseJson)
-            }
-            // Password credential
-            is PasswordCredential -> {
-                val username = credential.id
-                val password = credential.password
-                // Handle username and password as needed
-                onSignInSuccess(username)
-            }
             // GoogleIdToken credential
             is CustomCredential -> {
                 if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
