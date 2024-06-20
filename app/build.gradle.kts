@@ -73,6 +73,7 @@ dependencies {
 
     implementation (libs.firebase.database.ktx)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.core)
 
 
     testImplementation("junit:junit:4.13.2")

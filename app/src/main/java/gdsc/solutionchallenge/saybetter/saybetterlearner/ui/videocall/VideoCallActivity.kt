@@ -49,6 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.viewinterop.AndroidView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
@@ -64,11 +65,15 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
+import javax.inject.Inject
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 const val TAG = "VideoCall"
 
+@AndroidEntryPoint
 class VideoCallActivity : ComponentActivity(), TTSListener {
 
     private lateinit var ttsManager: TTSManager
@@ -76,6 +81,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
     private var target: String? = null
     private var isCaller: Boolean = true
+
+    @Inject lateinit var serviceRepository: MainServiceRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,8 +101,9 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         }
 
         isCaller = intent.getBooleanExtra("isCaller", true)
-
         Log.d(TAG, "target: $target\nisCaller: $isCaller")
+
+//        serviceRepository.setupViews()
 
     }
 
