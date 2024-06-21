@@ -48,6 +48,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.Ma
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.LearnerCodeDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.TestDialog
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.info.InfoActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
@@ -188,12 +189,17 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
                 ClickSetting = {
                     intent = Intent(this@MenuActivity, SettingActivity::class.java)
                     startActivity(intent)
+                },
+                ClickLevel = {
+                    intent = Intent(this@MenuActivity, InfoActivity::class.java)
+                    startActivity(intent)
                 })
         }
     }
 
     @Composable
     fun MenuBar(menuList : List<menu>,
+                ClickLevel:() ->Unit,
                 ClickSymbol: () ->Unit,
                 ClickChatbot:() ->Unit,
                 ClickSetting:() -> Unit) {
@@ -217,6 +223,9 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
                     items(menuList) { menuEntity ->
                         MenuItem(menuEntity, clickMenu = {
                             when (menuEntity.title) {
+                                "레벨 테스트" -> {
+                                    ClickLevel()
+                                }
                                 "그림 상징 의사소통" -> {
                                     ClickSymbol()
                                 }

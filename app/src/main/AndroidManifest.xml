@@ -58,6 +58,10 @@
             android:name=".ui.setting.SettingActivity"
             android:screenOrientation="landscape"/>
 
+        <activity
+        android:name=".ui.info.InfoActivity"
+        android:screenOrientation="landscape"/>
+
         <!-- 시그널링 서버와 지속적으로 데이터를 주고받아야 하므로 DataSync type으로 명시 -->
         <service
             android:name=".utils.webrtc.service.MainService"
