@@ -1,10 +1,16 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.info
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,12 +26,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -36,32 +46,49 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.InfoProfileDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray500
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorder
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.GoogleSignInHelper
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ImageSelect.CameraImage
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ImageSelect.CameraImageCallback
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.resetDialogState
 
 
-class InfoActivity : ComponentActivity(){
+class InfoActivity : ComponentActivity(), CameraImageCallback{
 
+    private lateinit var cameraImage: CameraImage
+
+    private var profileImageUri by mutableStateOf<Uri?>(null)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        cameraImage = CameraImage(this)
 
         setContent {
             InfoScreen()
         }
+
     }
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
@@ -79,57 +106,136 @@ class InfoActivity : ComponentActivity(){
         var gender by remember {
             mutableStateOf(false)
         }
+        var showBottomSheet by remember { mutableStateOf(false) }
+
+
+        val context = LocalContext.current
+        /** 요청할 권한 **/
+        val permissions = arrayOf(
+            Manifest.permission.CAMERA
+        )
+
+        val launcherMultiplePermissions = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissionsMap ->
+            val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+            /** 권한 요청시 동의 했을 경우 **/
+            if (areGranted) {
+                Log.d("test5", "권한이 동의되었습니다.")
+                cameraImage.dispatchTakePictureIntent()
+            }
+            /** 권한 요청시 거부 했을 경우 **/
+            else {
+                Log.d("test5", "권한이 거부되었습니다.")
+            }
+        }
+
+        val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // 사진 선택 이후 돌아왔을 때 콜백
+            if (uri != null) {
+                profileImageUri = uri
+            } else {
+                // 선택된 사진이 없을 경우
+            }
+        }
 
         Surface {
-            Column (modifier = Modifier
-                .fillMaxSize()
-                .padding(40.dp)){
-
-                Text(text = "로그인에 성공했어요! 시작하기 전 기본 설정이 필요해요.",
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(40.dp)
+            ) {
+                if (showBottomSheet) {
+                    InfoProfileDialog().BottomSheet(onClickDismiss = {
+                        showBottomSheet = false
+                    }, onClickCamera = {
+                        checkAndRequestPermissions(
+                            context,
+                            permissions,
+                            launcherMultiplePermissions,
+                            onPermissionsGranted = {    //권한이 이미 다 있을 때
+                                cameraImage.dispatchTakePictureIntent()
+                            }
+                        )
+                        showBottomSheet = false
+                    }, onClickGallary = {
+                        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        showBottomSheet = false
+                    })
+                }
+                Text(
+                    text = "로그인에 성공했어요! 시작하기 전 기본 설정이 필요해요.",
                     fontSize = 30.sp,
-                    fontWeight = FontWeight.W600)
+                    fontWeight = FontWeight.W600
+                )
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "프로필 사진은 교육자에게 노출되어 학습자를 구별하는 것에 사용돼요.",
+                Text(
+                    text = "프로필 사진은 교육자에게 노출되어 학습자를 구별하는 것에 사용돼요.",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.W500,
-                    color = Gray500)
-                Spacer(modifier = Modifier.height(60.dp))
+                    color = Gray500
+                )
+                Spacer(modifier = Modifier.height(40.dp))
                 Row {
-                    Column (horizontalAlignment = Alignment.CenterHorizontally){
-                        Image(painter = painterResource(id = R.drawable.info_img),
-                            contentDescription = null,
-                            modifier = Modifier.size(320.dp))
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Box (modifier = Modifier
-                            .background(BoxBackground, RoundedCornerShape(50.dp))
-                            .width(320.dp)
-                            .height(60.dp),
-                            contentAlignment = Alignment.Center
-                        ){
-                            Row (verticalAlignment = Alignment.CenterVertically){
-                                Image(painter = painterResource(id = R.drawable.ic_camera_info),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(30.dp))
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Text(text = "프로필 설정",
-                                    fontSize = 20.sp)
-                            }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if(profileImageUri != null) {
+                            Box(modifier = Modifier
+                                .size(320.dp)
+                                .clip(RoundedCornerShape(16.dp))) {
+                                    AsyncImage(
+                                        model = profileImageUri,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(320.dp),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+                        }else {
+                            Image(
+                                painter = painterResource(id = R.drawable.info_img),
+                                contentDescription = null,
+                                modifier = Modifier.size(320.dp)
+                            )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
-                        Text(text = "기본 이미지 사용")
+                        Box(
+                            modifier = Modifier
+                                .background(BoxBackground, RoundedCornerShape(50.dp))
+                                .width(320.dp)
+                                .height(60.dp)
+                                .clickable {
+                                    showBottomSheet = true
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_camera_info),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "프로필 설정",
+                                    fontSize = 20.sp
+                                )
+                            }
+                        }
+                        Text(text = "기본 이미지 사용",
+                            modifier = Modifier
+                                .clickable { profileImageUri = null })
                     }
-                    Spacer(modifier = Modifier.width(60.dp))
+                    Spacer(modifier = Modifier.width(40.dp))
                     Column {
                         InfoTextField(title = "이름", name)
                         Spacer(modifier = Modifier.height(20.dp))
                         InfoTextField(title = "생년월일", birthday)
                         Spacer(modifier = Modifier.height(20.dp))
                         InfoGender(gender,
-                            clickMale = {gender = false},
-                            clickFemale = {gender = true})
+                            clickMale = { gender = false },
+                            clickFemale = { gender = true })
                     }
                 }
-                Spacer(modifier = Modifier.height(60.dp))
+                Spacer(modifier = Modifier.height(20.dp))
                 FinishBtmBar()
             }
         }
@@ -246,6 +352,14 @@ class InfoActivity : ComponentActivity(){
                     fontWeight = FontWeight.W600)
             }
         }
+    }
+    override fun onImageCaptured(uri: Uri?) {
+        uri?.let {
+            profileImageUri = it
+        }
+    }
+
+    override fun onImageCaptureFailed() {
     }
 
 }

@@ -135,6 +135,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
     implementation("androidx.camera:camera-lifecycle:1.4.0-alpha02")
     implementation ("androidx.camera:camera-view:1.4.0-alpha02")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
 
 kapt {
