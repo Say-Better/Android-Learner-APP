@@ -19,6 +19,7 @@ val HighlightBorder = Color(0xFFBEFF7E)
 val BoxBackground = Color(0xFFF6F6F6)
 val Transparent = Color(0x00ff0000)
 
+
 val Gray50 = Color(0xFFF9FAFB)
 val Gray100 = Color(0xFFF3F4F6)
 val Gray200 = Color(0xFFE5E7EB)

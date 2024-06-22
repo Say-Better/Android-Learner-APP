@@ -111,6 +111,9 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     fun VideoCallView() {
         var isStart by remember { mutableStateOf(false) }
         var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
+        var isCameraOn by remember {
+            mutableStateOf(true)
+        }
         Surface (){
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -122,10 +125,13 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
                 }, isStart, iconState)
                 if (!isStart) {
-                    ReadyMainScreen(cameraSelectorState)
+                    ReadyMainScreen(cameraSelectorState, isCameraOn)
                     ReadyBottomMenuBar(
                         micClick = {},
-                        cameraClick = {},
+                        cameraClick = {
+                            isCameraOn = if(isCameraOn) false
+                            else true
+                        },
                         reverseClick = {
                             cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
                                 CameraSelector.DEFAULT_FRONT_CAMERA
@@ -139,8 +145,19 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     }
                     StartBottomMenuBar(
                         micClick = {},
-                        cameraClick = {},
-                        reverseClick = {isStart = false})
+                        cameraClick = {
+                            isCameraOn = if(isCameraOn) false
+                            else true
+                        },
+                        reverseClick = {
+                            isStart = false
+                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
+                                CameraSelector.DEFAULT_FRONT_CAMERA
+                            else
+                                CameraSelector.DEFAULT_BACK_CAMERA
+                        },
+                        cameraSelectorState = cameraSelectorState,
+                        isCameraOn = isCameraOn)
                 }
             }
         }
@@ -262,7 +279,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     @Composable
-    fun ReadyMainScreen(cameraSelectorState : CameraSelector) {
+    fun ReadyMainScreen(cameraSelectorState : CameraSelector, isCameraOn : Boolean) {
         Box (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.85f),
@@ -272,11 +289,19 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     .padding(horizontal = 20.dp)
                     .background(Transparent, RoundedCornerShape(0.dp)),
                     verticalAlignment = Alignment.CenterVertically){
-                    CameraComponet(context = this@VideoCallActivity,
-                        modifier = Modifier
-                            .weight(1f),
-                        cameraSelectorState = cameraSelectorState)
-
+                    if (isCameraOn) {
+                        CameraComponet(
+                            context = this@VideoCallActivity,
+                            modifier = Modifier
+                                .weight(1f),
+                            cameraSelectorState = cameraSelectorState
+                        )
+                    }else {
+                        Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .weight(1f))
+                    }
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Image(painter = painterResource(id = R.drawable.rectangle_1638),
@@ -293,7 +318,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         val selectedItemIndex = remember { mutableStateOf<Int?>(null) }
 
         Row (modifier = Modifier
-            .fillMaxHeight(0.8f)
+            .fillMaxHeight(0.82f)
             .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically){
             if (items.size <=2) {
@@ -461,7 +486,10 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     @Composable
     fun StartBottomMenuBar(micClick:()->Unit,
                            cameraClick:()->Unit,
-                           reverseClick:()->Unit) {
+                           reverseClick:()->Unit,
+                           cameraSelectorState : CameraSelector,
+                           isCameraOn : Boolean
+                           ) {
         var micClicked: Boolean by remember{ mutableStateOf(false) }
         var cameraClicked: Boolean by remember{ mutableStateOf(false) }
         Row (modifier = Modifier
@@ -622,10 +650,21 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
             //여기에 의사소통 버튼
             Row (modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)){
                 //webRTC 넣는 곳
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight(0.7f))
+                if (isCameraOn) {
+                    CameraComponet(
+                        context = this@VideoCallActivity,
+                        modifier = Modifier
+                            .fillMaxHeight(0.7f)
+                            .width(150.dp),
+                        cameraSelectorState = cameraSelectorState
+                    )
+                }else {
+                    Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxHeight(0.7f)
+                            .width(250.dp))
+                }
 
                 Spacer(modifier = Modifier.width(10.dp))
 
