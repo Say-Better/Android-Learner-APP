@@ -142,6 +142,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         )
     }
 
+
     private fun setupVideo(
         trackState: MutableState<VideoTrack?>,
         track: VideoTrack,
