@@ -13,8 +13,6 @@ class WebRTCClient @Inject constructor(
 ) {
 //    val listener: Listener? = null
 
-    private fun
-
     interface Listener {
         fun onTransferEventToSocket(data: DataModel)
     }
