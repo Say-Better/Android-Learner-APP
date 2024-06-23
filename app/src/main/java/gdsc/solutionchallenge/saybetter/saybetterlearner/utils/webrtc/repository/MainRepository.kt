@@ -4,7 +4,11 @@ import com.google.gson.Gson
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.firebaseClient.FirebaseClient
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModelType
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
+import org.webrtc.EglBase
+import org.webrtc.PeerConnection
+import org.webrtc.PeerConnectionFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,6 +46,14 @@ class MainRepository @Inject constructor(
                 target = target
             ), success
         )
+    }
+
+    fun getEglBaseContext(): EglBase.Context {
+        return webRTCClient.getEglBaseContext()
+    }
+
+    fun initLocalSurfaceView(localSurfaceView: VideoTextureViewRenderer) {
+        webRTCClient.initLocalSurfaceView(localSurfaceView)
     }
 
     interface Listener {

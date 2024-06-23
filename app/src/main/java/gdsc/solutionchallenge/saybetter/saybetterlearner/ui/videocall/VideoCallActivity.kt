@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.camera.core.CameraSelector
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,13 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,11 +59,12 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
+import org.webrtc.RendererCommon
+import org.webrtc.VideoTrack
 import javax.inject.Inject
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 const val TAG = "VideoCall"
 
@@ -83,6 +78,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     private var isCaller: Boolean = true
 
     @Inject lateinit var serviceRepository: MainServiceRepository
+    @Inject lateinit var mainRepository: MainRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +103,70 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
     }
 
+// Copyright 2023 Stream.IO, Inc. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+    @Composable
+    fun VideoRenderer(
+        videoTrack: VideoTrack,
+        modifier: Modifier = Modifier
+    ) {
+        val trackState: MutableState<VideoTrack?> = remember { mutableStateOf(null) }
+        var view: VideoTextureViewRenderer? by remember { mutableStateOf(null) }
+
+        DisposableEffect(videoTrack) {
+            onDispose {
+                cleanTrack(view, trackState)
+            }
+        }
+
+        val eglContext = mainRepository.getEglBaseContext()
+        AndroidView(
+            factory = { context ->
+                VideoTextureViewRenderer(context).apply {
+                    init(
+                        eglContext,
+                        object : RendererCommon.RendererEvents {
+                            override fun onFirstFrameRendered() = Unit
+
+                            override fun onFrameResolutionChanged(p0: Int, p1: Int, p2: Int) = Unit
+                        }
+                    )
+                    setupVideo(trackState, videoTrack, this)
+                    view = this
+                }
+
+            },
+            update = { v -> setupVideo(trackState, videoTrack, v) },
+            modifier = modifier
+        )
+    }
+
+    private fun setupVideo(
+        trackState: MutableState<VideoTrack?>,
+        track: VideoTrack,
+        renderer: VideoTextureViewRenderer
+    ) {
+        if (trackState.value == track) {
+            return
+        }
+
+        cleanTrack(renderer, trackState)
+
+        trackState.value = track
+        track.addSink(renderer)
+    }
+
+    private fun cleanTrack(
+        view: VideoTextureViewRenderer?,
+        trackState: MutableState<VideoTrack?>
+    ) {
+        view?.let { trackState.value?.removeSink(it) }
+        trackState.value = null
+    }
+
+
+    
     @Composable
     fun VideoCallView() {
         var isStart by remember { mutableStateOf(false) }
