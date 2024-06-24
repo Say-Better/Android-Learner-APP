@@ -4,13 +4,20 @@ import android.content.Context
 import androidx.compose.runtime.MutableState
 import com.google.gson.Gson
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
+import org.webrtc.AudioTrack
+import org.webrtc.Camera2Enumerator
+import org.webrtc.CameraVideoCapturer
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.DefaultVideoEncoderFactory
 import org.webrtc.EglBase
+import org.webrtc.MediaConstraints
+import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.PeerConnectionFactory
 import org.webrtc.RendererCommon
+import org.webrtc.SurfaceTextureHelper
 import org.webrtc.VideoTrack
+import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,10 +39,20 @@ class WebRTCClient @Inject constructor(
             .setUsername("")
             .setPassword("").createIceServer()
     )
+    private val localVideoSource by lazy { peerConnectionFactory.createVideoSource(false) }
+    private val localAudioSource by lazy { peerConnectionFactory.createAudioSource(MediaConstraints()) }
+    private val videoCapturer = getVideoCapturer(context) // Camera Video Capture를 가져오면서 Context를 전달
+    private var surfaceTextureHelper : SurfaceTextureHelper? = null
 
     // call variables
     private lateinit var localSurfaceView : VideoTextureViewRenderer
     private lateinit var remoteSurfaceView : VideoTextureViewRenderer
+    private var localStream: MediaStream? = null
+    private var localTrackId = ""
+    private var localStreamId = ""
+    private var localAudioTrack: AudioTrack? = null
+    private var localVideoTrack: VideoTrack? = null
+
 
     init {
         initPeerConnectionFactory()
@@ -66,6 +83,8 @@ class WebRTCClient @Inject constructor(
         userid: String, observer: PeerConnection.Observer
     ){
         this.userid = userid
+        localTrackId = "${userid}_track"
+        localStreamId = "${userid}_stream"
         peerConnection = createPeerConnection(observer)
     }
 
@@ -77,13 +96,57 @@ class WebRTCClient @Inject constructor(
         fun onTransferEventToSocket(data: DataModel)
     }
 
-    private fun initSurfaceView(context: VideoTextureViewRenderer) {
 
+    //Todo: 이걸 VideoCallActivity의 Composable과 연결해야함!
+    fun initLocalSurfaceView(localView: VideoTextureViewRenderer) {
+        this.localSurfaceView = localView
+        startLocalStreaming(localView)
     }
 
-    fun initLocalSurfaceView(localSurfaceView: VideoTextureViewRenderer) {
-        this.localSurfaceView = localSurfaceView
-        initSurfaceView(localSurfaceView)
+    private fun startLocalStreaming(localView: VideoTextureViewRenderer) {
+        localStream = peerConnectionFactory.createLocalMediaStream(localStreamId)
+
+        // 화상 통화이므로 바로 카메라 캡쳐 시작
+        startCapturingCamera(localView)
+
+        localAudioTrack = peerConnectionFactory.createAudioTrack(localTrackId + "_audio", localAudioSource)
+        localStream?.addTrack(localAudioTrack)
+        peerConnection?.addStream(localStream)
+    }
+
+    private fun startCapturingCamera(localView: VideoTextureViewRenderer) {
+        surfaceTextureHelper = SurfaceTextureHelper.create(
+            Thread.currentThread().name, eglBaseContext
+        )
+
+        videoCapturer.initialize(
+            surfaceTextureHelper, context, localVideoSource.capturerObserver
+        )
+
+        videoCapturer.startCapture(
+            720, 480, 20
+        )
+
+        localVideoTrack = peerConnectionFactory.createVideoTrack(localTrackId + "_video", localVideoSource)
+        localVideoTrack?.addSink(localView)
+        localStream?.addTrack(localVideoTrack)
+    }
+
+    private fun getVideoCapturer(context: Context): CameraVideoCapturer =
+        Camera2Enumerator(context).run {
+            deviceNames.find {
+                isFrontFacing(it)
+            }?.let {
+                createCapturer(it, null)
+            }?:throw IllegalStateException()
+        }
+
+    private fun stopCapturingCamera() {
+        videoCapturer.dispose()
+        localVideoTrack?.removeSink(localSurfaceView)
+//        localSurfaceView.clearImage()
+        localStream?.removeTrack(localVideoTrack)
+        localVideoTrack?.dispose()
     }
 
     fun getEglBaseContext(): EglBase.Context {
