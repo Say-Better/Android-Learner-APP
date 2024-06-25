@@ -77,6 +77,7 @@ class MainService : Service(), MainRepository.Listener {
             //setup my clients
             mainRepository.listener = this
             mainRepository.initFirebase()
+            mainRepository.initWebrtcClient(userid!!)
         }
     }
 
@@ -103,6 +104,10 @@ class MainService : Service(), MainRepository.Listener {
     override fun onLatestEventReceived(data: DataModel) {
         Log.d(TAG, "onLatestEventReceived: $data")
         listener?.onCallReceived(data)
+
+    }
+
+    override fun endCall() {
 
     }
 

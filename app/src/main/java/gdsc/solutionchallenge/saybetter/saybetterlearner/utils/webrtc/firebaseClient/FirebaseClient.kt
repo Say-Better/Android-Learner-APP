@@ -25,16 +25,6 @@ class FirebaseClient @Inject constructor(
         this.currentUserid = userid
     }
 
-    fun testAccess(){
-        dbRef.setValue("hello firebase")
-            .addOnCompleteListener {
-                Log.d("FirebaseClient", "DB Access Success")
-            }
-            .addOnFailureListener {
-                Log.d("FirebaseClient", "DB Access Failed")
-            }
-    }
-
     fun login(userid : String, done : (Boolean, String?) -> Unit) {
         dbRef.addListenerForSingleValueEvent(object : MyEventListener() {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -99,6 +89,14 @@ class FirebaseClient @Inject constructor(
             }.addOnFailureListener {
                 success(false)
             }
+    }
+
+    fun changeMyStatus(status: UserStatus) {
+        dbRef.child(currentUserid!!).child(STATUS).setValue(status.name)
+    }
+
+    fun clearLatestEvent() {
+        dbRef.child(currentUserid!!).child(LATEST_EVENT).setValue(null)
     }
 
     interface Listener {

@@ -30,7 +30,7 @@ class WebRTCClient @Inject constructor(
     private val gson : Gson
 ) {
     // class variables
-    val listener: Listener? = null
+    var listener: Listener? = null
     private lateinit var userid: String
 
     // webrtc variables
