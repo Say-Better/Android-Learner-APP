@@ -94,7 +94,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
         userid = intent.getStringExtra("userid")
         if(userid == null) finish()
 
-        MainService.listener =this
+        MainService.listener = this
         startMyService()
     }
 

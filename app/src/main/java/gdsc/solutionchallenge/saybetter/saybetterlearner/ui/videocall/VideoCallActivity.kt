@@ -62,6 +62,8 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.Custo
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
+import org.webrtc.MediaStream
 import org.webrtc.RendererCommon
 import org.webrtc.VideoTrack
 import javax.inject.Inject
@@ -79,6 +81,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
     @Inject lateinit var serviceRepository: MainServiceRepository
     @Inject lateinit var mainRepository: MainRepository
+    @Inject lateinit var webRTCClient: WebRTCClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,14 +112,16 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     @Composable
     fun VideoRenderer(
         videoTrack: VideoTrack,
+        stream: MediaStream,
         modifier: Modifier = Modifier
     ) {
         val trackState: MutableState<VideoTrack?> = remember { mutableStateOf(null) }
+        val streamState: MutableState<MediaStream?> = remember { mutableStateOf(null) }
         var view: VideoTextureViewRenderer? by remember { mutableStateOf(null) }
 
         DisposableEffect(videoTrack) {
             onDispose {
-                cleanTrack(view, trackState)
+                webRTCClient.cleanTrack(view, trackState, streamState)
             }
         }
 
@@ -132,42 +137,17 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                             override fun onFrameResolutionChanged(p0: Int, p1: Int, p2: Int) = Unit
                         }
                     )
-                    setupVideo(trackState, videoTrack, this)
+                    webRTCClient.setupVideo(trackState, videoTrack, this, stream, streamState)
                     view = this
                 }
 
             },
-            update = { v -> setupVideo(trackState, videoTrack, v) },
+            update = { v -> webRTCClient.setupVideo(trackState, videoTrack, v, stream, streamState) },
             modifier = modifier
         )
     }
 
 
-    private fun setupVideo(
-        trackState: MutableState<VideoTrack?>,
-        track: VideoTrack,
-        renderer: VideoTextureViewRenderer
-    ) {
-        if (trackState.value == track) {
-            return
-        }
-
-        cleanTrack(renderer, trackState)
-
-        trackState.value = track
-        track.addSink(renderer)
-    }
-
-    private fun cleanTrack(
-        view: VideoTextureViewRenderer?,
-        trackState: MutableState<VideoTrack?>
-    ) {
-        view?.let { trackState.value?.removeSink(it) }
-        trackState.value = null
-    }
-
-
-    
     @Composable
     fun VideoCallView() {
         var isStart by remember { mutableStateOf(false) }

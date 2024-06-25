@@ -205,6 +205,8 @@ class WebRTCClient @Inject constructor(
         localStream?.addTrack(localAudioTrack)
         peerConnection?.addStream(localStream)
     }
+
+    // localVideoTrack 초기화
     private fun startCapturingCamera(localView: VideoTextureViewRenderer) {
         surfaceTextureHelper = SurfaceTextureHelper.create(
             Thread.currentThread().name, eglBaseContext
@@ -219,8 +221,6 @@ class WebRTCClient @Inject constructor(
         )
 
         localVideoTrack = peerConnectionFactory.createVideoTrack(localTrackId + "_video", localVideoSource)
-        localVideoTrack?.addSink(localView)
-        localStream?.addTrack(localVideoTrack)
     }
     private fun getVideoCapturer(context: Context): CameraVideoCapturer =
         Camera2Enumerator(context).run {
@@ -232,10 +232,43 @@ class WebRTCClient @Inject constructor(
         }
     private fun stopCapturingCamera() {
         videoCapturer.dispose()
-        localVideoTrack?.removeSink(localSurfaceView)
+//        localVideoTrack?.removeSink(localSurfaceView)
 //        localSurfaceView.clearImage()
-        localStream?.removeTrack(localVideoTrack)
-        localVideoTrack?.dispose()
+//        localStream?.removeTrack(localVideoTrack)
+//        localVideoTrack?.dispose()
+    }
+
+    fun setupVideo(
+        trackState: MutableState<VideoTrack?>,
+        track: VideoTrack,
+        renderer: VideoTextureViewRenderer,
+        stream: MediaStream,
+        streamState: MutableState<MediaStream?>
+    ) {
+        if (trackState.value == track) {
+            return
+        }
+
+        cleanTrack(renderer, trackState, streamState)
+
+        trackState.value = track
+        track.addSink(renderer)
+
+        streamState.value = stream
+        stream.addTrack(track)
+    }
+
+    fun cleanTrack(
+        view: VideoTextureViewRenderer?,
+        trackState: MutableState<VideoTrack?>,
+        streamState: MutableState<MediaStream?>
+    ) {
+        view?.let {
+            trackState.value?.removeSink(it)
+            streamState.value?.removeTrack(trackState.value)
+        }
+        trackState.value = null
+        streamState.value = null
     }
 
     fun getEglBaseContext(): EglBase.Context {
