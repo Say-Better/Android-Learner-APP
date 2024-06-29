@@ -14,18 +14,25 @@ class MainServiceRepository @Inject constructor(
 
     fun startService(userid : String) {
         Thread{
-            Log.d(TAG, "thread start")
             val intent = Intent(context, MainService::class.java)
             intent.putExtra("userid", userid)
             intent.action = MainServiceActions.START_SERVICE.name
             startServiceIntent(intent)
-            Log.d(TAG, "thread end")
         }.start()
+    }
+
+    fun setupViews(caller: Boolean, target: String) {
+        val intent = Intent(context, MainService::class.java)
+        intent.apply {
+            action = MainServiceActions.SETUP_VIEWS.name
+            putExtra("target", target)
+            putExtra("isCaller", caller)
+        }
+        startServiceIntent(intent)
     }
 
     private fun startServiceIntent(intent : Intent) {
         //Foreground service: 시스템에 의해 종료될 확률이 적음
-        Log.d(TAG, "startServiceIntent")
         context.startForegroundService(intent)
     }
 
