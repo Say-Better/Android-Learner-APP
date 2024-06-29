@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.camera.core.CameraSelector
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,13 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,11 +59,16 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
+import org.webrtc.MediaStream
+import org.webrtc.RendererCommon
+import org.webrtc.SurfaceViewRenderer
+import org.webrtc.VideoTrack
 import javax.inject.Inject
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 const val TAG = "VideoCall"
 
@@ -101,10 +100,40 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         }
 
         isCaller = intent.getBooleanExtra("isCaller", true)
-        Log.d(TAG, "target: $target\nisCaller: $isCaller")
 
-//        serviceRepository.setupViews()
+        // MainService에서 SurfaceView를 관리하도록 위임
+        MainService.localSurfaceView = SurfaceViewRenderer(this)
+        MainService.remoteSurfaceView = SurfaceViewRenderer(this)
 
+        // Activity에 표시될 SurfaceViewRenderer를 MainService 멤버변수에 연결하고 serviceRepo를 통해 초기화하도록 명령
+        serviceRepository.setupViews(isCaller, target!!)
+
+    }
+
+    @Composable
+    fun LocalVideoRenderer(modifier: Modifier = Modifier) {
+        AndroidView(
+            modifier = modifier,
+            factory = {
+                MainService.localSurfaceView!!
+            },
+            update = { surfaceViewRenderer ->
+                // SurfaceViewRenderer 업데이트 로직 (필요한 경우)
+            }
+        )
+    }
+
+    @Composable
+    fun RemoteVideoRenderer(modifier: Modifier = Modifier) {
+        AndroidView(
+            modifier = modifier,
+            factory = {
+                MainService.remoteSurfaceView!!
+            },
+            update = { surfaceViewRenderer ->
+                // SurfaceViewRenderer 업데이트 로직 (필요한 경우)
+            }
+        )
     }
 
     @Composable
@@ -290,24 +319,31 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     .background(Transparent, RoundedCornerShape(0.dp)),
                     verticalAlignment = Alignment.CenterVertically){
                     if (isCameraOn) {
-                        CameraComponet(
-                            context = this@VideoCallActivity,
+                        LocalVideoRenderer(
                             modifier = Modifier
-                                .weight(1f),
-                            cameraSelectorState = cameraSelectorState
+                                .weight(1f)
                         )
                     }else {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),
                             contentDescription = null,
                             modifier = Modifier
-                                .weight(1f))
+                                .weight(1f)
+                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
 
-                    Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(1f))
+                    if (isCameraOn) {
+                        RemoteVideoRenderer(
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+                    }else {
+                        Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+                    }
                 }
         }
     }
@@ -651,13 +687,11 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
             Row (modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)){
                 //webRTC 넣는 곳
                 if (isCameraOn) {
-                    CameraComponet(
-                        context = this@VideoCallActivity,
+                    Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                        contentDescription = null,
                         modifier = Modifier
                             .fillMaxHeight(0.7f)
-                            .width(150.dp),
-                        cameraSelectorState = cameraSelectorState
-                    )
+                            .width(250.dp))
                 }else {
                     Image(painter = painterResource(id = R.drawable.rectangle_1638),
                         contentDescription = null,

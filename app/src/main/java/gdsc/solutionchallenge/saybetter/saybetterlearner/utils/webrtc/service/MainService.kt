@@ -13,8 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.START_SERVICE
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.*
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import org.webrtc.SurfaceViewRenderer
 import javax.inject.Inject
 
@@ -33,8 +34,8 @@ class MainService : Service(), MainRepository.Listener {
     companion object {
         var listener : CallEventListener? = null
 //        var endCallListener : EndCallListener? = null
-//        var localSurfaceView : SurfaceViewRenderer? = null
-//        var remoteSurfaceView : SurfaceViewRenderer? = null
+        var localSurfaceView : SurfaceViewRenderer? = null
+        var remoteSurfaceView : SurfaceViewRenderer? = null
     }
 
 
@@ -51,10 +52,28 @@ class MainService : Service(), MainRepository.Listener {
         intent?.let { incomingIntent ->
             when(incomingIntent.action) {
                 START_SERVICE.name -> handleStartService(incomingIntent)
+                SETUP_VIEWS.name -> handleSetupViews(incomingIntent)
                 else -> Unit
             }
         }
         return START_STICKY
+    }
+
+    private fun handleSetupViews(incomingIntent: Intent) {
+        val isCaller = incomingIntent.getBooleanExtra("isCaller", false)
+        val target = incomingIntent.getStringExtra("target")
+
+        mainRepository.setTarget(target!!)
+
+        // Local, Remote SurfaceViewRenderer init
+        mainRepository.initLocalSurfaceView(localSurfaceView!!)
+        mainRepository.initRemoteSurfaceView(remoteSurfaceView!!)
+
+        //Caller 가 아닐 경우 Call 시작
+        if(!isCaller) {
+            Log.d("MainService", "Start Call to $target")
+            mainRepository.startCall()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -68,6 +87,7 @@ class MainService : Service(), MainRepository.Listener {
             //setup my clients
             mainRepository.listener = this
             mainRepository.initFirebase()
+            mainRepository.initWebrtcClient(userid!!)
         }
     }
 
@@ -94,6 +114,10 @@ class MainService : Service(), MainRepository.Listener {
     override fun onLatestEventReceived(data: DataModel) {
         Log.d(TAG, "onLatestEventReceived: $data")
         listener?.onCallReceived(data)
+
+    }
+
+    override fun endCall() {
 
     }
 
