@@ -108,6 +108,9 @@ dependencies {
     //webRTC 종속성 추가
     implementation ("com.mesibo.api:webrtc:1.0.5")
 
+    //webrtc-stream dependency
+    implementation ("io.getstream:stream-webrtc-android:1.1.1")
+
     //Gson 종속성 추가
     implementation("com.google.code.gson:gson:2.10.1")
 

@@ -19,6 +19,7 @@ import org.webrtc.PeerConnectionFactory
 import org.webrtc.RendererCommon
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
+import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoTrack
 import java.lang.IllegalStateException
 import javax.inject.Inject
@@ -52,8 +53,8 @@ class WebRTCClient @Inject constructor(
     }
 
     // call variables
-    private lateinit var localSurfaceView : VideoTextureViewRenderer
-    private lateinit var remoteSurfaceView : VideoTextureViewRenderer
+    private lateinit var localSurfaceView : SurfaceViewRenderer
+    private lateinit var remoteSurfaceView : SurfaceViewRenderer
     private var localStream: MediaStream? = null
     private var localTrackId = ""
     private var localStreamId = ""
@@ -190,12 +191,23 @@ class WebRTCClient @Inject constructor(
     }
 
     // streaming section
-    // Todo: 이걸 VideoCallActivity의 Composable과 연결해야함!
-    fun initLocalSurfaceView(localView: VideoTextureViewRenderer) {
+    private fun initSurfaceView(view : SurfaceViewRenderer) {
+        view.run {
+            setMirror(false)
+            setEnableHardwareScaler(true)
+            init(eglBaseContext, null)
+        }
+    }
+    fun initRemoteSurfaceView(view : SurfaceViewRenderer) {
+        this.remoteSurfaceView = view
+        initSurfaceView(view)
+    }
+    fun initLocalSurfaceView(localView: SurfaceViewRenderer) {
         this.localSurfaceView = localView
+        initSurfaceView(localView)
         startLocalStreaming(localView)
     }
-    private fun startLocalStreaming(localView: VideoTextureViewRenderer) {
+    private fun startLocalStreaming(localView: SurfaceViewRenderer) {
         localStream = peerConnectionFactory.createLocalMediaStream(localStreamId)
 
         // 화상 통화이므로 바로 카메라 캡쳐 시작
@@ -207,7 +219,7 @@ class WebRTCClient @Inject constructor(
     }
 
     // localVideoTrack 초기화
-    private fun startCapturingCamera(localView: VideoTextureViewRenderer) {
+    private fun startCapturingCamera(localView: SurfaceViewRenderer) {
         surfaceTextureHelper = SurfaceTextureHelper.create(
             Thread.currentThread().name, eglBaseContext
         )
@@ -221,6 +233,8 @@ class WebRTCClient @Inject constructor(
         )
 
         localVideoTrack = peerConnectionFactory.createVideoTrack(localTrackId + "_video", localVideoSource)
+        localVideoTrack?.addSink(localView)
+        localStream?.addTrack(localVideoTrack)
     }
     private fun getVideoCapturer(context: Context): CameraVideoCapturer =
         Camera2Enumerator(context).run {
@@ -232,47 +246,10 @@ class WebRTCClient @Inject constructor(
         }
     private fun stopCapturingCamera() {
         videoCapturer.dispose()
-//        localVideoTrack?.removeSink(localSurfaceView)
-//        localSurfaceView.clearImage()
-//        localStream?.removeTrack(localVideoTrack)
-//        localVideoTrack?.dispose()
-    }
-
-    fun setupVideo(
-        trackState: MutableState<VideoTrack?>,
-        track: VideoTrack,
-        renderer: VideoTextureViewRenderer,
-        stream: MediaStream,
-        streamState: MutableState<MediaStream?>
-    ) {
-        if (trackState.value == track) {
-            return
-        }
-
-        cleanTrack(renderer, trackState, streamState)
-
-        trackState.value = track
-        track.addSink(renderer)
-
-        streamState.value = stream
-        stream.addTrack(track)
-    }
-
-    fun cleanTrack(
-        view: VideoTextureViewRenderer?,
-        trackState: MutableState<VideoTrack?>,
-        streamState: MutableState<MediaStream?>
-    ) {
-        view?.let {
-            trackState.value?.removeSink(it)
-            streamState.value?.removeTrack(trackState.value)
-        }
-        trackState.value = null
-        streamState.value = null
-    }
-
-    fun getEglBaseContext(): EglBase.Context {
-        return eglBaseContext
+        localVideoTrack?.removeSink(localSurfaceView)
+        localSurfaceView.clearImage()
+        localStream?.removeTrack(localVideoTrack)
+        localVideoTrack?.dispose()
     }
 
     interface Listener {
