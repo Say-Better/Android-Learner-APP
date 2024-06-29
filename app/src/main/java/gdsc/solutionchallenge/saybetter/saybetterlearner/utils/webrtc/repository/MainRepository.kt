@@ -148,4 +148,8 @@ class MainRepository @Inject constructor(
 
     override fun onTransferEventToSocket(data: DataModel) {
     }
+
+    fun startCall() {
+        webRTCClient.call(target!!)
+    }
 }

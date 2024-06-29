@@ -86,10 +86,10 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ttsManager = TTSManager(this@VideoCallActivity, this)
+        init()
         setContent {
             VideoCallView()
         }
-        init()
     }
 
     private fun init() {
@@ -108,6 +108,32 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         // Activity에 표시될 SurfaceViewRenderer를 MainService 멤버변수에 연결하고 serviceRepo를 통해 초기화하도록 명령
         serviceRepository.setupViews(isCaller, target!!)
 
+    }
+
+    @Composable
+    fun LocalVideoRenderer(modifier: Modifier = Modifier) {
+        AndroidView(
+            modifier = modifier,
+            factory = {
+                MainService.localSurfaceView!!
+            },
+            update = { surfaceViewRenderer ->
+                // SurfaceViewRenderer 업데이트 로직 (필요한 경우)
+            }
+        )
+    }
+
+    @Composable
+    fun RemoteVideoRenderer(modifier: Modifier = Modifier) {
+        AndroidView(
+            modifier = modifier,
+            factory = {
+                MainService.remoteSurfaceView!!
+            },
+            update = { surfaceViewRenderer ->
+                // SurfaceViewRenderer 업데이트 로직 (필요한 경우)
+            }
+        )
     }
 
     @Composable
@@ -293,11 +319,15 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     .background(Transparent, RoundedCornerShape(0.dp)),
                     verticalAlignment = Alignment.CenterVertically){
                     if (isCameraOn) {
-                        CameraComponet(
-                            context = this@VideoCallActivity,
+//                        CameraComponet(
+//                            context = this@VideoCallActivity,
+//                            modifier = Modifier
+//                                .weight(1f),
+//                            cameraSelectorState = cameraSelectorState
+//                        )
+                        LocalVideoRenderer(
                             modifier = Modifier
-                                .weight(1f),
-                            cameraSelectorState = cameraSelectorState
+                                .weight(1f)
                         )
                     }else {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),

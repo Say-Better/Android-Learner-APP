@@ -68,9 +68,11 @@ class MainService : Service(), MainRepository.Listener {
         // Local, Remote SurfaceViewRenderer init
         mainRepository.initLocalSurfaceView(localSurfaceView!!)
         mainRepository.initRemoteSurfaceView(remoteSurfaceView!!)
-        Log.d("MainService", "handleSetup OK")
-        Log.d("MainService", "Local: ${localSurfaceView.toString()}")
-        Log.d("MainService", "Remote: ${remoteSurfaceView.toString()}")
+
+        //Caller 가 아닐 경우 Call 시작
+        if(!isCaller) {
+//            mainRepository.startCall()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
