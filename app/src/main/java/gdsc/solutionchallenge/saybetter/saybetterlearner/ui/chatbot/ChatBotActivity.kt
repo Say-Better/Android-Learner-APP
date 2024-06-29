@@ -1,6 +1,7 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
@@ -27,6 +28,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,20 +68,14 @@ class ChatBotActivity: ComponentActivity() {
     @Composable
     fun ChatBatPreview() {
 
-        val chatMessageList = listOf(
-            ChatMessage(true, "19:10", "", R.drawable.ic_chatbot),
-            ChatMessage(true, "19:11", "", R.drawable.ic_chatbot),
-            ChatMessage(
+        val chatMessageList = remember {
+            mutableStateListOf(ChatMessage(
                 false,
                 "19:12",
-                "mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3mess3",
+                "우리 한 번 대화를 시작해볼까? 만나서 반가워~",
                 0
-            ),
-            ChatMessage(false, "19:13", "mess4", 0),
-            ChatMessage(true, "19:14", "", R.drawable.ic_chatbot),
-            ChatMessage(false, "19:15", "mess6", 0),
-            ChatMessage(true, "19:16", "", R.drawable.ic_chatbot)
-        )
+            ),   )
+        }
 
 
         val chatRoomList = listOf(
@@ -104,7 +101,17 @@ class ChatBotActivity: ComponentActivity() {
                             ChatBubble(chatMessage = chatmessage)
                         }
                     }
-                    ChatInput()
+                    ChatInput(onClickTransmit = {inputText->
+                        chatMessageList.add(
+                            ChatMessage(
+                            isUser = true,
+                            timestamp = "20:10",
+                            message = inputText,
+                            symbol = 0
+                        )
+                        )
+                        Log.d("message", chatMessageList.toString())
+                    })
                 }
             }
 
@@ -232,10 +239,19 @@ class ChatBotActivity: ComponentActivity() {
                 .fillMaxWidth()
                 .padding(end = 20.dp, top = 20.dp),
             horizontalArrangement = messageArrangement,
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // 내가 보낸 채팅
             if (chatMessage.isUser) {
+                Column (verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End){
+                    Image(painter = painterResource(id = R.drawable.ic_speaker_off),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp))
+                    Text(text = "다시 듣기",
+                        fontSize = 12.sp)
+                }
+                Spacer(modifier = Modifier.width(8.dp))
                 MessageBox(
                     chatMessage
                 )
@@ -251,6 +267,13 @@ class ChatBotActivity: ComponentActivity() {
                     chatMessage
                 )
                 Spacer(modifier = Modifier.width(8.dp))
+                Column (verticalArrangement = Arrangement.Center){
+                    Image(painter = painterResource(id = R.drawable.ic_speaker_off),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp))
+                    Text(text = "다시 듣기",
+                        fontSize = 12.sp)
+                }
             }
         }
     }
@@ -265,7 +288,23 @@ class ChatBotActivity: ComponentActivity() {
         Box(
             modifier = Modifier
                 .widthIn(max = if (chatMessage.isUser) maxWidthDp else maxWidthDp - 56.dp)
-                .clip(RoundedCornerShape(8.dp))
+                .clip(
+                    if (chatMessage.isUser) {
+                        RoundedCornerShape(
+                            topStart = 15.dp, // Change this as needed
+                            topEnd = 0.dp,    // Set to 0.dp for no rounding
+                            bottomStart = 15.dp,
+                            bottomEnd = 15.dp
+                        ) // Change this as needed
+                    } else {
+                        RoundedCornerShape(
+                            topStart = 0.dp, // Change this as needed
+                            topEnd = 15.dp,    // Set to 0.dp for no rounding
+                            bottomStart = 15.dp,
+                            bottomEnd = 15.dp
+                        )
+                    }
+                )
                 .background(if (chatMessage.isUser) DarkGray else MainGreen)
                 .padding(8.dp),
             contentAlignment = Alignment.Center,
@@ -277,10 +316,10 @@ class ChatBotActivity: ComponentActivity() {
                     modifier = Modifier.padding(all = 4.dp)
                 )
             } else {
-                Image(
-                    painter = painterResource(id = chatMessage.symbol), // 여기에 프로필 이미지 리소스 아이디를 넣어주세요.
-                    contentDescription = "Symbols",
-                    modifier = Modifier.padding(10.dp)
+                Text(
+                    text = chatMessage.message,
+                    color = White,
+                    modifier = Modifier.padding(all = 4.dp)
                 )
             }
         }
@@ -306,10 +345,10 @@ class ChatBotActivity: ComponentActivity() {
         ) {
             // Draw the image clipped as a circle
             Image(
-                painter = painterResource(id = R.drawable.ic_chatbot),
+                painter = painterResource(id = R.drawable.ic_chatbot_profile),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(30.dp)
+                    .fillMaxSize()
             )
         }
     }

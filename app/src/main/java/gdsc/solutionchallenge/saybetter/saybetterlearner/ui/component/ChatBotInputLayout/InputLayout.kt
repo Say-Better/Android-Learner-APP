@@ -36,9 +36,8 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 
-@Preview(widthDp = 1280, heightDp = 800)
 @Composable
-fun ChatInput() {
+fun ChatInput(onClickTransmit:(String)->Unit) {
     var inputMode by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf("") }
     val hangul = remember { HangulAutomaton() }
@@ -100,7 +99,11 @@ fun ChatInput() {
                     .fillMaxWidth()
                     .fillMaxHeight(0.15f)
                     .background(MainBlue, shape = RoundedCornerShape(50.dp))
-                    .padding(10.dp),
+                    .padding(10.dp)
+                    .clickable {
+                               onClickTransmit(inputText)
+                        inputText=""
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Row {
