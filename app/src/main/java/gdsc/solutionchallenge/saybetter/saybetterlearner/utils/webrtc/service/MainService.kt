@@ -71,7 +71,8 @@ class MainService : Service(), MainRepository.Listener {
 
         //Caller 가 아닐 경우 Call 시작
         if(!isCaller) {
-//            mainRepository.startCall()
+            Log.d("MainService", "Start Call to $target")
+            mainRepository.startCall()
         }
     }
 

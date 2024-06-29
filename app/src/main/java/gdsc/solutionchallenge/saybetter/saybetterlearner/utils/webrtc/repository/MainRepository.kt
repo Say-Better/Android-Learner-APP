@@ -147,6 +147,7 @@ class MainRepository @Inject constructor(
     }
 
     override fun onTransferEventToSocket(data: DataModel) {
+        firebaseClient.sendMessageToOtherClient(data){}
     }
 
     fun startCall() {

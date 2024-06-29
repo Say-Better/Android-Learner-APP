@@ -68,7 +68,8 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     )
 
     private var userid : String? = null
-    private val testUser: String = "helloYI"
+    private val testUser: String = "testUser1"
+    private var currentReceivedModel: DataModel? = null
     val TAG : String = "ServiceDebug"
 
     var count: Int = 0
@@ -103,14 +104,14 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     }
 
     //Video call 클릭되었을 때
-    private fun StartVideoCall(targetUserid : String) {
+    private fun StartVideoCall(targetUserid : String, isCaller: Boolean) {
         mainRepository.sendConnectionRequest(targetUserid) {
             if(it) {
                 //videocall 시작해야함
                 //educator 되면 수정
                 intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
                 intent.putExtra("target", targetUserid)
-                intent.putExtra("isCaller", true)
+                intent.putExtra("isCaller", isCaller)
                 startActivity(intent)
             }
         }
@@ -120,6 +121,8 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
     fun MenuPreview() {
+        var isCaller: Boolean? = null
+
         val context = LocalContext.current
 
         /** 요청할 권한 **/
@@ -136,7 +139,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
             if (areGranted) {
                 Log.d("test5", "권한이 동의되었습니다.")
                 resetDialogState(customAlertDialogState)
-                StartVideoCall(testUser)
+                StartVideoCall(testUser, isCaller!!)
             }
             /** 권한 요청시 거부 했을 경우 **/
             else {
@@ -157,13 +160,14 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
             if (customAlertDialogState.value.isClick) {
                 TestDialog().CallTestDialog(
                     onClickSure = {
+                        isCaller = false
                         checkAndRequestPermissions(
                             context,
                             permissions,
                             launcherMultiplePermissions,
                             onPermissionsGranted = {    //권한이 이미 다 있을 때
                                 resetDialogState(customAlertDialogState)
-                                StartVideoCall(testUser)
+                                StartVideoCall(currentReceivedModel?.sender!!, isCaller!!)
                             }
                         )
                        },
@@ -172,12 +176,13 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
             }
             MenuBar(menuList = menuList,
                 ClickSymbol = {
+                    isCaller = true
                     checkAndRequestPermissions(
                         context,
                         permissions,
                         launcherMultiplePermissions,
                         onPermissionsGranted = {    //권한이 이미 다 있을 때
-                            StartVideoCall(testUser)
+                            StartVideoCall(testUser, isCaller!!)
                         }
                     )
                     // 권환을 받아야할 때
@@ -274,15 +279,22 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     }
 
     override fun onCallReceived(model: DataModel) {
-        count += 1
-        if(count >= 2) {
-            customAlertDialogState.value = TestDialogState(
-                isClick = true,
-                onClickCancel = {},
-                onClickSure = {}
-            )
-            count -= 1
-        }
+        Log.d("MainService", "call receive by ${model.sender}")
+        this.currentReceivedModel = model
+//        count += 1
+//        if(count >= 2) {
+//            customAlertDialogState.value = TestDialogState(
+//                isClick = true,
+//                onClickCancel = {},
+//                onClickSure = {}
+//            )
+//            count -= 1
+//        }
+        customAlertDialogState.value = TestDialogState(
+            isClick = true,
+            onClickCancel = {},
+            onClickSure = {}
+        )
     }
 
     fun resetDialogState(state: MutableState<TestDialogState>) {

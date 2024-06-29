@@ -39,9 +39,9 @@ class WebRTCClient @Inject constructor(
     private val peerConnectionFactory by lazy { createPeerConnectionFactory() }
     private var peerConnection: PeerConnection? = null
     private val iceServer = listOf(
-        PeerConnection.IceServer.builder("")
-            .setUsername("")
-            .setPassword("").createIceServer()
+        PeerConnection.IceServer.builder("turns:global.relay.metered.ca:443?transport=tcp")
+            .setUsername("3034a2e47ead957a5246ff2d")
+            .setPassword("zAyeHrbfgXr6T/sr").createIceServer()
     )
     private val localVideoSource by lazy { peerConnectionFactory.createVideoSource(false) }
     private val localAudioSource by lazy { peerConnectionFactory.createAudioSource(MediaConstraints()) }

@@ -319,12 +319,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     .background(Transparent, RoundedCornerShape(0.dp)),
                     verticalAlignment = Alignment.CenterVertically){
                     if (isCameraOn) {
-//                        CameraComponet(
-//                            context = this@VideoCallActivity,
-//                            modifier = Modifier
-//                                .weight(1f),
-//                            cameraSelectorState = cameraSelectorState
-//                        )
                         LocalVideoRenderer(
                             modifier = Modifier
                                 .weight(1f)
@@ -333,14 +327,23 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),
                             contentDescription = null,
                             modifier = Modifier
-                                .weight(1f))
+                                .weight(1f)
+                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
 
-                    Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .weight(1f))
+                    if (isCameraOn) {
+                        RemoteVideoRenderer(
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+                    }else {
+                        Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+                    }
                 }
         }
     }
@@ -684,13 +687,11 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
             Row (modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)){
                 //webRTC 넣는 곳
                 if (isCameraOn) {
-                    CameraComponet(
-                        context = this@VideoCallActivity,
+                    Image(painter = painterResource(id = R.drawable.rectangle_1638),
+                        contentDescription = null,
                         modifier = Modifier
                             .fillMaxHeight(0.7f)
-                            .width(150.dp),
-                        cameraSelectorState = cameraSelectorState
-                    )
+                            .width(250.dp))
                 }else {
                     Image(painter = painterResource(id = R.drawable.rectangle_1638),
                         contentDescription = null,
