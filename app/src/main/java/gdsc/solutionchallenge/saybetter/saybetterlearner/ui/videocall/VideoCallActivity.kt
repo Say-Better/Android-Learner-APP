@@ -60,11 +60,13 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
 import org.webrtc.MediaStream
 import org.webrtc.RendererCommon
+import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoTrack
 import javax.inject.Inject
 
@@ -80,16 +82,14 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     private var isCaller: Boolean = true
 
     @Inject lateinit var serviceRepository: MainServiceRepository
-    @Inject lateinit var mainRepository: MainRepository
-    @Inject lateinit var webRTCClient: WebRTCClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ttsManager = TTSManager(this@VideoCallActivity, this)
-        init()
         setContent {
             VideoCallView()
         }
+        init()
     }
 
     private fun init() {
@@ -100,53 +100,15 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         }
 
         isCaller = intent.getBooleanExtra("isCaller", true)
-        Log.d(TAG, "target: $target\nisCaller: $isCaller")
 
-//        serviceRepository.setupViews()
+        // MainService에서 SurfaceView를 관리하도록 위임
+        MainService.localSurfaceView = SurfaceViewRenderer(this)
+        MainService.remoteSurfaceView = SurfaceViewRenderer(this)
+
+        // Activity에 표시될 SurfaceViewRenderer를 MainService 멤버변수에 연결하고 serviceRepo를 통해 초기화하도록 명령
+        serviceRepository.setupViews(isCaller, target!!)
 
     }
-
-// Copyright 2023 Stream.IO, Inc. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
-
-    @Composable
-    fun VideoRenderer(
-        videoTrack: VideoTrack,
-        stream: MediaStream,
-        modifier: Modifier = Modifier
-    ) {
-        val trackState: MutableState<VideoTrack?> = remember { mutableStateOf(null) }
-        val streamState: MutableState<MediaStream?> = remember { mutableStateOf(null) }
-        var view: VideoTextureViewRenderer? by remember { mutableStateOf(null) }
-
-        DisposableEffect(videoTrack) {
-            onDispose {
-                webRTCClient.cleanTrack(view, trackState, streamState)
-            }
-        }
-
-        val eglContext = mainRepository.getEglBaseContext()
-        AndroidView(
-            factory = { context ->
-                VideoTextureViewRenderer(context).apply {
-                    init(
-                        eglContext,
-                        object : RendererCommon.RendererEvents {
-                            override fun onFirstFrameRendered() = Unit
-
-                            override fun onFrameResolutionChanged(p0: Int, p1: Int, p2: Int) = Unit
-                        }
-                    )
-                    webRTCClient.setupVideo(trackState, videoTrack, this, stream, streamState)
-                    view = this
-                }
-
-            },
-            update = { v -> webRTCClient.setupVideo(trackState, videoTrack, v, stream, streamState) },
-            modifier = modifier
-        )
-    }
-
 
     @Composable
     fun VideoCallView() {

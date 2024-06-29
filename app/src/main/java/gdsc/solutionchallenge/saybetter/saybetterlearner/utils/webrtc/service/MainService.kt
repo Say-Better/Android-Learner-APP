@@ -34,8 +34,8 @@ class MainService : Service(), MainRepository.Listener {
     companion object {
         var listener : CallEventListener? = null
 //        var endCallListener : EndCallListener? = null
-        var localSurfaceView : VideoTextureViewRenderer? = null
-//        var remoteSurfaceView : SurfaceViewRenderer? = null
+        var localSurfaceView : SurfaceViewRenderer? = null
+        var remoteSurfaceView : SurfaceViewRenderer? = null
     }
 
 
@@ -64,6 +64,8 @@ class MainService : Service(), MainRepository.Listener {
         val target = incomingIntent.getStringExtra("target")
 
         mainRepository.initLocalSurfaceView(localSurfaceView!!)
+        Log.d("MainService", "handleSetup OK")
+        Log.d("MainService", localSurfaceView.toString())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

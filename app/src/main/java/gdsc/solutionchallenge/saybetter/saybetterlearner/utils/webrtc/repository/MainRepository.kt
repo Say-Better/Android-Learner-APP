@@ -19,6 +19,7 @@ import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.PeerConnectionFactory
 import org.webrtc.SessionDescription
+import org.webrtc.SurfaceViewRenderer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -132,12 +133,7 @@ class MainRepository @Inject constructor(
             ), success
         )
     }
-
-    fun getEglBaseContext(): EglBase.Context {
-        return webRTCClient.getEglBaseContext()
-    }
-
-    fun initLocalSurfaceView(localSurfaceView: VideoTextureViewRenderer) {
+    fun initLocalSurfaceView(localSurfaceView: SurfaceViewRenderer) {
         webRTCClient.initLocalSurfaceView(localSurfaceView)
     }
 
