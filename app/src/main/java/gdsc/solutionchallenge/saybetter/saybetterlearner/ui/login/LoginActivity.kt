@@ -81,7 +81,7 @@ class LoginActivity: ComponentActivity() {
                         Log.d("login", "로그인 실패, $reason")
                     } else {
                         Log.d("login", "로그인 성공")
-                        googleSignInHelper.login()
+                        googleSignInHelper.signIn()
                         //Todo: Credential 오류 해결하고 적용하기
                     }
                 }
