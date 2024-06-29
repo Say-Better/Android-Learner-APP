@@ -59,6 +59,7 @@ class GoogleSignInHelper(
                     try {
                         val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                         val idToken = googleIdTokenCredential.idToken
+                        Log.d("token", idToken)
                         // Handle the ID token as needed
                         onSignInSuccess(idToken)
                     } catch (e: GoogleIdTokenParsingException) {
