@@ -31,7 +31,7 @@ class MainRepository @Inject constructor(
 ) : WebRTCClient.Listener {
     var listener : Listener? = null
     private var target : String? = null
-    private var remoteView: VideoTextureViewRenderer? = null
+    private var remoteView: SurfaceViewRenderer? = null
 
 
     fun login(userid : String, isDone : (Boolean, String?) -> Unit) {
@@ -133,8 +133,12 @@ class MainRepository @Inject constructor(
             ), success
         )
     }
-    fun initLocalSurfaceView(localSurfaceView: SurfaceViewRenderer) {
-        webRTCClient.initLocalSurfaceView(localSurfaceView)
+    fun initLocalSurfaceView(view: SurfaceViewRenderer) {
+        webRTCClient.initLocalSurfaceView(view)
+    }
+    fun initRemoteSurfaceView(view: SurfaceViewRenderer) {
+        webRTCClient.initRemoteSurfaceView(view)
+        this.remoteView = view
     }
 
     interface Listener {
@@ -144,5 +148,4 @@ class MainRepository @Inject constructor(
 
     override fun onTransferEventToSocket(data: DataModel) {
     }
-
 }

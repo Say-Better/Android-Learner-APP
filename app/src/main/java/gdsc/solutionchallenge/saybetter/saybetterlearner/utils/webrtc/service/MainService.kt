@@ -63,9 +63,14 @@ class MainService : Service(), MainRepository.Listener {
         val isCaller = incomingIntent.getBooleanExtra("isCaller", false)
         val target = incomingIntent.getStringExtra("target")
 
+        mainRepository.setTarget(target!!)
+
+        // Local, Remote SurfaceViewRenderer init
         mainRepository.initLocalSurfaceView(localSurfaceView!!)
+        mainRepository.initRemoteSurfaceView(remoteSurfaceView!!)
         Log.d("MainService", "handleSetup OK")
-        Log.d("MainService", localSurfaceView.toString())
+        Log.d("MainService", "Local: ${localSurfaceView.toString()}")
+        Log.d("MainService", "Remote: ${remoteSurfaceView.toString()}")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
