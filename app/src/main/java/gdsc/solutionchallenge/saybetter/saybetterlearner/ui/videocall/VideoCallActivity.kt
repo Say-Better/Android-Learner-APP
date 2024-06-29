@@ -47,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.viewinterop.AndroidView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.CamCoder.CameraComponet
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSListener
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSManager
@@ -139,7 +138,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     @Composable
     fun VideoCallView() {
         var isStart by remember { mutableStateOf(false) }
-        var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
         var isCameraOn by remember {
             mutableStateOf(true)
         }
@@ -154,7 +152,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
                 }, isStart, iconState)
                 if (!isStart) {
-                    ReadyMainScreen(cameraSelectorState, isCameraOn)
+                    ReadyMainScreen(isCameraOn)
                     ReadyBottomMenuBar(
                         micClick = {},
                         cameraClick = {
@@ -162,10 +160,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                             else true
                         },
                         reverseClick = {
-                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            else
-                                CameraSelector.DEFAULT_BACK_CAMERA
+
                         },
                         greetClick = {isStart = true})
                 }else {
@@ -180,13 +175,10 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                         },
                         reverseClick = {
                             isStart = false
-                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            else
-                                CameraSelector.DEFAULT_BACK_CAMERA
+
                         },
-                        cameraSelectorState = cameraSelectorState,
-                        isCameraOn = isCameraOn)
+                        isCameraOn = isCameraOn
+                    )
                 }
             }
         }
@@ -308,7 +300,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     @Composable
-    fun ReadyMainScreen(cameraSelectorState : CameraSelector, isCameraOn : Boolean) {
+    fun ReadyMainScreen(isCameraOn : Boolean) {
         Box (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.85f),
@@ -523,7 +515,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     fun StartBottomMenuBar(micClick:()->Unit,
                            cameraClick:()->Unit,
                            reverseClick:()->Unit,
-                           cameraSelectorState : CameraSelector,
                            isCameraOn : Boolean
                            ) {
         var micClicked: Boolean by remember{ mutableStateOf(false) }
