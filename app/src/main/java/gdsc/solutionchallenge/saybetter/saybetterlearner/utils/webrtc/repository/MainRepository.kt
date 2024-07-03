@@ -168,4 +168,8 @@ class MainRepository @Inject constructor(
         //통화 종료시 다시 온라인 상태로 돌아감
         changeMyStatus(UserStatus.ONLINE)
     }
+
+    fun switchCamera() {
+        webRTCClient.switchCamera()
+    }
 }

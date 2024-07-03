@@ -162,7 +162,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                             else true
                         },
                         reverseClick = {
-
+                            serviceRepository.switchCamera()
                         },
                         greetClick = {isStart = true})
                 }else {

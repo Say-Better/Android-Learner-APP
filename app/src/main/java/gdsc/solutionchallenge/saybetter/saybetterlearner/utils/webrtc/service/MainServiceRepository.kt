@@ -42,4 +42,10 @@ class MainServiceRepository @Inject constructor(
         startServiceIntent(intent)
     }
 
+    fun switchCamera() {
+        val intent = Intent(context, MainService::class.java)
+        intent.action = MainServiceActions.SWITCH_CAMERA.name
+        startServiceIntent(intent)
+    }
+
 }

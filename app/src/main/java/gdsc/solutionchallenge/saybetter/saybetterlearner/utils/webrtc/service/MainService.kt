@@ -54,10 +54,15 @@ class MainService : Service(), MainRepository.Listener {
                 START_SERVICE.name -> handleStartService(incomingIntent)
                 SETUP_VIEWS.name -> handleSetupViews(incomingIntent)
                 END_CALL.name -> handleEndCall()
+                SWITCH_CAMERA.name -> handleSwitchCamera()
                 else -> Unit
             }
         }
         return START_STICKY
+    }
+
+    private fun handleSwitchCamera() {
+        mainRepository.switchCamera()
     }
 
     private fun handleEndCall() {
