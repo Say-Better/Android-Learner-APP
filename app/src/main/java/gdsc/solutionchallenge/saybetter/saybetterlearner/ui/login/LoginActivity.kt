@@ -58,7 +58,7 @@ class LoginActivity: ComponentActivity() {
 
     private lateinit var googleSignInHelper: GoogleSignInHelper
 
-    val testid : String = "helloYI"
+    val testid : String = "testUser1"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,8 +81,12 @@ class LoginActivity: ComponentActivity() {
                         Log.d("login", "로그인 실패, $reason")
                     } else {
                         Log.d("login", "로그인 성공")
-                        googleSignInHelper.signIn()
+//                        googleSignInHelper.signIn()
                         //Todo: Credential 오류 해결하고 적용하기
+                        finish()
+                        startActivity(Intent(this@LoginActivity, MenuActivity::class.java).apply {
+                            putExtra("userid", testid)
+                        })
                     }
                 }
             })

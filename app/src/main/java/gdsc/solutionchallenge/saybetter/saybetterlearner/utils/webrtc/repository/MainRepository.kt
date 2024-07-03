@@ -153,4 +153,19 @@ class MainRepository @Inject constructor(
     fun startCall() {
         webRTCClient.call(target!!)
     }
+
+    fun sendEndCall() {
+        onTransferEventToSocket(
+            DataModel(
+                type = EndCall,
+                target = target!!
+            )
+        )
+    }
+
+    fun endCall() {
+        webRTCClient.closeConnection()
+        //통화 종료시 다시 온라인 상태로 돌아감
+        changeMyStatus(UserStatus.ONLINE)
+    }
 }

@@ -72,7 +72,7 @@ import javax.inject.Inject
 const val TAG = "VideoCall"
 
 @AndroidEntryPoint
-class VideoCallActivity : ComponentActivity(), TTSListener {
+class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener {
 
     private lateinit var ttsManager: TTSManager
     private var iconState by mutableStateOf(false) // 이 부분을 추가해주세요.
@@ -106,6 +106,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
         // Activity에 표시될 SurfaceViewRenderer를 MainService 멤버변수에 연결하고 serviceRepo를 통해 초기화하도록 명령
         serviceRepository.setupViews(isCaller, target!!)
+
+        MainService.endCallListener = this
 
     }
 
@@ -147,7 +149,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                 .background(Color.Black),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 VideoCallTopbar(clickBack = {
-                    finish()
+                    serviceRepository.sendEndCall()
                 }, clickDeatil = {
 
                 }, isStart, iconState)
@@ -713,5 +715,18 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     override fun onTTSStopped() {
         // Update iconState to false when TTS stops
         iconState = false
+    }
+
+    override fun onCallEnded() {
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MainService.remoteSurfaceView?.release()
+        MainService.remoteSurfaceView = null
+
+        MainService.localSurfaceView?.release()
+        MainService.localSurfaceView = null
     }
 }
