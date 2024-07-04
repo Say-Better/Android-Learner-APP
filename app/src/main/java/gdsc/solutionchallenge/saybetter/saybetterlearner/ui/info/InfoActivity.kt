@@ -1,14 +1,12 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.info
 
 import android.Manifest
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -26,17 +24,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -50,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -60,19 +50,14 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.InfoProfileDialog
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu.MenuActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray500
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorder
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.GoogleSignInHelper
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ImageSelect.CameraImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ImageSelect.CameraImageCallback
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.resetDialogState
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Permission.checkAndRequestPermissions
 
 
 class InfoActivity : ComponentActivity(), CameraImageCallback{

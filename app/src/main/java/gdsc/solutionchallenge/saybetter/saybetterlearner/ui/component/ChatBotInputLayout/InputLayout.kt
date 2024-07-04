@@ -102,6 +102,7 @@ fun ChatInput(onClickTransmit:(String)->Unit) {
                     .padding(10.dp)
                     .clickable {
                                onClickTransmit(inputText)
+                        hangul.content = ""
                         inputText=""
                     },
                 contentAlignment = Alignment.Center
