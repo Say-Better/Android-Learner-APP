@@ -4,15 +4,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,42 +22,48 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
-import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMenu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.ChatBotViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.ChatBotInputLayout.ChatInput
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.NaviBar.NaviMenu
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray500
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import kotlinx.coroutines.launch
 
 class ChatBotActivity: ComponentActivity() {
 
+    private lateinit var chatBotViewModel: ChatBotViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        chatBotViewModel = ChatBotViewModel(context = this)
         setContent {
             ChatBatPreview()
         }
@@ -68,14 +73,10 @@ class ChatBotActivity: ComponentActivity() {
     @Composable
     fun ChatBatPreview() {
 
-        val chatMessageList = remember {
-            mutableStateListOf(ChatMessage(
-                false,
-                "19:12",
-                "우리 한 번 대화를 시작해볼까? 만나서 반가워~",
-                0
-            ),   )
-        }
+        val chatMessageList = chatBotViewModel.chatMessageList.collectAsState(initial = emptyList())
+        val selectedMessageIndex = chatBotViewModel.selectedMessageIndex.collectAsState()
+        val highlightingRange = chatBotViewModel.highlightedRange.collectAsState()
+        val isSpeaking = chatBotViewModel.isSpeaking.collectAsState()
 
 
         val chatRoomList = listOf(
@@ -87,28 +88,45 @@ class ChatBotActivity: ComponentActivity() {
         )
         Surface {
             Row(modifier = Modifier.fillMaxSize()) {
+                val lazyListState = rememberLazyListState()
+                val coroutineScope = rememberCoroutineScope()
+
                 NaviMenu(2)
 
                 ChatList(chatRoomList)
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    // 채팅 목록
                     LazyColumn(
-                        // TopBar 영역과 TextField 영역을 제외한 나머지 공간을 모두 차지하도록
-                        modifier = Modifier.fillMaxHeight(0.45f)
+                        modifier = Modifier.fillMaxHeight(0.45f),
+                        state = lazyListState
                     ) {
-                        items(chatMessageList) { chatmessage ->
-                            ChatBubble(chatMessage = chatmessage)
+                        itemsIndexed(chatMessageList.value) { index, chatmessage ->
+                            ChatBubble(
+                                chatMessage = chatmessage,
+                                isSelected = if (index == selectedMessageIndex.value) true
+                                else false,
+                                highlightingIndex = highlightingRange.value,
+                                isSpeaking = isSpeaking.value,
+                                onClickReListen = {
+                                    chatBotViewModel.selectMessage(index)
+                                    chatBotViewModel.speak(chatmessage.message)
+                                }
+                            )
                         }
                     }
-                    ChatInput(onClickTransmit = {inputText->
-                        chatMessageList.add(
+                    LaunchedEffect(chatMessageList.value.size) {
+                        coroutineScope.launch {
+                            lazyListState.animateScrollToItem(chatMessageList.value.size - 1)
+                        }
+                    }
+                    ChatInput(onClickTransmit = { inputText ->
+                        chatBotViewModel.addMessage(
                             ChatMessage(
-                            isUser = true,
-                            timestamp = "20:10",
-                            message = inputText,
-                            symbol = 0
-                        )
+                                isUser = true,
+                                timestamp = "20:10",
+                                message = inputText,
+                                symbol = 0
+                            )
                         )
                         Log.d("message", chatMessageList.toString())
                     })
@@ -116,7 +134,6 @@ class ChatBotActivity: ComponentActivity() {
             }
 
         }
-        // 전체 영역을 Column 으로 배치
     }
 
     @Composable
@@ -144,7 +161,7 @@ class ChatBotActivity: ComponentActivity() {
                     contentDescription = null
                 )
             }
-            // ChatRoomList 스크롤 가능한 컬럼
+
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -154,7 +171,7 @@ class ChatBotActivity: ComponentActivity() {
                     ChatRoomList(chatRoomList)
                 }
             }
-            // 새로운 대화 상자 고정
+
             Box(
                 modifier = Modifier
                     .background(MainGreen, RoundedCornerShape(50.dp))
@@ -180,11 +197,10 @@ class ChatBotActivity: ComponentActivity() {
                 .fillMaxWidth()
                 .padding(bottom = 10.dp)
         ) {
-            }
-            chatRoomList.forEach { chatRoom ->
-                ChatRoom(chatRoom)
-                Spacer(modifier = Modifier.height(10.dp))
-            }
+        }
+        chatRoomList.forEach { chatRoom ->
+            ChatRoom(chatRoom)
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 
@@ -227,35 +243,49 @@ class ChatBotActivity: ComponentActivity() {
     @Composable
     fun ChatBubble(
         chatMessage: ChatMessage,
+        isSelected : Boolean,
+        highlightingIndex : Pair<Int,Int>,
+        isSpeaking : Boolean,
+        onClickReListen:() -> Unit
     ) {
-        // 내가 보낸 채팅인지, 아닌지에 따라 Start 또는 End 정렬
         val messageArrangement = if (chatMessage.isUser) Arrangement.End else Arrangement.Start
 
-        // 채팅 아이템의 구성요소들(프로필 사진, 메세지, 시각)을 가로로 배치하기 위함
         Row(
             modifier = Modifier
                 .padding(8.dp)
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .padding(end = 20.dp, top = 20.dp),
+                .padding(end = 20.dp, top = 10.dp),
             horizontalArrangement = messageArrangement,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // 내가 보낸 채팅
             if (chatMessage.isUser) {
-                Column (verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.End){
-                    Image(painter = painterResource(id = R.drawable.ic_speaker_off),
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Image(
+                        painter = painterResource(id = if(isSpeaking && isSelected) R.drawable.ic_speaker_on
+                        else R.drawable.ic_speaker_off),
                         contentDescription = null,
-                        modifier = Modifier.size(30.dp))
-                    Text(text = "다시 듣기",
-                        fontSize = 12.sp)
+                        modifier = Modifier.size(30.dp)
+                    )
+                    if ((!isSpeaking && isSelected) || !isSelected) {
+                        Text(
+                            text = "다시 듣기",
+                            fontSize = 12.sp,
+                            modifier = Modifier.clickable {
+                                onClickReListen()
+                            }
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 MessageBox(
-                    chatMessage
+                    chatMessage,
+                    highlightingIndex,
+                    isSelected
                 )
-                // 상대방이 보낸 채팅(프로필 사진을 포함)
             } else {
                 ProfileImage(
                     modifier = Modifier
@@ -264,15 +294,27 @@ class ChatBotActivity: ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 MessageBox(
-                    chatMessage
+                    chatMessage,
+                    highlightingIndex,
+                    isSelected
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Column (verticalArrangement = Arrangement.Center){
-                    Image(painter = painterResource(id = R.drawable.ic_speaker_off),
+                Column(verticalArrangement = Arrangement.Center) {
+                    Image(
+                        painter = painterResource(id = if(isSpeaking && isSelected) R.drawable.ic_speaker_on
+                        else R.drawable.ic_speaker_off),
                         contentDescription = null,
-                        modifier = Modifier.size(30.dp))
-                    Text(text = "다시 듣기",
-                        fontSize = 12.sp)
+                        modifier = Modifier.size(30.dp)
+                    )
+                    if ((!isSpeaking && isSelected) || !isSelected) {
+                        Text(
+                            text = "다시 듣기",
+                            fontSize = 12.sp,
+                            modifier = Modifier.clickable {
+                                onClickReListen()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -280,9 +322,10 @@ class ChatBotActivity: ComponentActivity() {
 
     @Composable
     fun MessageBox(
-        chatMessage: ChatMessage
+        chatMessage: ChatMessage,
+        highlightingIndex : Pair<Int,Int>,
+        isSelected : Boolean
     ) {
-        // optional 채팅이 길어질 경우 화면의 최대 2/3 를 차지 하도록
         val maxWidthDp = LocalConfiguration.current.screenWidthDp.dp * 3 / 6
 
         Box(
@@ -291,46 +334,51 @@ class ChatBotActivity: ComponentActivity() {
                 .clip(
                     if (chatMessage.isUser) {
                         RoundedCornerShape(
-                            topStart = 15.dp, // Change this as needed
-                            topEnd = 0.dp,    // Set to 0.dp for no rounding
+                            topStart = 15.dp,
+                            topEnd = 0.dp,
                             bottomStart = 15.dp,
                             bottomEnd = 15.dp
-                        ) // Change this as needed
+                        )
                     } else {
                         RoundedCornerShape(
-                            topStart = 0.dp, // Change this as needed
-                            topEnd = 15.dp,    // Set to 0.dp for no rounding
+                            topStart = 0.dp,
+                            topEnd = 15.dp,
                             bottomStart = 15.dp,
                             bottomEnd = 15.dp
                         )
                     }
                 )
                 .background(if (chatMessage.isUser) DarkGray else MainGreen)
-                .padding(8.dp),
+                .padding(12.dp),
             contentAlignment = Alignment.Center,
         ) {
-            if (!chatMessage.isUser) {
+
+            if (isSelected) {
+                val annotatedString = buildAnnotatedString {
+                    val text = chatMessage.message
+                    append(text)
+                    addStyle(
+                        style = SpanStyle(background = MainBlue),
+                        start = highlightingIndex.first,
+                        end = highlightingIndex.second
+                    )
+                }
                 Text(
-                    text = chatMessage.message,
+                    text = annotatedString,
                     color = White,
-                    modifier = Modifier.padding(all = 4.dp)
+                    fontSize = 16.sp,
+                    modifier = Modifier
                 )
-            } else {
+            }else {
                 Text(
                     text = chatMessage.message,
                     color = White,
-                    modifier = Modifier.padding(all = 4.dp)
+                    fontSize = 16.sp,
+                    modifier = Modifier
                 )
             }
-        }
-    }
 
-    @Composable
-    fun TimeText(time: String) {
-        Text(
-            text = time,
-            color = Gray500,
-        )
+        }
     }
 
     @Composable
@@ -338,12 +386,12 @@ class ChatBotActivity: ComponentActivity() {
         modifier: Modifier = Modifier,
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .size(50.dp)
                 .background(SubGreen.copy(alpha = 0.3f), RoundedCornerShape(200.dp)),
             contentAlignment = Alignment.Center
         ) {
-            // Draw the image clipped as a circle
+
             Image(
                 painter = painterResource(id = R.drawable.ic_chatbot_profile),
                 contentDescription = null,
@@ -353,7 +401,7 @@ class ChatBotActivity: ComponentActivity() {
         }
     }
 
-
+}
 
 
 
