@@ -47,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.viewinterop.AndroidView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.CamCoder.CameraComponet
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSListener
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSManager
@@ -73,7 +72,7 @@ import javax.inject.Inject
 const val TAG = "VideoCall"
 
 @AndroidEntryPoint
-class VideoCallActivity : ComponentActivity(), TTSListener {
+class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener {
 
     private lateinit var ttsManager: TTSManager
     private var iconState by mutableStateOf(false) // 이 부분을 추가해주세요.
@@ -109,6 +108,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         // Activity에 표시될 SurfaceViewRenderer를 MainService 멤버변수에 연결하고 serviceRepo를 통해 초기화하도록 명령
         serviceRepository.setupViews(isCaller, target!!)
 
+        MainService.endCallListener = this
+
     }
 
     @Composable
@@ -140,7 +141,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     @Composable
     fun VideoCallView() {
         var isStart by remember { mutableStateOf(false) }
-        var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
         var isCameraOn by remember {
             mutableStateOf(true)
         }
@@ -150,12 +150,12 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                 .background(Color.Black),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 VideoCallTopbar(clickBack = {
-                    finish()
+                    serviceRepository.sendEndCall()
                 }, clickDeatil = {
 
                 }, isStart, iconState)
                 if (!isStart) {
-                    ReadyMainScreen(cameraSelectorState, isCameraOn)
+                    ReadyMainScreen(isCameraOn)
                     ReadyBottomMenuBar(
                         micClick = {},
                         cameraClick = {
@@ -163,10 +163,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                             else true
                         },
                         reverseClick = {
-                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            else
-                                CameraSelector.DEFAULT_BACK_CAMERA
+                            serviceRepository.switchCamera()
                         },
                         greetClick = {isStart = true})
                 }else {
@@ -181,13 +178,10 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                         },
                         reverseClick = {
                             isStart = false
-                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            else
-                                CameraSelector.DEFAULT_BACK_CAMERA
+
                         },
-                        cameraSelectorState = cameraSelectorState,
-                        isCameraOn = isCameraOn)
+                        isCameraOn = isCameraOn
+                    )
                 }
             }
         }
@@ -309,7 +303,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     @Composable
-    fun ReadyMainScreen(cameraSelectorState : CameraSelector, isCameraOn : Boolean) {
+    fun ReadyMainScreen(isCameraOn : Boolean) {
         Box (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.85f),
@@ -524,7 +518,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     fun StartBottomMenuBar(micClick:()->Unit,
                            cameraClick:()->Unit,
                            reverseClick:()->Unit,
-                           cameraSelectorState : CameraSelector,
                            isCameraOn : Boolean
                            ) {
         var micClicked: Boolean by remember{ mutableStateOf(false) }
@@ -725,6 +718,20 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
         iconState = false
     }
 
+    override fun onCallEnded() {
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MainService.remoteSurfaceView?.release()
+        MainService.remoteSurfaceView = null
+
+        MainService.localSurfaceView?.release()
+        MainService.localSurfaceView = null
+    }
+      
     override fun updateIndex(start: Int, end: Int) {
+
     }
 }

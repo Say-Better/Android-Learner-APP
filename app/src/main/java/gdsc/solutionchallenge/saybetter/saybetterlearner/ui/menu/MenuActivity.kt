@@ -67,11 +67,9 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     )
 
     private var userid : String? = null
-    private val testUser: String = "testUser1"
+    private val testUser: String = "helloYI"
     private var currentReceivedModel: DataModel? = null
     val TAG : String = "ServiceDebug"
-
-    var count: Int = 0
 
     //Hilt 종속성 주입
     @Inject lateinit var mainRepository : MainRepository
@@ -84,10 +82,17 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
 
         setContent {
             MenuPreview()
+            resetDialogState(customAlertDialogState)
         }
 
         Log.d(TAG, "oncreate")
         init()
+    }
+
+    // 화상통화가 종료되었을 때 dialog가 뜨는 것을 방지
+    override fun onResume() {
+        super.onResume()
+        resetDialogState(customAlertDialogState)
     }
 
     private fun init(){
