@@ -46,14 +46,13 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataMo
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.LearnerCodeDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.TestDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.info.InfoActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Permission.checkAndRequestPermissions
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 
 import javax.inject.Inject

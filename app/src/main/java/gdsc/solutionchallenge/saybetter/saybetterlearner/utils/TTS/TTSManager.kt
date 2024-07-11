@@ -1,18 +1,31 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS
+package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS
 
 import android.content.Context
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.util.Log
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.util.*
 
-class TTSManager(context: Context, private val ttsListener: TTSListener) : TextToSpeech.OnInitListener {
+class TTSManager(context: Context) : TextToSpeech.OnInitListener {
 
     private var tts: TextToSpeech = TextToSpeech(context, this)
+    private var listener: TTSListener? = null
     private var isInitialized: Boolean = false
+
+    fun setTTSListener(listener: TTSListener) {
+        this.listener = listener
+    }
+
+    fun speak(text: String) {
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TTS_")
+    }
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
+            tts.setSpeechRate(0.8f)
             val result = tts.setLanguage(Locale.KOREA)
             isInitialized = !(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED)
 
@@ -23,37 +36,34 @@ class TTSManager(context: Context, private val ttsListener: TTSListener) : TextT
                     }
 
                     override fun onDone(utteranceId: String?) {
-                        notifyTTSStopped()
+                        if (utteranceId?.startsWith("TTS_") == true) {
+                            notifyTTSStopped()
+                        }
                     }
 
                     override fun onError(utteranceId: String?) {
                         notifyTTSStopped()
                     }
+
+                    override fun onRangeStart(
+                        utteranceId: String?,
+                        start: Int,
+                        end: Int,
+                        frame: Int
+                    ) {
+                        Log.d("start,end", start.toString() +" "+end.toString())
+                        listener?.updateIndex(start, end)
+                    }
                 })
             }
-        } else {
-            isInitialized = false
         }
-    }
-
-    fun speak(text: String) {
-        if (isInitialized) {
-            val params = Bundle()
-            params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "utteranceId")
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "utteranceId")
-        }
-    }
-
-    fun shutdown() {
-        tts.stop()
-        tts.shutdown()
     }
 
     private fun notifyTTSStarted() {
-        ttsListener.onTTSStarted()
+        listener?.onTTSStarted()
     }
 
     private fun notifyTTSStopped() {
-        ttsListener.onTTSStopped()
+        listener?.onTTSStopped()
     }
 }

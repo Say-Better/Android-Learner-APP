@@ -48,8 +48,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSListener
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.TTS.TTSManager
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSListener
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
@@ -84,7 +84,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ttsManager = TTSManager(this@VideoCallActivity, this)
+        ttsManager = TTSManager(this@VideoCallActivity)
+        ttsManager.setTTSListener(this)
         init()
         setContent {
             VideoCallView()
@@ -728,5 +729,9 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
 
         MainService.localSurfaceView?.release()
         MainService.localSurfaceView = null
+    }
+      
+    override fun updateIndex(start: Int, end: Int) {
+
     }
 }
