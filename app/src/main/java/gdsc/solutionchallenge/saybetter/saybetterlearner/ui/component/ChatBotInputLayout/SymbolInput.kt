@@ -3,7 +3,6 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.ChatBotIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
@@ -33,10 +30,10 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import kotlinx.coroutines.launch
 
 @Composable
 fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
-    var currentPage by remember { mutableStateOf(0) }
 
     val items = listOf(
         Symbol("1인분주세요", R.drawable.a1),
@@ -67,8 +64,16 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
         Symbol("피자 시켜주세요", R.drawable.a26),
     )  // 임시로 10개의 아이템을 생성
 
+
     val itemsPerPage = 10
     val totalPages = (items.size + itemsPerPage - 1) / itemsPerPage
+
+    var pagerState = rememberPagerState(
+        pageCount = { totalPages },
+        initialPage = 0
+    )
+    val scope = rememberCoroutineScope()
+
 
     Row(
         modifier = modifier
@@ -81,7 +86,11 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
                 .fillMaxHeight()
                 .clickable(
                 ) {
-                    if (currentPage > 0) currentPage--
+                    scope.launch {
+                        if (pagerState.currentPage > 0) {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -97,7 +106,13 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
                 .fillMaxHeight()
                 .weight(1f)
         ) {
-            SymbolLayout(modifier, currentPage, items, itemsPerPage, SymbolClick)
+            HorizontalPager(
+                state = pagerState,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp, vertical = 10.dp)) {
+                SymbolLayout(modifier, pagerState.currentPage, items, itemsPerPage, SymbolClick,)
+            }
         }
         Box(
             modifier = modifier
@@ -105,7 +120,11 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
                 .fillMaxHeight()
                 .clickable(
                 ) {
-                    if (currentPage < totalPages - 1) currentPage++
+                    scope.launch {
+                        if (pagerState.currentPage < totalPages - 1) {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -119,40 +138,41 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
 }
 
 @Composable
-fun SymbolLayout(modifier: Modifier, currentPage: Int, items: List<Symbol>, itemsPerPage: Int, SymbolClick: (String) -> Unit) {
-    val start = currentPage * itemsPerPage
+fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPage: Int, SymbolClick: (String) -> Unit) {
+
+    val start = page* itemsPerPage
     val end = minOf(start + itemsPerPage, items.size)
     val pageItems = items.subList(start, end)
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(5),
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 10.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement .spacedBy(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        items(pageItems.size) { index ->
-            Box (modifier = Modifier
-                .background(White, RoundedCornerShape(7.dp))
-                .padding(vertical = 10.dp)){
-                Column (Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally){
-                    Image(
-                        painter = painterResource(id = pageItems[index].img),
-                        contentDescription = null,
-                        Modifier
-                            .size(100.dp)
-                            .padding(end = 10.dp)
-                            .clickable {
-                                SymbolClick(pageItems[index].title)
-                            }
-                    )
-                    Text(text = pageItems[index].title,
-                        color = Black)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(5),
+            modifier = modifier
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement .spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(pageItems.size) { index ->
+                Box (modifier = Modifier
+                    .background(White, RoundedCornerShape(7.dp))
+                    .padding(vertical = 10.dp)){
+                    Column (Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally){
+                        Image(
+                            painter = painterResource(id = pageItems[index].img),
+                            contentDescription = null,
+                            Modifier
+                                .size(100.dp)
+                                .padding(end = 10.dp)
+                                .clickable {
+                                    SymbolClick(pageItems[index].title)
+                                }
+                        )
+                        Text(text = pageItems[index].title,
+                            color = Black)
+                    }
                 }
-
             }
         }
-    }
+
+
 }
