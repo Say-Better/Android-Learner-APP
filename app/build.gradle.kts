@@ -10,6 +10,8 @@ plugins {
     //Hilt 종속성 추가
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 }
 
 android {
@@ -131,7 +133,7 @@ dependencies {
     // OkHttp
     implementation ("com.squareup.okhttp3:okhttp:4.10.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("androidx.camera:camera-camera2:1.4.0-alpha02")
@@ -139,6 +141,7 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.4.0-alpha02")
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.kizitonwose.calendar:compose:2.6.0-beta02")
 }
 
 kapt {
