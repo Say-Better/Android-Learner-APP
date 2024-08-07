@@ -1,7 +1,6 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.camera.core.CameraSelector
@@ -30,8 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,10 +44,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.viewinterop.AndroidView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.CamCoder.CameraComponet
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.SymbolLayout.Symbol
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSListener
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSManager
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.symbollayout.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSListener
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
@@ -58,16 +54,10 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.GrayW40
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
-import org.webrtc.MediaStream
-import org.webrtc.RendererCommon
 import org.webrtc.SurfaceViewRenderer
-import org.webrtc.VideoTrack
 import javax.inject.Inject
 
 const val TAG = "VideoCall"

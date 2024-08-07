@@ -2,11 +2,10 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSListener
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.TTS.TTSManager
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSListener
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

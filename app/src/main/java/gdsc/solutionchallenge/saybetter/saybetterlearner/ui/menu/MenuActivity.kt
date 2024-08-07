@@ -46,13 +46,13 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataMo
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.ChatBotActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.Dialog.TestDialog
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.dialog.TestDialog
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.info.InfoActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Customclick.CustomClickEvent
-import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.Permission.checkAndRequestPermissions
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 
 import javax.inject.Inject
@@ -89,33 +89,6 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
         Log.d(TAG, "oncreate")
         init()
     }
-
-    private fun init(){
-        userid = intent.getStringExtra("userid")
-        if(userid == null) finish()
-
-        MainService.listener = this
-        startMyService()
-    }
-
-    private fun startMyService() {
-        mainServiceRepository.startService(userid!!)
-    }
-
-    //Video call 클릭되었을 때
-    private fun StartVideoCall(targetUserid : String, isCaller: Boolean) {
-        mainRepository.sendConnectionRequest(targetUserid) {
-            if(it) {
-                //videocall 시작해야함
-                //educator 되면 수정
-                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
-                intent.putExtra("target", targetUserid)
-                intent.putExtra("isCaller", isCaller)
-                startActivity(intent)
-            }
-        }
-    }
-
 
     @Preview(widthDp = 1280, heightDp = 800)
     @Composable
@@ -169,7 +142,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
                                 StartVideoCall(currentReceivedModel?.sender!!, isCaller!!)
                             }
                         )
-                       },
+                    },
                     onClickCancel = { resetDialogState(customAlertDialogState) }
                 )
             }
@@ -201,82 +174,31 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
         }
     }
 
-    @Composable
-    fun MenuBar(menuList : List<menu>,
-                ClickLevel:() ->Unit,
-                ClickSymbol: () ->Unit,
-                ClickChatbot:() ->Unit,
-                ClickSetting:() -> Unit) {
-        Box {
-            Column (modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 100.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Image(painter = painterResource(id = R.drawable.ic_say_better),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(70.dp)
-                        .width(300.dp),)
-            }
+    private fun init(){
+        userid = intent.getStringExtra("userid")
+        if(userid == null) finish()
 
-            Column(modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
-                LazyRow {
-                    items(menuList) { menuEntity ->
-                        MenuItem(menuEntity, clickMenu = {
-                            when (menuEntity.title) {
-                                "레벨 테스트" -> {
-                                    ClickLevel()
-                                }
-                                "그림 상징 의사소통" -> {
-                                    ClickSymbol()
-                                }
-                                "AI 챗봇" -> {
-                                    ClickChatbot()
-                                }
-                                "설정" -> {
-                                    ClickSetting()
-                                }
-                                else -> {
-                                }
-                            }
-                        })
-                        Log.d("permission", "call FeatureThatRequiresCameraPermission")
-                        if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
+        MainService.listener = this
+        startMyService()
+    }
 
-                    }
-                }
+    private fun startMyService() {
+        mainServiceRepository.startService(userid!!)
+    }
+
+    //Video call 클릭되었을 때
+    private fun StartVideoCall(targetUserid : String, isCaller: Boolean) {
+        mainRepository.sendConnectionRequest(targetUserid) {
+            if(it) {
+                //videocall 시작해야함
+                //educator 되면 수정
+                intent = Intent(this@MenuActivity, VideoCallActivity::class.java)
+                intent.putExtra("target", targetUserid)
+                intent.putExtra("isCaller", isCaller)
+                startActivity(intent)
             }
         }
-
     }
-
-    @Composable
-    fun MenuItem(menuEntity : menu, clickMenu: () -> Unit) {
-        Column (horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.clickable (
-                interactionSource = remember{ MutableInteractionSource() },
-                indication = CustomClickEvent
-            ) {
-                clickMenu()
-            }){
-                Image(
-                    painter = painterResource(id = menuEntity.img),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .width(200.dp)
-                        .height(200.dp)
-                        .background(Color.White, shape = RoundedCornerShape(50.dp))
-                )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = menuEntity.title,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W600)
-            }
-    }
-
     override fun onCallReceived(model: DataModel) {
         Log.d("MainService", "call receive by ${model.sender}")
         this.currentReceivedModel = model
@@ -301,4 +223,80 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     }
 
 }
+@Composable
+fun MenuBar(menuList : List<menu>,
+            ClickLevel:() ->Unit,
+            ClickSymbol: () ->Unit,
+            ClickChatbot:() ->Unit,
+            ClickSetting:() -> Unit) {
+    Box {
+        Column (modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Image(painter = painterResource(id = R.drawable.ic_say_better),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(300.dp),)
+        }
+
+        Column(modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            LazyRow {
+                items(menuList) { menuEntity ->
+                    MenuItem(menuEntity, clickMenu = {
+                        when (menuEntity.title) {
+                            "레벨 테스트" -> {
+                                ClickLevel()
+                            }
+                            "그림 상징 의사소통" -> {
+                                ClickSymbol()
+                            }
+                            "AI 챗봇" -> {
+                                ClickChatbot()
+                            }
+                            "설정" -> {
+                                ClickSetting()
+                            }
+                            else -> {
+                            }
+                        }
+                    })
+                    Log.d("permission", "call FeatureThatRequiresCameraPermission")
+                    if (menuEntity != menuList.last()) Spacer(modifier = Modifier.width(30.dp))
+
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun MenuItem(menuEntity : menu, clickMenu: () -> Unit) {
+    Column (horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable (
+            interactionSource = remember{ MutableInteractionSource() },
+            indication = CustomClickEvent
+        ) {
+            clickMenu()
+        }){
+        Image(
+            painter = painterResource(id = menuEntity.img),
+            contentDescription = null,
+            modifier = Modifier
+                .width(200.dp)
+                .height(200.dp)
+                .background(Color.White, shape = RoundedCornerShape(50.dp))
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(text = menuEntity.title,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.W600)
+    }
+}
+
 
