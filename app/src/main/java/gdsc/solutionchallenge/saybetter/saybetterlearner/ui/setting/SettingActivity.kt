@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.GeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGetResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.service.MemberService
@@ -57,7 +58,7 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
 
     private lateinit var memberService: MemberService
     private lateinit var customAlertDialogState: MutableState<CustomAlertDialogState>
-    private lateinit var memberInfo : MutableState<MemberGetResponse.Result>
+    private lateinit var memberInfo : MutableState<MemberGetResponse>
     data class CustomAlertDialogState(
         val code: String = "",
         val onClickCancel: () -> Unit = {},
@@ -72,7 +73,7 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
 
         memberService.getMemberInfo(getSharedPreferences("Member", Context.MODE_PRIVATE).getString("Jwt", "")!!)
 
-        memberInfo = mutableStateOf(MemberGetResponse.Result("", 0, "", ""))
+        memberInfo = mutableStateOf(MemberGetResponse("", 0, "", ""))
         customAlertDialogState = mutableStateOf(CustomAlertDialogState())
 
         setContent {
@@ -98,7 +99,7 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
     }
 
     @Composable
-    fun SettingScreen(memberInfo : MutableState<MemberGetResponse.Result>) {
+    fun SettingScreen(memberInfo : MutableState<MemberGetResponse>) {
         Column (modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)){
@@ -211,9 +212,9 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
         Toast.makeText(this, "복사되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onGetMemberCodeSuccess(response: MemberGeneralResponse) {
+    override fun onGetMemberCodeSuccess(response: GeneralResponse<String>) {
         customAlertDialogState.value = CustomAlertDialogState(
-            code = response.result,
+            code = response.result!!,
             onClickCancel = {
                 resetDialogState(customAlertDialogState)
             }
@@ -224,9 +225,9 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
         TODO("Not yet implemented")
     }
 
-    override fun onGetMemberInfoSuccess(response: MemberGetResponse) {
+    override fun onGetMemberInfoSuccess(response: GeneralResponse<MemberGetResponse>) {
         Log.d("Info" , response.result.toString())
-        memberInfo.value = response.result
+        memberInfo.value = response.result!!
     }
 
     override fun onGetMemberInfoFailure(isSuccess: Boolean, code: String, message: String) {

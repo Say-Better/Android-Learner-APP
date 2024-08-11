@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.google.gson.Gson
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.RequestEntity.member.MemberInfoRequest
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.GeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGetResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.retrofit.MemberRetrofitInterface
@@ -56,13 +57,13 @@ class MemberService {
 
             val memberService = getRetrofit().create(MemberRetrofitInterface::class.java)
             memberService.postMemberInfo("Bearer $accessToken", body, memberInfoBody)
-                .enqueue(object : Callback<MemberGeneralResponse> {
+                .enqueue(object : Callback<GeneralResponse<String>> {
                     override fun onResponse(
-                        call: Call<MemberGeneralResponse>,
-                        response: Response<MemberGeneralResponse>
+                        call: Call<GeneralResponse<String>>,
+                        response: Response<GeneralResponse<String>>
                     ) {
                         if (response.isSuccessful) {
-                            val resp: MemberGeneralResponse? = response.body()
+                            val resp: GeneralResponse<String>? = response.body()
                             if (resp != null) {
                                 when (resp.code) {
                                     "SUCCESS_200" -> memberInfoView.onPostMemberInfoSuccess(resp)       //변경
@@ -80,7 +81,7 @@ class MemberService {
                         }
                     }
 
-                    override fun onFailure(call: Call<MemberGeneralResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<GeneralResponse<String>>, t: Throwable) {
                         Log.d("postMemberInfo", t.toString())
                     }
                 })
@@ -89,13 +90,13 @@ class MemberService {
 
     fun getMemberInfo(accessToken : String, ) {
         val memberService = getRetrofit().create(MemberRetrofitInterface::class.java)
-        memberService.getMemberInfo("Bearer " + accessToken).enqueue(object : Callback<MemberGetResponse> {
+        memberService.getMemberInfo("Bearer " + accessToken).enqueue(object : Callback<GeneralResponse<MemberGetResponse>> {
                     override fun onResponse(
-                        call: Call<MemberGetResponse>,
-                        response: Response<MemberGetResponse>
+                        call: Call<GeneralResponse<MemberGetResponse>>,
+                        response: Response<GeneralResponse<MemberGetResponse>>
                     ) {
                         if (response.isSuccessful) {
-                            val resp: MemberGetResponse? = response.body()
+                            val resp: GeneralResponse<MemberGetResponse>? = response.body()
                             if (resp != null) {
                                 when (resp.code) {
                                     "SUCCESS_200" -> memberGetView.onGetMemberInfoSuccess(resp)       //변경
@@ -113,7 +114,7 @@ class MemberService {
                         }
                     }
 
-                    override fun onFailure(call: Call<MemberGetResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<GeneralResponse<MemberGetResponse>>, t: Throwable) {
                         Log.d("getMemberInfo", t.toString())
                     }
                 })
@@ -122,10 +123,10 @@ class MemberService {
     fun getMemberCode(accessToken : String) {
         val memberService = getRetrofit().create(MemberRetrofitInterface::class.java)
         Log.d("getMemberCode : " , accessToken)
-        memberService.getMemberCode("Bearer " + accessToken).enqueue(object : Callback<MemberGeneralResponse> {
-            override fun onResponse(call: Call<MemberGeneralResponse>, response: Response<MemberGeneralResponse>) {
+        memberService.getMemberCode("Bearer " + accessToken).enqueue(object : Callback<GeneralResponse<String>> {
+            override fun onResponse(call: Call<GeneralResponse<String>>, response: Response<GeneralResponse<String>>) {
                 if (response.isSuccessful) {
-                    val resp: MemberGeneralResponse? = response.body()
+                    val resp: GeneralResponse<String>? = response.body()
                     if (resp != null) {
                         when (resp.code) {
                             "SUCCESS_200" -> memberCodeView.onGetMemberCodeSuccess(resp)
@@ -138,7 +139,7 @@ class MemberService {
                     Log.e("getMemberCode", "Response not successful: ${response.code()}")
                 }
             }
-            override fun onFailure(call: Call<MemberGeneralResponse>, t: Throwable) {
+            override fun onFailure(call: Call<GeneralResponse<String>>, t: Throwable) {
                 Log.d("getMemberCode", t.toString())
             }
         })
