@@ -154,7 +154,10 @@ fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPag
             items(pageItems.size) { index ->
                 Box (modifier = Modifier
                     .background(White, RoundedCornerShape(7.dp))
-                    .padding(vertical = 10.dp)){
+                    .padding(vertical = 10.dp)
+                    .clickable {
+                        SymbolClick(pageItems[index].title)
+                    }){
                     Column (Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally){
                         Image(
@@ -163,9 +166,6 @@ fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPag
                             Modifier
                                 .size(100.dp)
                                 .padding(end = 10.dp)
-                                .clickable {
-                                    SymbolClick(pageItems[index].title)
-                                }
                         )
                         Text(text = pageItems[index].title,
                             color = Black)

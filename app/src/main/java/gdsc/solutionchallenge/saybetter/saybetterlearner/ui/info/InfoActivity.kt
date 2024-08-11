@@ -49,6 +49,7 @@ import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.RequestEntity.member.MemberInfoRequest
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.GeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.service.MemberService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.view.member.MemberInfoView
@@ -251,7 +252,7 @@ class InfoActivity : ComponentActivity(), CameraImageCallback, CalendarCallback,
         viewModel.setBirthDay(date)
     }
 
-    override fun onPostMemberInfoSuccess(response: MemberGeneralResponse) {
+    override fun onPostMemberInfoSuccess(response: GeneralResponse<String>) {
         val spf = getSharedPreferences("Member", Context.MODE_PRIVATE)
         val editor = spf.edit()
         editor.apply()

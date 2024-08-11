@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.RequestEntity.auth.AuthCommonRequest
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.GeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.auth.AuthCommonResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.service.AuthService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.view.auth.AuthView
@@ -100,8 +101,8 @@ class LoginActivity: ComponentActivity(), AuthView {
         })
     }
 
-    override fun onPostLoginSuccess(response: AuthCommonResponse) {
-        Log.d("response", response.result.accessToken)
+    override fun onPostLoginSuccess(response: GeneralResponse<AuthCommonResponse>) {
+        Log.d("response", response.result!!.accessToken)
         finish()
         if(response.result.needMemberInfo) {    //첫 로그인
             val spf = getSharedPreferences("Member", Context.MODE_PRIVATE)

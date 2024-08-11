@@ -1,5 +1,6 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.retrofit
 
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.GeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGeneralResponse
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.member.MemberGetResponse
 import okhttp3.MultipartBody
@@ -17,13 +18,13 @@ interface MemberRetrofitInterface {
     fun postMemberInfo(@Header("Authorization") Authorization: String,
                        @Part file : MultipartBody.Part,
                        @Part("dto") dto : RequestBody
-    ): Call<MemberGeneralResponse>
+    ): Call<GeneralResponse<String>>
 
 
     @GET("/api/member/learner/info")
-    fun getMemberInfo(@Header("Authorization") Authorization: String): Call<MemberGetResponse>
+    fun getMemberInfo(@Header("Authorization") Authorization: String): Call<GeneralResponse<MemberGetResponse>>
 
     @GET("/api/member/connect/code")
-    fun getMemberCode(@Header("Authorization") Authorization: String): Call<MemberGeneralResponse>
+    fun getMemberCode(@Header("Authorization") Authorization: String): Call<GeneralResponse<String>>
 
 }

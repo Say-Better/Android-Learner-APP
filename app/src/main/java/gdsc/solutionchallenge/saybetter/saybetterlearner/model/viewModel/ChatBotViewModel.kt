@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.sqlite.ChatDatabaseHelper
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSListener
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,19 +28,20 @@ class ChatBotViewModel(private val context: Context) : ViewModel(), TTSListener 
         setTTSListener(this@ChatBotViewModel)
     }
 
+    private val chatDB : ChatDatabaseHelper = ChatDatabaseHelper(context)
+
     init {
-        _chatMessageList.value = listOf(
-            ChatMessage(false, "19:12", "우리 한 번 대화를 시작해볼까? 만나서 반가워~", 0) //기본값
-        )
+        _chatMessageList.value = chatDB.getAllChats()
+        if (_chatMessageList.value.isNullOrEmpty()) addMessage(ChatMessage(false, "우리 한 번 대화를 시작해볼까? 만나서 반가워~", 0))
     }
 
     fun addMessage(message : ChatMessage) {
         _chatMessageList.value = _chatMessageList.value + ChatMessage(
             isUser = message.isUser,
-            timestamp = message.timestamp,
             message = message.message,
             symbol = message.symbol
         )
+        chatDB.addChat(message)
         selectMessage(_chatMessageList.value.size -1)
         speak(message.message)
     }

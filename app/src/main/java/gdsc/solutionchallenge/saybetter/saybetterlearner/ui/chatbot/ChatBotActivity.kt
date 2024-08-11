@@ -1,5 +1,6 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -45,6 +46,11 @@ import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.sqlite.ChatDatabaseHelper
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.GeneralResponse
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.dto.chat.ChatResponse
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.service.ChatService
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.view.chat.ChatBotView
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.ChatBotViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.chatbotinputlayout.ChatInput
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.navibar.NaviMenu
@@ -57,21 +63,42 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import kotlinx.coroutines.launch
 
-class ChatBotActivity: ComponentActivity() {
+class ChatBotActivity: ComponentActivity(), ChatBotView {
 
     private lateinit var chatBotViewModel: ChatBotViewModel
+    private lateinit var chatService: ChatService
+    private lateinit var chatDB:ChatDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         chatBotViewModel = ChatBotViewModel(context = this)
+
+        chatService = ChatService()
+        chatService.setChatBotView(this@ChatBotActivity)
+
         setContent {
-            ChatBatPreview(chatBotViewModel)
+            ChatBatPreview(
+                chatBotViewModel,
+                chatService,
+                getSharedPreferences("Member", Context.MODE_PRIVATE).getString("Jwt", "")!!)
         }
+    }
+
+    override fun onGetChatSuccess(response: GeneralResponse<ChatResponse>) {
+        chatBotViewModel.addMessage(ChatMessage(false, response.result!!.firstAnswer, 0))
+    }
+
+    override fun onGetChatFailure(isSuccess: Boolean, code: String, message: String) {
+        Log.d("getChat", "fail")
     }
 }
 
 @Composable
-fun ChatBatPreview(chatBotViewModel : ChatBotViewModel) {
+fun ChatBatPreview(
+    chatBotViewModel : ChatBotViewModel,
+    chatService: ChatService,
+    accessToken:String) {
 
     val chatMessageList = chatBotViewModel.chatMessageList.collectAsState(initial = emptyList())
     val selectedMessageIndex = chatBotViewModel.selectedMessageIndex.collectAsState()
@@ -123,12 +150,12 @@ fun ChatBatPreview(chatBotViewModel : ChatBotViewModel) {
                     chatBotViewModel.addMessage(
                         ChatMessage(
                             isUser = true,
-                            timestamp = "20:10",
                             message = inputText,
                             symbol = 0
                         )
                     )
                     Log.d("message", chatMessageList.toString())
+                    chatService.getChatBot(accessToken, inputText)
                 })
             }
         }

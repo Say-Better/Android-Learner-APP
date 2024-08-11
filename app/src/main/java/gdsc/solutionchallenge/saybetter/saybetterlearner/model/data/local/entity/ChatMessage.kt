@@ -2,7 +2,6 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entit
 
 data class ChatMessage(
     val isUser: Boolean,
-    val timestamp:String,
     val message: String,
     val symbol : Int
 )
