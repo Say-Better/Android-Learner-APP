@@ -71,8 +71,6 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     private var currentReceivedModel: DataModel? = null
     val TAG : String = "ServiceDebug"
 
-    var count: Int = 0
-
     //Hilt 종속성 주입
     @Inject lateinit var mainRepository : MainRepository
     @Inject lateinit var mainServiceRepository : MainServiceRepository
@@ -84,10 +82,17 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
 
         setContent {
             MenuPreview()
+            resetDialogState(customAlertDialogState)
         }
 
         Log.d(TAG, "oncreate")
         init()
+    }
+
+    // 화상통화가 종료되었을 때 dialog가 뜨는 것을 방지
+    override fun onResume() {
+        super.onResume()
+        resetDialogState(customAlertDialogState)
     }
 
     @Preview(widthDp = 1280, heightDp = 800)
@@ -202,15 +207,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     override fun onCallReceived(model: DataModel) {
         Log.d("MainService", "call receive by ${model.sender}")
         this.currentReceivedModel = model
-//        count += 1
-//        if(count >= 2) {
-//            customAlertDialogState.value = TestDialogState(
-//                isClick = true,
-//                onClickCancel = {},
-//                onClickSure = {}
-//            )
-//            count -= 1
-//        }
+
         customAlertDialogState.value = TestDialogState(
             isClick = true,
             onClickCancel = {},

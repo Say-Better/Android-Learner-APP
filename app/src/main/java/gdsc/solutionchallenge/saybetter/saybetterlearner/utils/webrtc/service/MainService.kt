@@ -33,7 +33,7 @@ class MainService : Service(), MainRepository.Listener {
 
     companion object {
         var listener : CallEventListener? = null
-//        var endCallListener : EndCallListener? = null
+        var endCallListener : EndCallListener? = null
         var localSurfaceView : SurfaceViewRenderer? = null
         var remoteSurfaceView : SurfaceViewRenderer? = null
     }
@@ -53,10 +53,30 @@ class MainService : Service(), MainRepository.Listener {
             when(incomingIntent.action) {
                 START_SERVICE.name -> handleStartService(incomingIntent)
                 SETUP_VIEWS.name -> handleSetupViews(incomingIntent)
+                END_CALL.name -> handleEndCall()
+                SWITCH_CAMERA.name -> handleSwitchCamera()
                 else -> Unit
             }
         }
         return START_STICKY
+    }
+
+    private fun handleSwitchCamera() {
+        mainRepository.switchCamera()
+    }
+
+    private fun handleEndCall() {
+        //1. we have to send a signal to other peer that call is ended
+        mainRepository.sendEndCall()
+
+        //2. end out call process and restart our webrtc client
+        endCallAndRestartRepository()
+    }
+
+    private fun endCallAndRestartRepository() {
+        mainRepository.endCall()
+        endCallListener?.onCallEnded()
+        mainRepository.initWebrtcClient(userid!!)
     }
 
     private fun handleSetupViews(incomingIntent: Intent) {
@@ -118,7 +138,8 @@ class MainService : Service(), MainRepository.Listener {
     }
 
     override fun endCall() {
-
+        //remote peer로부터 통화 종료 신호를 받은 경우
+        endCallAndRestartRepository()
     }
 
     //MainActivity에서 구현됨
@@ -126,5 +147,11 @@ class MainService : Service(), MainRepository.Listener {
         fun onCallReceived(model: DataModel)
     }
 
+    interface EndCallListener {
+        fun onCallEnded()
+    }
+
 
 }
+
+

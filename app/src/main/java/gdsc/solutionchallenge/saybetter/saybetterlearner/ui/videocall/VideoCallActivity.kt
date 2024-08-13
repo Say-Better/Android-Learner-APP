@@ -49,8 +49,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModelProvider
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
-import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.ChatBotViewModel
-import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.InfoViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCallViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.symbollayout.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSListener
@@ -73,7 +71,7 @@ import javax.inject.Inject
 const val TAG = "VideoCall"
 
 @AndroidEntryPoint
-class VideoCallActivity : ComponentActivity(), TTSListener {
+class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener {
 
     private lateinit var ttsManager: TTSManager
     private var iconState by mutableStateOf(false)
@@ -151,6 +149,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
         //초기화
         videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolSet.size, symbolSet)
+        MainService.endCallListener = this
+
     }
 
     @Composable
@@ -183,7 +183,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     fun VideoCallView() {
         var isStart by remember { mutableStateOf(false) } //솔루션 시작?
         var ready by remember { mutableStateOf(false) } //대기 시간
-        var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
+
         var isCameraOn by remember {
             mutableStateOf(true)
         }
@@ -227,12 +227,12 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                 .background(Color.Black),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 VideoCallTopbar(clickBack = {
-                    finish()
+                    serviceRepository.sendEndCall()
                 }, clickDeatil = {
                     ready = true    //의사소통 시작 -> 차후 코드 변경 필요
                 }, isStart, iconState, commOptCnt, commOptTimes)
                 if (!isStart) {
-                    ReadyMainScreen(cameraSelectorState, isCameraOn)
+                    ReadyMainScreen(isCameraOn)
                     ReadyBottomMenuBar(
                         micClick = {},
                         cameraClick = {
@@ -240,10 +240,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                             else true
                         },
                         reverseClick = {
-                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            else
-                                CameraSelector.DEFAULT_BACK_CAMERA
+                            serviceRepository.switchCamera()
                         },
                         greetClick = {isStart = true})
                 }else {
@@ -258,13 +255,10 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                         },
                         reverseClick = {
                             isStart = false
-                            cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                                CameraSelector.DEFAULT_FRONT_CAMERA
-                            else
-                                CameraSelector.DEFAULT_BACK_CAMERA
+
                         },
-                        cameraSelectorState = cameraSelectorState,
-                        isCameraOn = isCameraOn)
+                        isCameraOn = isCameraOn
+                    )
                 }
             }
         }
@@ -397,7 +391,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     @Composable
-    fun ReadyMainScreen(cameraSelectorState : CameraSelector, isCameraOn : Boolean) {
+    fun ReadyMainScreen(isCameraOn : Boolean) {
         Box (modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.85f),
@@ -410,13 +404,13 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     if (isCameraOn) {
                         LocalVideoRenderer(
                             modifier = Modifier
+//                                .size(width = 622.dp, height = 370.dp)
                                 .weight(1f)
                         )
                     }else {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),
                             contentDescription = null,
                             modifier = Modifier
-                                .weight(1f)
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
@@ -424,13 +418,14 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
                     if (isCameraOn) {
                         RemoteVideoRenderer(
                             modifier = Modifier
+//                                .padding(start = 12.dp)
+//                                .size(width = 622.dp, height = 370.dp)
                                 .weight(1f)
                         )
                     }else {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),
                             contentDescription = null,
                             modifier = Modifier
-                                .weight(1f)
                         )
                     }
                 }
@@ -634,7 +629,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     fun StartBottomMenuBar(micClick:()->Unit,
                            cameraClick:()->Unit,
                            reverseClick:()->Unit,
-                           cameraSelectorState : CameraSelector,
                            isCameraOn : Boolean
                            ) {
         var micClicked: Boolean by remember{ mutableStateOf(false) }
@@ -836,5 +830,19 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     override fun updateIndex(start: Int, end: Int) {
+
+    }
+
+    override fun onCallEnded() {
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MainService.remoteSurfaceView?.release()
+        MainService.remoteSurfaceView = null
+
+        MainService.localSurfaceView?.release()
+        MainService.localSurfaceView = null
     }
 }
