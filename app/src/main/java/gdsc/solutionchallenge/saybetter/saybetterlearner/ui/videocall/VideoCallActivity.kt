@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -300,7 +301,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                     verticalAlignment = Alignment.CenterVertically){
                     if(!isStart) {
                         Text(
-                            text = "최승아 교육자와 솔루션 진행",
+                            text = "송승아 교육자와 솔루션 진행",
                             color = Color.White,
                             fontSize = 20.sp,
                         )
@@ -401,31 +402,37 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                     .padding(horizontal = 20.dp)
                     .background(Transparent, RoundedCornerShape(0.dp)),
                     verticalAlignment = Alignment.CenterVertically){
-                    if (isCameraOn) {
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(width = 622.dp, height = 370.dp)
+                            .background(
+                                color = Color.DarkGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
                         LocalVideoRenderer(
                             modifier = Modifier
-//                                .size(width = 622.dp, height = 370.dp)
-                                .weight(1f)
-                        )
-                    }else {
-                        Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                            contentDescription = null,
-                            modifier = Modifier
+                                .size(width = 622.dp, height = 370.dp)
+                                .clip(RoundedCornerShape(12.dp))
                         )
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
 
-                    if (isCameraOn) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .size(width = 622.dp, height = 370.dp)
+                            .background(
+                                color = Color.DarkGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
                         RemoteVideoRenderer(
                             modifier = Modifier
-//                                .padding(start = 12.dp)
-//                                .size(width = 622.dp, height = 370.dp)
-                                .weight(1f)
-                        )
-                    }else {
-                        Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                            contentDescription = null,
-                            modifier = Modifier
+                                .size(width = 622.dp, height = 370.dp)
+                                .clip(RoundedCornerShape(12.dp))
                         )
                     }
                 }
