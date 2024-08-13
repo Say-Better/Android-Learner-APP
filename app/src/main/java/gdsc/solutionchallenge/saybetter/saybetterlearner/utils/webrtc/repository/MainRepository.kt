@@ -13,6 +13,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.UserSt
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.MyPeerObserver
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
+import org.webrtc.DataChannel
 import org.webrtc.EglBase
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
@@ -20,6 +21,7 @@ import org.webrtc.PeerConnection
 import org.webrtc.PeerConnectionFactory
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceViewRenderer
+import java.nio.ByteBuffer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,6 +34,9 @@ class MainRepository @Inject constructor(
     var listener : Listener? = null
     private var target : String? = null
     private var remoteView: SurfaceViewRenderer? = null
+    private var dataChannel: DataChannel? = null
+
+    val TAG = "DataChannel"
 
 
     fun login(userid : String, isDone : (Boolean, String?) -> Unit) {
@@ -110,15 +115,49 @@ class MainRepository @Inject constructor(
             override fun onConnectionChange(newState: PeerConnection.PeerConnectionState?) {
                 super.onConnectionChange(newState)
                 if(newState == PeerConnection.PeerConnectionState.CONNECTED) {
+                    Log.d(TAG, "PeerConnection CONNECTED")
                     // 1. change my status to in call
                     changeMyStatus(UserStatus.IN_CALL)
                     // 2. clear latest event inside my user section in firebase database
                     firebaseClient.clearLatestEvent()
+
+                    // 3. data channel 뚫기
+//                    initDataChannel()
+                }
+            }
+
+            override fun onDataChannel(p0: DataChannel?) {
+                super.onDataChannel(p0)
+                Log.d(TAG, "Peer data channel 감지")
+
+                p0?.let {
+                    dataChannel = it
+                    Log.d(TAG, "register observer 등록")
+                    val message = "Hello from Educator-APP!"
+//                    it.registerObserver(object: DataChannel.Observer{
+//                        override fun onBufferedAmountChange(p0: Long) {
+//
+//                        }
+//
+//                        override fun onStateChange() {
+//                            Log.d(TAG, "datachannel state changed to ${it.state()}")
+////                            it.send(DataChannel.Buffer(ByteBuffer.wrap(message.toByteArray()), false))
+//                        }
+//
+//                        override fun onMessage(p0: DataChannel.Buffer?) {
+//                            Log.d(TAG, p0?.data.toString())
+//                        }
+//
+//                    })
                 }
             }
         })
 
     }
+
+//    fun initDataChannel() {
+//        webRTCClient.initDataChannel()
+//    }
 
     // firebase에서의 상태를 업데이트
     private fun changeMyStatus(status : UserStatus) {

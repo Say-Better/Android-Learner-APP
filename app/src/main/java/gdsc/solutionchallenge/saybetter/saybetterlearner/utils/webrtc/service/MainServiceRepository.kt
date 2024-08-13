@@ -47,5 +47,4 @@ class MainServiceRepository @Inject constructor(
         intent.action = MainServiceActions.SWITCH_CAMERA.name
         startServiceIntent(intent)
     }
-
 }

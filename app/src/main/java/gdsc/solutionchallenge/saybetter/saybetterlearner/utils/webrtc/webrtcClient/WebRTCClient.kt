@@ -1,6 +1,7 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient
 //
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import com.google.gson.Gson
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
@@ -8,6 +9,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataMo
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer
+import org.webrtc.DataChannel
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.DefaultVideoEncoderFactory
 import org.webrtc.EglBase
@@ -22,6 +24,7 @@ import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoTrack
 import java.lang.IllegalStateException
+import java.nio.ByteBuffer
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,15 +36,30 @@ class WebRTCClient @Inject constructor(
     // class variables
     var listener: Listener? = null
     private lateinit var userid: String
+    val TAG = "DataChannel"
 
     // webrtc variables
     private val eglBaseContext = EglBase.create().eglBaseContext
     private val peerConnectionFactory by lazy { createPeerConnectionFactory() }
     private var peerConnection: PeerConnection? = null
-    private val iceServer = listOf(
+    private val iceServers = listOf(
+        PeerConnection.IceServer.builder("stun:stun.relay.metered.ca:80").createIceServer(),
+        PeerConnection.IceServer.builder("turn:global.relay.metered.ca:80")
+            .setUsername("3034a2e47ead957a5246ff2d")
+            .setPassword("zAyeHrbfgXr6T/sr")
+            .createIceServer(),
+        PeerConnection.IceServer.builder("turn:global.relay.metered.ca:80?transport=tcp")
+            .setUsername("3034a2e47ead957a5246ff2d")
+            .setPassword("zAyeHrbfgXr6T/sr")
+            .createIceServer(),
+        PeerConnection.IceServer.builder("turn:global.relay.metered.ca:443")
+            .setUsername("3034a2e47ead957a5246ff2d")
+            .setPassword("zAyeHrbfgXr6T/sr")
+            .createIceServer(),
         PeerConnection.IceServer.builder("turns:global.relay.metered.ca:443?transport=tcp")
             .setUsername("3034a2e47ead957a5246ff2d")
-            .setPassword("zAyeHrbfgXr6T/sr").createIceServer()
+            .setPassword("zAyeHrbfgXr6T/sr")
+            .createIceServer()
     )
     private val localVideoSource by lazy { peerConnectionFactory.createVideoSource(false) }
     private val localAudioSource by lazy { peerConnectionFactory.createAudioSource(MediaConstraints()) }
@@ -50,7 +68,9 @@ class WebRTCClient @Inject constructor(
     private val mediaConstraint = MediaConstraints().apply {
         mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))
         mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
+        mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))
     }
+    private var dataChannel: DataChannel? = null
 
     // call variables
     private lateinit var localSurfaceView : SurfaceViewRenderer
@@ -92,9 +112,24 @@ class WebRTCClient @Inject constructor(
         localTrackId = "${userid}_track"
         localStreamId = "${userid}_stream"
         peerConnection = createPeerConnection(observer)
+        dataChannel = peerConnection?.createDataChannel("HelloChannel", DataChannel.Init())
+        dataChannel?.registerObserver(object : DataChannel.Observer {
+            override fun onBufferedAmountChange(p0: Long) {
+
+            }
+
+            override fun onStateChange() {
+                Log.d(TAG, "datachannel state changed to ${dataChannel!!.state()}")
+            }
+
+            override fun onMessage(p0: DataChannel.Buffer?) {
+                Log.d(TAG, p0?.data.toString())
+            }
+
+        })
     }
     private fun createPeerConnection(observer: PeerConnection.Observer): PeerConnection? {
-        return peerConnectionFactory.createPeerConnection(iceServer, observer)
+        return peerConnectionFactory.createPeerConnection(iceServers, observer)
     }
 
     // negotiation section
@@ -189,6 +224,34 @@ class WebRTCClient @Inject constructor(
             startCapturingCamera(localSurfaceView)
         }
     }
+
+//    fun initDataChannel(
+//    ) {
+//        try {
+//            dataChannel = peerConnection?.createDataChannel("HelloChannel", DataChannel.Init())
+//            dataChannel?.let {
+//                val message = "Hello from Learner-APP!"
+//                it.registerObserver(object: DataChannel.Observer{
+//                    override fun onBufferedAmountChange(p0: Long) {
+//
+//                    }
+//
+//                    override fun onStateChange() {
+//                        Log.d("DataChannel", "datachannel state changed to ${it.state()}")
+//                        it.send(DataChannel.Buffer(ByteBuffer.wrap(message.toByteArray()), false))
+//                    }
+//
+//                    override fun onMessage(p0: DataChannel.Buffer?) {
+//                        Log.d("DataChannel", p0?.data.toString())
+//                    }
+//
+//                })
+//            }
+//        } catch (e: Exception) {
+//            Log.d("DataChannel", "DataChannel Create Failed")
+//        }
+//
+//    }
 
     // streaming section
     private fun initSurfaceView(view : SurfaceViewRenderer) {

@@ -315,13 +315,13 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                     if (isCameraOn) {
                         LocalVideoRenderer(
                             modifier = Modifier
+//                                .size(width = 622.dp, height = 370.dp)
                                 .weight(1f)
                         )
                     }else {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),
                             contentDescription = null,
                             modifier = Modifier
-                                .weight(1f)
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
@@ -329,13 +329,14 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                     if (isCameraOn) {
                         RemoteVideoRenderer(
                             modifier = Modifier
+//                                .padding(start = 12.dp)
+//                                .size(width = 622.dp, height = 370.dp)
                                 .weight(1f)
                         )
                     }else {
                         Image(painter = painterResource(id = R.drawable.rectangle_1638),
                             contentDescription = null,
                             modifier = Modifier
-                                .weight(1f)
                         )
                     }
                 }

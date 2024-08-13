@@ -68,7 +68,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     )
 
     private var userid : String? = null
-    private val testUser: String = "helloYI"
+    private val testUser: String = "testUser1"
     private var currentReceivedModel: DataModel? = null
     val TAG : String = "ServiceDebug"
 
