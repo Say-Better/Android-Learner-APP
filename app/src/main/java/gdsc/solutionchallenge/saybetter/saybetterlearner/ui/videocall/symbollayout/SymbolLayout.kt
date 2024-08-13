@@ -1,4 +1,4 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.symbollayout
+package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.symbollayout
 
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorder
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
@@ -36,8 +37,8 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.Custo
 fun Symbol(
     modifier: Modifier,
     isSelected: Boolean,
-    onSymbolClick: () -> Unit,
-    context: Context
+    symbol: Symbol,
+    onSymbolClick: () -> Unit
 ) {
     val borderColor = if (isSelected) HighlightBorder else SubGrey
     val textColor = if (isSelected) HighlightBorder else White
@@ -61,7 +62,7 @@ fun Symbol(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.symbol_big),
+                painter = painterResource(id = symbol.img),
                 contentDescription = null,
                 modifier = Modifier
                     .size(boxSize)
@@ -73,7 +74,7 @@ fun Symbol(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    text = "~로 가요",
+                    text = symbol.title,
                     fontSize = fontSize.sp,
                     color = textColor,
                     fontWeight = FontWeight.W600

@@ -84,7 +84,7 @@ class LoginActivity: ComponentActivity(), AuthView {
                         Log.d("login", "로그인 실패, $reason")
                     } else {
                         Log.d("login", "로그인 성공")
-                        googleSignInHelper.signIn()
+                        authService.postCommonLogin(AuthCommonRequest("", "kodari385@gachon.ac.kr", ""))
                     }
                 }
             })
