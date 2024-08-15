@@ -69,7 +69,7 @@ fun VideoCallTopbar(
                 verticalAlignment = Alignment.CenterVertically){
                 if(!isStart) {
                     Text(
-                        text = "최승아 교육자와 솔루션 진행",
+                        text = "송승아 교육자와 솔루션 진행",
                         color = Color.White,
                         fontSize = 20.sp,
                     )

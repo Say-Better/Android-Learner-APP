@@ -3,9 +3,6 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.lifecycle.ViewModelProvider
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
@@ -21,7 +18,7 @@ import javax.inject.Inject
 const val TAG = "VideoCall"
 
 @AndroidEntryPoint
-class VideoCallActivity : ComponentActivity(), TTSListener {
+class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener {
 
     private lateinit var ttsManager: TTSManager
 
@@ -105,6 +102,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
 
         //초기화
         videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolSet.size, symbolSet)
+        MainService.endCallListener = this
+
     }
 
     private fun saveClickLog(symbol : Symbol?) {
@@ -122,5 +121,19 @@ class VideoCallActivity : ComponentActivity(), TTSListener {
     }
 
     override fun updateIndex(start: Int, end: Int) {
+
+    }
+
+    override fun onCallEnded() {
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MainService.remoteSurfaceView?.release()
+        MainService.remoteSurfaceView = null
+
+        MainService.localSurfaceView?.release()
+        MainService.localSurfaceView = null
     }
 }

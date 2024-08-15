@@ -93,16 +93,20 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
                     startActivity(intent)
                 },
                 onClickSetting = {
-                    intent = Intent(this@MenuActivity, SettingActivity::class.java)
-                    startActivity(intent)
-                },
+                        intent = Intent(this@MenuActivity, SettingActivity::class.java)
+                        startActivity(intent)
+                                 },
                 onClickLevel = {
                     intent = Intent(this@MenuActivity, InfoActivity::class.java)
                     startActivity(intent)
-                }
-            )
+                })
         }
+    }
 
+    // 화상통화가 종료되었을 때 dialog가 뜨는 것을 방지
+    override fun onResume() {
+        super.onResume()
+        resetDialogState(customAlertDialogState)
     }
 
     private fun init(){
@@ -131,15 +135,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     override fun onCallReceived(model: DataModel) {
         Log.d("MainService", "call receive by ${model.sender}")
         this.currentReceivedModel = model
-//        count += 1
-//        if(count >= 2) {
-//            customAlertDialogState.value = TestDialogState(
-//                isClick = true,
-//                onClickCancel = {},
-//                onClickSure = {}
-//            )
-//            count -= 1
-//        }
+
         customAlertDialogState.value = TestDialogState(
             isClick = true,
             onClickCancel = {},
@@ -150,7 +146,6 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     fun resetDialogState(state: MutableState<TestDialogState>) {
         state.value = TestDialogState()
     }
-
 }
 
 

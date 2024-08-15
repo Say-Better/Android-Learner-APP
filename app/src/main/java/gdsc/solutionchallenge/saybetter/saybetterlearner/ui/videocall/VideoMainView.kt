@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,10 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 
@@ -41,10 +44,21 @@ fun ReadyMainView(
             .background(Transparent, RoundedCornerShape(0.dp)),
             verticalAlignment = Alignment.CenterVertically){
             if (isCameraOn) {
-                LocalVideoRenderer(
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .weight(1f)
-                )
+                        .size(width = 622.dp, height = 370.dp)
+                        .background(
+                            color = DarkGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    LocalVideoRenderer(
+                        modifier = Modifier
+                            .size(width = 622.dp, height = 370.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
             }else {
                 Image(painter = painterResource(id = R.drawable.rectangle_1638),
                     contentDescription = null,
@@ -55,10 +69,22 @@ fun ReadyMainView(
             Spacer(modifier = Modifier.width(10.dp))
 
             if (isCameraOn) {
-                RemoteVideoRenderer(
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .weight(1f)
-                )
+                        .padding(start = 12.dp)
+                        .size(width = 622.dp, height = 370.dp)
+                        .background(
+                            color = DarkGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    RemoteVideoRenderer(
+                        modifier = Modifier
+                            .size(width = 622.dp, height = 370.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
             }else {
                 Image(painter = painterResource(id = R.drawable.rectangle_1638),
                     contentDescription = null,
