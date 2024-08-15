@@ -1,4 +1,4 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.symbollayout
+package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 
 import android.content.Context
 import androidx.compose.foundation.Image

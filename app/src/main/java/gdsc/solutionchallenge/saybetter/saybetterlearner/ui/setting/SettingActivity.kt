@@ -80,7 +80,11 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
             Surface {
                 Row(Modifier.fillMaxSize()) {
                     NaviMenu(mode = 3)
-                    SettingScreen(memberInfo)
+                    SettingView(
+                        memberInfo = memberInfo,
+                        onClickGenCode = {
+                            memberService.getMemberCode(getSharedPreferences("Member", Context.MODE_PRIVATE).getString("Jwt", "")!!)
+                        })
                 }
                 if (customAlertDialogState.value.code.isNotEmpty()) {
                     LearnerCodeDialog().LearnerCodeDialogScreen(
@@ -98,112 +102,8 @@ class SettingActivity: ComponentActivity(), MemberCodeView, MemberGetView {
         }
     }
 
-    @Composable
-    fun SettingScreen(memberInfo : MutableState<MemberGetResponse>) {
-        Column (modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp)){
-            Text(text = "프로필",
-                fontWeight = FontWeight.W500,
-                fontSize = 20.sp,)
-            Spacer(modifier = Modifier.height(20.dp))
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .background(BoxBackground, shape = RoundedCornerShape(10.dp))
-                .padding(10.dp)) {
-                Row (modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically){
-                    Box(
-                        modifier = Modifier
-                            .size(140.dp)
-                            .clip(RoundedCornerShape(16.dp)) // 원하는 둥근 정도로 설정
-                    ) {
-                        Image(painter = rememberAsyncImagePainter(memberInfo.value.imgUrl),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.matchParentSize())
-                    }
-                    Column (modifier = Modifier.padding(10.dp)){
-                        Text(text = "이름",
-                            color = SubGrey,
-                            fontSize = 14.sp)
-
-                        Text(text = memberInfo.value.name,
-                            color = Black,
-                            fontWeight = FontWeight.W700,
-                            fontSize = 19.sp)
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Text(text = "나이/성별",
-                            color = SubGrey,
-                            fontSize = 14.sp)
-
-                        Text(text = "${memberInfo.value.age} 세/" + if(memberInfo.value.gender == "MALE") "남자" else "여성",
-                            color = Black,
-                            fontWeight = FontWeight.W700,
-                            fontSize = 19.sp)
-                    }
-                }
-
-                Box(modifier = Modifier
-                    .padding(10.dp)
-                    .align(Alignment.TopEnd)
-                    .background(White, shape = RoundedCornerShape(30.dp))
-                    .height(40.dp)
-                    .width(160.dp)
-                    .border(1.dp, SubGrey, RoundedCornerShape(30.dp))) {
-                    Row (modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center){
-                        Image(painter = painterResource(id = R.drawable.icon_settings),
-                            contentDescription = null)
-
-                        Text(text = "프로필 설정",
-                            fontSize = 20.sp)
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "학습자 등록 코드 발급",
-                fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "학습자 등록 코드는 교육자가 학습자를 등록하기 위해 꼭 필요해요! 코드는 발급 시 3분간 사용이 가능합니다.",
-                color = SubGrey)
-
-            Spacer(modifier = Modifier.height(10.dp))
-            Box(modifier = Modifier
-                .background(MainGreen, shape = RoundedCornerShape(30.dp))
-                .height(50.dp)
-                .width(120.dp)
-                .clickable {
-                    memberService.getMemberCode(getSharedPreferences("Member", Context.MODE_PRIVATE).getString("Jwt", "")!!)
-                }) {
-                Row (modifier = Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center){
-                    Text(text = "발급받기",
-                        fontSize = 20.sp,
-                        color = White)
-                }
-            }
-        }
-    }
-
-
     private fun resetDialogState(state: MutableState<CustomAlertDialogState>) {
         state.value = CustomAlertDialogState()
-    }
-
-    @Preview(widthDp = 1280, heightDp = 800)
-    @Composable
-    fun SettingPreview() {
-        Surface {
-            Row(Modifier.fillMaxSize()) {
-                NaviMenu(mode = 3)
-                //SettingScreen()
-            }
-        }
     }
     private fun copyToClipboard(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

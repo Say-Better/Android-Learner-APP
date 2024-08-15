@@ -27,7 +27,7 @@ class InfoViewModel:ViewModel() {
     val customAlertDialogState: StateFlow<CustomAlertDialogState> = _customAlertDialogState
 
 
-    private val _mode = MutableStateFlow(1)
+    private val _mode = MutableStateFlow(0)
     val mode: StateFlow<Int> = _mode
 
     fun setMode(mode: Int) {
