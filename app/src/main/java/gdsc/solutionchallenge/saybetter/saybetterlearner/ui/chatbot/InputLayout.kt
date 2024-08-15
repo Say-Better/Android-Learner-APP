@@ -1,6 +1,12 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.chatbotinputlayout
+package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot
 
 import HangulAutomaton
+import android.content.Context
+import android.os.Build
+import android.os.CombinedVibration
+import android.os.VibrationEffect
+import android.os.Vibrator
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,34 +36,45 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun ChatInput(onClickTransmit:(String)->Unit) {
+fun ChatInput(
+    context : Context,
+    onClickTransmit:(String)->Unit) {
     var inputMode by remember { mutableStateOf(false) }
     var inputText by remember { mutableStateOf("") }
     val hangul = remember { HangulAutomaton() }
 
+    val vibrator = ContextCompat.getSystemService(context, Vibrator::class.java) as Vibrator
+    val vibrationEffect = VibrationEffect.createOneShot(100L, VibrationEffect.DEFAULT_AMPLITUDE)
+
     val onCharacterClick: (Char) -> Unit = { char ->
         hangul.commit(char)
         inputText = hangul.content
+        vibrator.vibrate(vibrationEffect)
     }
 
     val onBackClick: () -> Unit = {
         hangul.delete()
         inputText = hangul.content
+        vibrator.vibrate(vibrationEffect)
     }
 
     val onSpaceClick: () -> Unit = {
         hangul.commitSpace()
         inputText = hangul.content
+        vibrator.vibrate(vibrationEffect)
     }
     val SymbolClick: (String) -> Unit = { input->
         hangul.content += (" " + input)
         inputText += (" " + input)
+        vibrator.vibrate(vibrationEffect)
     }
 
     Canvas(

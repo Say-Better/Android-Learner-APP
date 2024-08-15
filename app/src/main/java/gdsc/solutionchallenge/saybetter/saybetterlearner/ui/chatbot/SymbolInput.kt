@@ -1,4 +1,4 @@
-package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot.chatbotinputlayout
+package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.chatbot
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

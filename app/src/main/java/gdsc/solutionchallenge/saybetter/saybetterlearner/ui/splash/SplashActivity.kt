@@ -38,14 +38,14 @@ class SplashActivity : ComponentActivity() {
         }
 
         setContent {
-            Splash()
+            SplashView()
         }
     }
 }
 
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
-fun Splash(){
+fun SplashView(){
     Surface(color = Color.White,
         modifier = Modifier.fillMaxSize()
     ) {
