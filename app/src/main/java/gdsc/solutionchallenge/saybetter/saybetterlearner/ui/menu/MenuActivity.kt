@@ -3,6 +3,7 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.menu
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -69,7 +70,8 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
 
     private var userId: String? = null
     private val testUser: String = "testUser1"
-    private var currentReceivedModel: DataModel? = null
+//    private var currentReceivedModel: DataModel? = null
+    private var receivedModelState: MutableState<DataModel?> = mutableStateOf(null)
     private val customAlertDialogState = mutableStateOf(TestDialogState())
 
     //Hilt 종속성 주입
@@ -84,9 +86,9 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
         setContent {
             MenuView(
                 resetDialogState = {resetDialogState(customAlertDialogState)},
-                startVideoCall = {testUser, isCaller -> startVideoCall(testUser, isCaller) },
-                user = userId!!,
-                currentReceivedModel = currentReceivedModel,
+                startVideoCall = {targetUser, isCaller -> startVideoCall(targetUser, isCaller) },
+                targetUser = userId!!,
+                currentReceivedModel = receivedModelState,
                 customAlertDialogState = customAlertDialogState,
                 onClickChatbot = {
                     intent = Intent(this@MenuActivity, ChatBotActivity::class.java)
@@ -110,7 +112,9 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     }
 
     private fun init(){
-        userId = intent.getStringExtra("userid")!!
+        userId = intent.getStringExtra("userid")
+        if(userId == null) finish()
+
         MainService.listener = this
         startMyService()
     }
@@ -134,7 +138,7 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
     }
     override fun onCallReceived(model: DataModel) {
         Log.d("MainService", "call receive by ${model.sender}")
-        this.currentReceivedModel = model
+        receivedModelState.value = model
 
         customAlertDialogState.value = TestDialogState(
             isClick = true,
