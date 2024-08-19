@@ -29,12 +29,13 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkA
 @Composable
 fun MenuPreview() {
     val mockDialogState = remember { mutableStateOf(MenuActivity.TestDialogState()) }
+    val receivedModelState: MutableState<DataModel?> = remember{ mutableStateOf(null) }
 
     MenuView(
         resetDialogState = { mockDialogState.value = MenuActivity.TestDialogState() },
         startVideoCall = { _, _ -> },
-        user = "testUser1",
-        currentReceivedModel =null,
+        targetUser = "testUser1",
+        currentReceivedModel = receivedModelState,
         customAlertDialogState = mockDialogState,
         onClickChatbot = { /* Handle chatbot click */ },
         onClickSetting = { /* Handle setting click */ },
@@ -46,8 +47,8 @@ fun MenuPreview() {
 fun MenuView(
     resetDialogState: () -> Unit,
     startVideoCall: (String, Boolean) -> Unit,
-    user: String,
-    currentReceivedModel : DataModel?,
+    targetUser: String,
+    currentReceivedModel : MutableState<DataModel?>,
     customAlertDialogState: MutableState<MenuActivity.TestDialogState>,
     onClickChatbot: () -> Unit,
     onClickSetting: () -> Unit,
@@ -71,8 +72,9 @@ fun MenuView(
         /** 권한 요청시 동의 했을 경우 **/
         if (areGranted) {
             Log.d("test5", "권한이 동의되었습니다.")
+            Log.d("test5", currentReceivedModel.value?.sender!!)
             resetDialogState()
-            startVideoCall(user, isCaller!!)
+            startVideoCall(currentReceivedModel.value?.sender!!, isCaller!!)
         }
         /** 권한 요청시 거부 했을 경우 **/
         /** 권한 요청시 거부 했을 경우 **/
@@ -101,8 +103,9 @@ fun MenuView(
                         permissions,
                         launcherMultiplePermissions,
                         onPermissionsGranted = {    //권한이 이미 다 있을 때
+                            Log.d("MenuViewState", currentReceivedModel.toString())
                             resetDialogState()
-                            startVideoCall(currentReceivedModel?.sender!!, isCaller!!)
+                            startVideoCall(currentReceivedModel.value?.sender!!, isCaller!!)
                         }
                     )
                 },
@@ -124,7 +127,7 @@ fun MenuView(
                             permissions,
                             launcherMultiplePermissions,
                             onPermissionsGranted = {    //권한이 이미 다 있을 때
-                                startVideoCall(user, isCaller!!)
+                                startVideoCall("helloYI", isCaller!!) // 타겟이 들어가야함
                             }
                         )
                     }
