@@ -72,8 +72,9 @@ fun ChatInput(
         vibrator.vibrate(vibrationEffect)
     }
     val SymbolClick: (String) -> Unit = { input->
-        hangul.content += (" " + input)
-        inputText += (" " + input)
+        hangul.clear()
+        hangul.content += (" " + input + " ")
+        inputText += (" " + input + " ")
         vibrator.vibrate(vibrationEffect)
     }
 

@@ -99,7 +99,7 @@ open class HangulAutomaton {
                     directlyCommit()
                     cho = c
                     state = 1
-                    content = content.dropLast(1)
+//                    content = content.dropLast(1)
                     content += makeHan().toString()
                 }
             }

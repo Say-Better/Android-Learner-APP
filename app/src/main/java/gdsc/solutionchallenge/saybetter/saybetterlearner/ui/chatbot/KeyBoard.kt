@@ -40,7 +40,7 @@ fun InputKeyboard(modifier: Modifier,
     val num = listOf('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
     val list1 = listOf('ㅃ', 'ㅉ', 'ㄸ', 'ㄲ' ,'ㅆ', 'ㅒ', 'ㅖ', '~', '!', ' ')
     val list2 = listOf('ㅂ', 'ㅈ', 'ㄷ', 'ㄱ' ,'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ')
-    val list3 = listOf('ㅁ', 'ㄴ', 'ㅇ', 'ㄹ' ,'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ', ',')
+    val list3 = listOf('ㅁ', 'ㄴ', 'ㅇ', 'ㄹ' ,'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ', '?')
     val list4 = listOf(' ', 'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', '.')
 
     Column(modifier = modifier
