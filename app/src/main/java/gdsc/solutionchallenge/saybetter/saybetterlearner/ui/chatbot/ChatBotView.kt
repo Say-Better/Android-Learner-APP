@@ -58,7 +58,7 @@ fun ChatBatPreview(
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxHeight(0.45f),
+                    modifier = Modifier.weight(1f),
                     state = lazyListState
                 ) {
                     itemsIndexed(chatMessageList.value) { index, chatmessage ->
