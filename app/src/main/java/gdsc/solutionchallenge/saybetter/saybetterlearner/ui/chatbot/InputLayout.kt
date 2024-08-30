@@ -41,6 +41,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -117,11 +118,11 @@ fun ChatInput(
                     .fillMaxHeight(0.15f)
                     .background(MainBlue, shape = RoundedCornerShape(50.dp))
                     .padding(10.dp)
-                    .clickable {
-                               onClickTransmit(inputText)
+                    .clickWithScaleAnimation({
+                        onClickTransmit(inputText)
                         hangul.content = ""
                         inputText=""
-                    },
+                    }),
                 contentAlignment = Alignment.Center
             ) {
                 Row {
@@ -163,12 +164,7 @@ fun ChatInput(
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
                         .padding(bottom = 5.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            inputMode = false
-                        },
+                        .clickWithScaleAnimation({inputMode = false}),
                     contentScale = ContentScale.FillBounds
                 )
                 Image(
@@ -180,12 +176,7 @@ fun ChatInput(
                         .fillMaxHeight()
                         .fillMaxWidth()
                         .padding(top = 5.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            inputMode = true
-                        },
+                        .clickWithScaleAnimation({inputMode = true}),
                     contentScale = ContentScale.FillBounds
                 )
             }

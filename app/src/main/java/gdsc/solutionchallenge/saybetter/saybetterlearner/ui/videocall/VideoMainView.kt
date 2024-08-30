@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,13 +28,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCallViewModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.imageView.ShakingImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 
 @Composable
 fun ReadyMainView(
-    isCameraOn : Boolean) {
+    isCameraOn : Boolean,
+    videoCallViewModel: VideoCallViewModel) {
+
     Box (modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.85f),
@@ -58,13 +63,24 @@ fun ReadyMainView(
                             .size(width = 622.dp, height = 370.dp)
                             .clip(RoundedCornerShape(12.dp))
                     )
+                    ShakingImage(videoCallViewModel)    //videocallviewmodel에 greetstate로 알수있음!
                 }
             }else {
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .weight(1f)
-                )
+                        .size(width = 622.dp, height = 370.dp)
+                        .background(
+                            color = DarkGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.rectangle_1638),
+                        contentDescription = null,
+                    )
+                    ShakingImage(videoCallViewModel)
+                }
             }
             Spacer(modifier = Modifier.width(10.dp))
 

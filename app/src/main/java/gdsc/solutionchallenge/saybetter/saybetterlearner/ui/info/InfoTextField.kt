@@ -31,6 +31,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.InfoVie
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray500
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialogState
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun InfoNameTextField(viewModel: InfoViewModel) {
@@ -89,9 +90,9 @@ fun InfoBirthTextField(viewModel: InfoViewModel) {
                 .border(1.dp, Gray500, RoundedCornerShape(20.dp))
                 .width(580.dp)
                 .height(70.dp)
-                .clickable {
-                    viewModel.setCustomAlertDialogState(CustomAlertDialogState(code = "open"))
-                },
+                .clickWithScaleAnimation(
+                    {viewModel.setCustomAlertDialogState(CustomAlertDialogState(code = "open"))}
+                ),
             contentAlignment = Alignment.CenterStart
         ){
             Text(text = birthday,

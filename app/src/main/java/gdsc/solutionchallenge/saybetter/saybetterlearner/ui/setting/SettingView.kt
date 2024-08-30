@@ -40,6 +40,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
@@ -134,9 +135,7 @@ fun SettingView(
             .background(MainGreen, shape = RoundedCornerShape(30.dp))
             .height(50.dp)
             .width(120.dp)
-            .clickable {
-                onClickGenCode()
-            }) {
+            .clickWithScaleAnimation(onClickGenCode)) {
             Row (modifier = Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center){

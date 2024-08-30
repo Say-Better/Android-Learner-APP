@@ -35,6 +35,13 @@ class VideoCallViewModel:ViewModel() {
     private val _iconState = MutableStateFlow(false)
     val iconState: StateFlow<Boolean> = _iconState
 
+    private val _greetState = MutableStateFlow(false)
+    val greetState : StateFlow<Boolean> = _greetState
+
+    fun setGreetState(value: Boolean) {
+        _greetState.value = value
+    }
+
     fun setIconState(value: Boolean) {
         _iconState.value = value
     }

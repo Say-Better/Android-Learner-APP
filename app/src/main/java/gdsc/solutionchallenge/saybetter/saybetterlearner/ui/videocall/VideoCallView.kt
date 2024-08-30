@@ -76,7 +76,8 @@ fun VideoCallView(
                 commOptTimes = commOptTimes
             )
             if (!isStart) {
-                ReadyMainView(isCameraOn = isCameraOn)
+                ReadyMainView(isCameraOn = isCameraOn,
+                    videoCallViewModel = videoCallViewModel)
                 ReadyBottomMenuBar(
                     micClick = {},
                     cameraClick = {
@@ -89,7 +90,10 @@ fun VideoCallView(
                         else
                             CameraSelector.DEFAULT_BACK_CAMERA
                     },
-                    greetClick = {isStart = true})
+                    greetClick = {
+                        videoCallViewModel.setGreetState(true)
+                        //isStart = true
+                    })
             }else {
                 StartMainView(
                     symbolSet = symbolSet,

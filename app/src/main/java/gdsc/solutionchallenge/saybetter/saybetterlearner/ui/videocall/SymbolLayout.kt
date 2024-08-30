@@ -31,6 +31,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.HighlightBorde
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 
 @Composable
@@ -47,12 +48,7 @@ fun Symbol(
         modifier = modifier
             .background(DarkGray, RoundedCornerShape(10.dp))
             .border(1.dp, borderColor, RoundedCornerShape(10.dp))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = CustomClickEvent
-            ) {
-                onSymbolClick()
-            },
+            .clickWithScaleAnimation(onSymbolClick),
         contentAlignment = Alignment.Center
     ) {
         val boxSize = maxHeight * 0.9f // 최대 너비를 기준으로 크기 조정

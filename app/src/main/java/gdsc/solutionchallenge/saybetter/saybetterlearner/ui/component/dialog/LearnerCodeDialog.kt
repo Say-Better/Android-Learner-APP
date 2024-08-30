@@ -35,6 +35,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 import kotlinx.coroutines.delay
 
 class LearnerCodeDialog {
@@ -96,9 +97,7 @@ class LearnerCodeDialog {
                             contentDescription = null,
                             Modifier
                                 .size(48.dp)
-                                .clickable {
-                                    onClickCancel()
-                                }
+                                .clickWithScaleAnimation(onClickCancel)
                         )
                     }
                     Spacer(modifier = Modifier.height(30.dp))
@@ -111,9 +110,8 @@ class LearnerCodeDialog {
                             color = Black)
                         Spacer(modifier = Modifier.width(10.dp))
                         Row (verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                onClickCopy(code)
-                            }){
+                            modifier = Modifier
+                                .clickWithScaleAnimation({ onClickCopy(code) })){
                             Image(painter = painterResource(id = R.drawable.ic_copy),
                                 contentDescription = null)
                             Text(text = "복사하기",
@@ -137,10 +135,10 @@ class LearnerCodeDialog {
                         .fillMaxWidth()
                         .background(BoxBackground, RoundedCornerShape(8.dp))
                         .height(60.dp)
-                        .clickable {
+                        .clickWithScaleAnimation({
                             onClickRequest()
                             sec.intValue = 180
-                        },
+                        }),
                         contentAlignment = Alignment.Center) {
                         Text(text = "코드 다시 요청하기")
                     }

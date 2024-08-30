@@ -30,6 +30,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 import kotlinx.coroutines.launch
 
 @Composable
@@ -107,14 +108,13 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
             modifier = modifier
                 .background(SubGrey, RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
                 .fillMaxHeight()
-                .clickable(
-                ) {
+                .clickWithScaleAnimation({
                     scope.launch {
                         if (pagerState.currentPage > 0) {
                             pagerState.animateScrollToPage(pagerState.currentPage - 1)
                         }
                     }
-                },
+                }),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -141,14 +141,13 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
             modifier = modifier
                 .background(SubGrey, RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
                 .fillMaxHeight()
-                .clickable(
-                ) {
+                .clickWithScaleAnimation({
                     scope.launch {
                         if (pagerState.currentPage < totalPages - 1) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
                     }
-                },
+                }),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -178,9 +177,7 @@ fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPag
                 Box (modifier = Modifier
                     .background(White, RoundedCornerShape(7.dp))
                     .padding(vertical = 10.dp)
-                    .clickable {
-                        SymbolClick(pageItems[index].title)
-                    }){
+                    .clickWithScaleAnimation({SymbolClick(pageItems[index].title)})){
                     Column (Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally){
                         Image(
@@ -188,7 +185,7 @@ fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPag
                             contentDescription = null,
                             Modifier
                                 .size(100.dp)
-                                .padding(end = 10.dp)
+                                .padding()
                         )
                         Text(text = pageItems[index].title,
                             color = Black)
