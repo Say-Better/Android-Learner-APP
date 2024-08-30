@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 class InfoProfileDialog {
     @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
@@ -46,9 +47,7 @@ class InfoProfileDialog {
                     fontSize = 25.sp,
                     color = Black,
                     modifier = Modifier
-                        .clickable {
-                            onClickCamera()
-                        })
+                        .clickWithScaleAnimation(onClickCamera))
                 Canvas(
                     modifier = Modifier
                         .width(150.dp)
@@ -65,9 +64,7 @@ class InfoProfileDialog {
                     fontSize = 25.sp,
                     color = Black,
                     modifier = Modifier
-                        .clickable {
-                            onClickGallary()
-                        })
+                        .clickWithScaleAnimation(onClickGallary))
             }
         }
     }

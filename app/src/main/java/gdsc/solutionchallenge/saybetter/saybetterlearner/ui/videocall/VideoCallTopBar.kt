@@ -29,6 +29,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCa
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DeepDarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray400
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun VideoCallTopbar(
@@ -59,12 +60,7 @@ fun VideoCallTopbar(
                 contentDescription = null,
                 Modifier
                     .size(35.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = CustomClickEvent
-                    ) {
-                        clickBack()
-                    })
+                    .clickWithScaleAnimation(clickBack))
             Row (modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically){
                 if(!isStart) {
@@ -151,9 +147,7 @@ fun VideoCallTopbar(
                     contentDescription = null,
                     Modifier
                         .size(35.dp)
-                        .clickable {
-                            clickDeatil()
-                        })
+                        .clickWithScaleAnimation(clickDeatil))
             }
         }
     }

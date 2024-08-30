@@ -34,6 +34,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.GrayW40
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Red
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun ReadyBottomMenuBar(
@@ -54,13 +55,10 @@ fun ReadyBottomMenuBar(
             .background(DarkGray, RoundedCornerShape(36.dp))
             .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = CustomClickEvent
-            ) {
+            .clickWithScaleAnimation({
                 micClicked = !micClicked // 클릭 시 상태 변경
                 micClick()
-            }){
+            })){
             Row (verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center){
                 Image(painter = painterResource(id = R.drawable.ic_mic),
@@ -78,13 +76,10 @@ fun ReadyBottomMenuBar(
             .background(DarkGray, RoundedCornerShape(36.dp))
             .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = CustomClickEvent
-            ) {
+            .clickWithScaleAnimation({
                 cameraClicked = !cameraClicked
                 cameraClick()
-            }){
+            })){
             Row (verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center){
                 Image(painter = painterResource(id = R.drawable.ic_camera),
@@ -101,12 +96,8 @@ fun ReadyBottomMenuBar(
             .background(DarkGray, RoundedCornerShape(36.dp))
             .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = CustomClickEvent
-            ) {
-                reverseClick()
-            }){
+            .clickWithScaleAnimation(reverseClick)
+            ){
             Row (verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center){
                 Image(painter = painterResource(id = R.drawable.ic_camera_reverse),
@@ -123,12 +114,7 @@ fun ReadyBottomMenuBar(
         Box (modifier = Modifier
             .background(MainGreen, RoundedCornerShape(36.dp))
             .padding(horizontal = 20.dp, vertical = 12.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = CustomClickEvent
-            ) {
-                greetClick()
-            }){
+            .clickWithScaleAnimation(greetClick)){
             Row (verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center){
                 Image(painter = painterResource(id = R.drawable.ic_waving_hand),
@@ -163,13 +149,10 @@ fun StartBottomMenuBar(
                 .background(DarkGray, RoundedCornerShape(36.dp))
                 .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = CustomClickEvent
-                ) {
+                .clickWithScaleAnimation({
                     micClicked = !micClicked // 클릭 시 상태 변경
                     micClick()
-                }) {
+                })) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -193,13 +176,10 @@ fun StartBottomMenuBar(
                 .background(DarkGray, RoundedCornerShape(36.dp))
                 .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = CustomClickEvent
-                ) {
+                .clickWithScaleAnimation({
                     cameraClicked = !cameraClicked
                     cameraClick()
-                }) {
+                })) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -222,12 +202,7 @@ fun StartBottomMenuBar(
                 .background(DarkGray, RoundedCornerShape(36.dp))
                 .border(2.dp, GrayW40, RoundedCornerShape(36.dp))
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = CustomClickEvent
-                ) {
-                    reverseClick()
-                }) {
+                .clickWithScaleAnimation(reverseClick)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -253,12 +228,7 @@ fun StartBottomMenuBar(
                 Box(modifier = Modifier
                     .background(MainGreen, RoundedCornerShape(36.dp))
                     .padding(horizontal = 30.dp, vertical = 12.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = CustomClickEvent
-                    ) {
-                        reverseClick()
-                    }) {
+                    .clickWithScaleAnimation(reverseClick)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
@@ -281,12 +251,7 @@ fun StartBottomMenuBar(
                 Box(modifier = Modifier
                     .background(Red, RoundedCornerShape(36.dp))
                     .padding(horizontal = 30.dp, vertical = 12.dp)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = CustomClickEvent
-                    ) {
-                        reverseClick()
-                    }) {
+                    .clickWithScaleAnimation(reverseClick)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
