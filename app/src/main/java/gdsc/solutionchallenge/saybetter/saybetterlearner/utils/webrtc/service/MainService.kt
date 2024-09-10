@@ -14,8 +14,10 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataConverter
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.*
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
+import org.webrtc.DataChannel
 import org.webrtc.SurfaceViewRenderer
 import javax.inject.Inject
 
@@ -140,6 +142,29 @@ class MainService : Service(), MainRepository.Listener {
     override fun endCall() {
         //remote peer로부터 통화 종료 신호를 받은 경우
         endCallAndRestartRepository()
+    }
+
+    override fun onDataReceivedFromChannel(it: DataChannel.Buffer) {
+        Log.d("DataChannel", "Data Received")
+
+        // 여기서 case 나누어 처리
+        val model = DataConverter.convertToModel(it)
+        model?.let {
+            when(it.first) {
+                "TEXT" -> {
+                    Log.d("DataChannel", it.second.toString())
+                }
+
+                else -> {
+                    Log.d("DataChannel", "not text")
+                }
+            }
+        }
+    }
+
+    override fun onDataChannelReceived() {
+        //DataChannel 감지한 경우
+        Log.d("DataChannel", "Receive Data Channel")
     }
 
     //MainActivity에서 구현됨

@@ -37,6 +37,7 @@ class WebRTCClient @Inject constructor(
     var listener: Listener? = null
     private lateinit var userid: String
     val TAG = "DataChannel"
+    var receiverListener : ReceiverListener?=null
 
     // webrtc variables
     private val eglBaseContext = EglBase.create().eglBaseContext
@@ -70,7 +71,22 @@ class WebRTCClient @Inject constructor(
         mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"))
         mandatory.add(MediaConstraints.KeyValuePair("RtpDataChannels", "true"))
     }
-    private var dataChannel: DataChannel? = null
+    private val dataChannelObserver = object : DataChannel.Observer {
+        override fun onBufferedAmountChange(p0: Long) {
+
+        }
+
+        override fun onStateChange() {
+        }
+
+        override fun onMessage(p0: DataChannel.Buffer?) {
+            Log.d("DataChannel", "onMessage!! ${p0?.data.toString()}")
+            p0?.let {
+                receiverListener?.onDataReceived(it)
+            }
+        }
+
+    }
 
     // call variables
     private lateinit var localSurfaceView : SurfaceViewRenderer
@@ -112,22 +128,16 @@ class WebRTCClient @Inject constructor(
         localTrackId = "${userid}_track"
         localStreamId = "${userid}_stream"
         peerConnection = createPeerConnection(observer)
-        dataChannel = peerConnection?.createDataChannel("HelloChannel", DataChannel.Init())
-        dataChannel?.registerObserver(object : DataChannel.Observer {
-            override fun onBufferedAmountChange(p0: Long) {
 
-            }
-
-            override fun onStateChange() {
-                Log.d(TAG, "datachannel state changed to ${dataChannel!!.state()}")
-            }
-
-            override fun onMessage(p0: DataChannel.Buffer?) {
-                Log.d(TAG, p0?.data.toString())
-            }
-
-        })
+        createDataChannel()
     }
+
+    private fun createDataChannel(){
+        val initDataChannel = DataChannel.Init()
+        val dataChannel = peerConnection?.createDataChannel("dataChannelLabel",initDataChannel)
+        dataChannel?.registerObserver(dataChannelObserver)
+    }
+
     private fun createPeerConnection(observer: PeerConnection.Observer): PeerConnection? {
         return peerConnectionFactory.createPeerConnection(iceServers, observer)
     }
@@ -317,5 +327,9 @@ class WebRTCClient @Inject constructor(
 
     interface Listener {
         fun onTransferEventToSocket(data: DataModel)
+    }
+
+    interface ReceiverListener{
+        fun onDataReceived(it:DataChannel.Buffer)
     }
 }

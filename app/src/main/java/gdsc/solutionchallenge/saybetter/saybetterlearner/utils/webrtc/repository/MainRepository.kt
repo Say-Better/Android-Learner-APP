@@ -10,6 +10,8 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataMo
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModelType.IceCandidates
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModelType.Offer
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.UserStatus
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataConverter
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.FileMetaDataType
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.MyPeerObserver
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.WebRTCClient
@@ -30,7 +32,7 @@ class MainRepository @Inject constructor(
     private val firebaseClient : FirebaseClient,
     private val webRTCClient: WebRTCClient,
     private val gson : Gson
-) : WebRTCClient.Listener {
+) : WebRTCClient.Listener, WebRTCClient.ReceiverListener {
     var listener : Listener? = null
     private var target : String? = null
     private var remoteView: SurfaceViewRenderer? = null
@@ -94,6 +96,7 @@ class MainRepository @Inject constructor(
 
     fun initWebrtcClient(userid: String) {
         webRTCClient.listener = this
+        webRTCClient.receiverListener = this
         webRTCClient.initializeWebrtcClient(userid, object : MyPeerObserver() {
             override fun onAddStream(p0: MediaStream?) {
                 super.onAddStream(p0)
@@ -128,28 +131,8 @@ class MainRepository @Inject constructor(
 
             override fun onDataChannel(p0: DataChannel?) {
                 super.onDataChannel(p0)
-                Log.d(TAG, "Peer data channel 감지")
-
-                p0?.let {
-                    dataChannel = it
-                    Log.d(TAG, "register observer 등록")
-                    val message = "Hello from Educator-APP!"
-//                    it.registerObserver(object: DataChannel.Observer{
-//                        override fun onBufferedAmountChange(p0: Long) {
-//
-//                        }
-//
-//                        override fun onStateChange() {
-//                            Log.d(TAG, "datachannel state changed to ${it.state()}")
-////                            it.send(DataChannel.Buffer(ByteBuffer.wrap(message.toByteArray()), false))
-//                        }
-//
-//                        override fun onMessage(p0: DataChannel.Buffer?) {
-//                            Log.d(TAG, p0?.data.toString())
-//                        }
-//
-//                    })
-                }
+                dataChannel = p0
+                listener?.onDataChannelReceived()
             }
         })
 
@@ -180,9 +163,21 @@ class MainRepository @Inject constructor(
         this.remoteView = view
     }
 
+    fun sendTextToDataChannel(text:String){
+        sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.META_DATA_TEXT,text))
+        sendBufferToDataChannel(DataConverter.convertToBuffer(FileMetaDataType.TEXT,text))
+    }
+
+    private fun sendBufferToDataChannel(buffer: DataChannel.Buffer){
+        dataChannel?.send(buffer)
+
+    }
+
     interface Listener {
         fun onLatestEventReceived(data : DataModel)
         fun endCall()
+        fun onDataReceivedFromChannel(it: DataChannel.Buffer)
+        fun onDataChannelReceived()
     }
 
     override fun onTransferEventToSocket(data: DataModel) {
@@ -210,5 +205,10 @@ class MainRepository @Inject constructor(
 
     fun switchCamera() {
         webRTCClient.switchCamera()
+    }
+
+    override fun onDataReceived(it: DataChannel.Buffer) {
+        Log.d("DataChannel", "data receive in mainRepo")
+        listener?.onDataReceivedFromChannel(it)
     }
 }
