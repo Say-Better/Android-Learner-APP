@@ -27,7 +27,9 @@ fun VideoCallView(
     symbolSet : List<List<Symbol>>,
     ttsManager: TTSManager,
     saveClickLog:(Int, Int) -> Unit,
-    onClickBack:()->Unit) {
+    onClickBack:()->Unit,
+    greetClick: () -> Unit
+) {
 
 //    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
     var ready by remember { mutableStateOf(false) } //대기 시간
@@ -44,6 +46,8 @@ fun VideoCallView(
     val symbolRecord = videoCallViewModel.symbolRecord.collectAsState()
 
     val isStartLearning by videoCallViewModel.isStartLearning.collectAsState()
+    val greetState by videoCallViewModel.greetState.collectAsState()
+    val localGreetState by videoCallViewModel.localGreetState.collectAsState()
 
     if (isStartLearning && ready) { //솔루션 시작 + 대기 아닐시
         LaunchedEffect(Unit) {
@@ -78,7 +82,11 @@ fun VideoCallView(
                 commOptTimes = commOptTimes
             )
             if (!isStartLearning) {
-                ReadyMainView(isCameraOn = isCameraOn)
+                ReadyMainView(
+                    localGreetState = localGreetState,
+                    greetState = greetState,
+                    isCameraOn = isCameraOn
+                )
                 ReadyBottomMenuBar(
                     micClick = {},
                     cameraClick = {
@@ -91,9 +99,7 @@ fun VideoCallView(
                         else
                             CameraSelector.DEFAULT_BACK_CAMERA
                     },
-                    greetClick = {
-
-                    })
+                    greetClick = { greetClick() })
             }else {
                 StartMainView(
                     symbolSet = symbolSet,

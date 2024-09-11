@@ -156,7 +156,7 @@ class MainService : Service(), MainRepository.Listener {
             if(it.first == "TEXT") {
                 when(it.second) {
                     GREETING.name -> {
-
+                        interactionListener?.onGreeting()
                     }
                     SWITCH_TO_LEARNING.name -> {
                         Log.d("DataChannel", SWITCH_TO_LEARNING.name)

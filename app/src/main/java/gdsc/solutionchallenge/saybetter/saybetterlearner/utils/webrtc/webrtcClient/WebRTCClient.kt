@@ -235,34 +235,6 @@ class WebRTCClient @Inject constructor(
         }
     }
 
-//    fun initDataChannel(
-//    ) {
-//        try {
-//            dataChannel = peerConnection?.createDataChannel("HelloChannel", DataChannel.Init())
-//            dataChannel?.let {
-//                val message = "Hello from Learner-APP!"
-//                it.registerObserver(object: DataChannel.Observer{
-//                    override fun onBufferedAmountChange(p0: Long) {
-//
-//                    }
-//
-//                    override fun onStateChange() {
-//                        Log.d("DataChannel", "datachannel state changed to ${it.state()}")
-//                        it.send(DataChannel.Buffer(ByteBuffer.wrap(message.toByteArray()), false))
-//                    }
-//
-//                    override fun onMessage(p0: DataChannel.Buffer?) {
-//                        Log.d("DataChannel", p0?.data.toString())
-//                    }
-//
-//                })
-//            }
-//        } catch (e: Exception) {
-//            Log.d("DataChannel", "DataChannel Create Failed")
-//        }
-//
-//    }
-
     // streaming section
     private fun initSurfaceView(view : SurfaceViewRenderer) {
         view.run {

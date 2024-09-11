@@ -138,10 +138,6 @@ class MainRepository @Inject constructor(
 
     }
 
-//    fun initDataChannel() {
-//        webRTCClient.initDataChannel()
-//    }
-
     // firebase에서의 상태를 업데이트
     private fun changeMyStatus(status : UserStatus) {
         firebaseClient.changeMyStatus(status)
@@ -170,7 +166,6 @@ class MainRepository @Inject constructor(
 
     private fun sendBufferToDataChannel(buffer: DataChannel.Buffer){
         dataChannel?.send(buffer)
-
     }
 
     interface Listener {

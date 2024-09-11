@@ -14,11 +14,16 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.Ma
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceRepository
 import org.webrtc.SurfaceViewRenderer
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.GREETING
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
+import kotlinx.coroutines.CoroutineScope
 
 const val TAG = "VideoCall"
 
 @AndroidEntryPoint
-class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener, MainService.InteractionListener {
+class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener {
 
     private lateinit var ttsManager: TTSManager
 
@@ -26,6 +31,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
     private var isCaller: Boolean = true
 
     @Inject lateinit var serviceRepository: MainServiceRepository
+    @Inject lateinit var mainRepository: MainRepository
     private lateinit var videoCallViewModel: VideoCallViewModel
 
     private val items = listOf(
@@ -103,7 +109,12 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                 },
                 onClickBack = {finish()},
                 ttsManager = ttsManager,
-                symbolSet = symbolSet)
+                symbolSet = symbolSet,
+                greetClick = {
+                    videoCallViewModel.localGreeting()
+                    mainRepository.sendTextToDataChannel(GREETING.name)
+                }
+            )
         }
     }
 
@@ -126,7 +137,6 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
         //초기화
         videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolSet.size, symbolSet)
         MainService.endCallListener = this
-        MainService.interactionListener = this
     }
 
     private fun saveClickLog(symbol : Symbol?) {
@@ -158,28 +168,5 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
 
         MainService.localSurfaceView?.release()
         MainService.localSurfaceView = null
-    }
-
-    override fun onGreeting() {
-
-    }
-
-    override fun onSwitchToLearning() {
-        videoCallViewModel.setIsStartLearning(true)
-    }
-
-    override fun onSwitchToLayout1() {
-    }
-
-    override fun onSwitchToLayout2() {
-    }
-
-    override fun onSwitchToLayout4() {
-    }
-
-    override fun onSwitchToLayoutAll() {
-    }
-
-    override fun onSymbolHighlight() {
     }
 }
