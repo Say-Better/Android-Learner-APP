@@ -37,6 +37,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray5B50
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.*
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.delay
 
@@ -180,68 +181,98 @@ fun ReadyMainView(
 
 @Composable
 fun StartMainView(
-    symbolSet : List<List<Symbol>>,
-    ttsManager : TTSManager,
+    symbolSet: List<Symbol>,
+    ttsManager: TTSManager,
     commOptCnt: Int,
-    ready : Boolean,
+    ready: Boolean,
     selectedItemIndex: MutableState<Int?>,
-    cnt :Int, ) {
+    cnt: Int,
+    layoutState: String,
+    selectedSymbolList: List<Symbol>
+) {
 
     Row (modifier = Modifier
         .fillMaxHeight(0.82f)
         .padding(horizontal = 10.dp),
-        verticalAlignment = Alignment.CenterVertically){
-        if (symbolSet[cnt - commOptCnt].size <=2) {
-            symbolSet[cnt - commOptCnt].forEachIndexed{ index, item ->
-                if(ready) {
+        verticalAlignment = Alignment.CenterVertically)
+    {
+        when(layoutState) {
+            SWITCH_TO_LAYOUT_1.name -> {
+                val symbol = selectedSymbolList.getOrNull(0)
+                if(symbol != null){
                     Symbol(
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(1f),
-                        isSelected = index == selectedItemIndex.value,
-                        symbol = item,
+                        isSelected = 0 == selectedItemIndex.value,
+                        symbol = symbol,
                         onSymbolClick = {
-                            selectedItemIndex.value = index
-                            ttsManager.speak(item.title)
+                            selectedItemIndex.value = 0
+                            ttsManager.speak(symbol.title)
                         },
                     )
-                }else {
+                } else {
                     ReadySymbol(modifier = Modifier
                         .padding(8.dp)
                         .weight(1f),)
                 }
+
             }
-        }else if (symbolSet[cnt - commOptCnt].size == 4) {
-            symbolSet[cnt - commOptCnt].forEachIndexed{ index, item ->
-                if(ready) {
-                    Symbol(
-                        modifier = Modifier
+            SWITCH_TO_LAYOUT_2.name -> {
+                for (i in 0 until 2) {
+                    val symbol = selectedSymbolList.getOrNull(i)
+                    if(symbol != null){
+                        Symbol(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .weight(1f),
+                            isSelected = i == selectedItemIndex.value,
+                            symbol = symbol,
+                            onSymbolClick = {
+                                selectedItemIndex.value = i
+                                ttsManager.speak(symbol.title)
+                            },
+                        )
+                    } else {
+                        ReadySymbol(modifier = Modifier
                             .padding(8.dp)
-                            .weight(1f)
-                            .height(250.dp),
-                        isSelected = index == selectedItemIndex.value,
-                        symbol = item,
-                        onSymbolClick = {
-                            selectedItemIndex.value = index
-                            ttsManager.speak(item.title)
-                        },
-                    )
-                }else {
-                    ReadySymbol(modifier = Modifier
-                        .padding(8.dp)
-                        .weight(1f)
-                        .height(250.dp),)
+                            .weight(1f),)
+                    }
                 }
             }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(5), // 한 행에 4개의 아이템을 배치
-                horizontalArrangement = Arrangement.Center,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                itemsIndexed(symbolSet[cnt - commOptCnt]) { index, item ->
-                    if(ready) {
+            SWITCH_TO_LAYOUT_4.name -> {
+                for (i in 0 until 4) {
+                    val symbol = selectedSymbolList.getOrNull(i)
+                    if(symbol != null){
+                        Symbol(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .weight(1f)
+                                .height(250.dp),
+                            isSelected = i == selectedItemIndex.value,
+                            symbol = symbol,
+                            onSymbolClick = {
+                                selectedItemIndex.value = i
+                                ttsManager.speak(symbol.title)
+                            },
+                        )
+                    } else {
+                        ReadySymbol(modifier = Modifier
+                            .padding(8.dp)
+                            .weight(1f)
+                            .height(250.dp)
+                        )
+                    }
+                }
+            }
+            SWITCH_TO_LAYOUT_ALL.name -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(5), // 한 행에 5개의 아이템을 배치
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    itemsIndexed(symbolSet) { index, item ->
                         Symbol(
                             modifier = Modifier
                                 .padding(8.dp)
@@ -254,14 +285,96 @@ fun StartMainView(
                                 ttsManager.speak(item.title)
                             },
                         )
-                    }else {
-                        ReadySymbol(modifier = Modifier
-                            .padding(8.dp)
-                            .weight(1f)
-                            .height(250.dp),)
                     }
                 }
             }
+            else -> {}
         }
+
+
+
+
+
+
+
+
+
+
+//        if (symbolSet[cnt - commOptCnt].size <=2) { // 1, 2 view
+//            symbolSet.forEachIndexed{ index, item ->
+//                if(ready) {
+//                    Symbol(
+//                        modifier = Modifier
+//                            .padding(8.dp)
+//                            .weight(1f),
+//                        isSelected = index == selectedItemIndex.value,
+//                        symbol = item,
+//                        onSymbolClick = {
+//                            selectedItemIndex.value = index
+//                            ttsManager.speak(item.title)
+//                        },
+//                    )
+//                }else {
+//                    ReadySymbol(modifier = Modifier
+//                        .padding(8.dp)
+//                        .weight(1f),)
+//                }
+//            }
+//        }else if (symbolSet[cnt - commOptCnt].size == 4) { // 4 view
+//            symbolSet.forEachIndexed{ index, item ->
+//                if(ready) {
+//                    Symbol(
+//                        modifier = Modifier
+//                            .padding(8.dp)
+//                            .weight(1f)
+//                            .height(250.dp),
+//                        isSelected = index == selectedItemIndex.value,
+//                        symbol = item,
+//                        onSymbolClick = {
+//                            selectedItemIndex.value = index
+//                            ttsManager.speak(item.title)
+//                        },
+//                    )
+//                }else {
+//                    ReadySymbol(modifier = Modifier
+//                        .padding(8.dp)
+//                        .weight(1f)
+//                        .height(250.dp),)
+//                }
+//            }
+//        } else { // All View
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(5), // 한 행에 4개의 아이템을 배치
+//                horizontalArrangement = Arrangement.Center,
+//                verticalArrangement = Arrangement.Center,
+//                modifier = Modifier.fillMaxSize()
+//            ) {
+//                itemsIndexed(symbolSet[cnt - commOptCnt]) { index, item ->
+//                    if(ready) {
+//                        Symbol(
+//                            modifier = Modifier
+//                                .padding(8.dp)
+//                                .weight(1f)
+//                                .height(250.dp),
+//                            isSelected = index == selectedItemIndex.value,
+//                            symbol = item,
+//                            onSymbolClick = {
+//                                selectedItemIndex.value = index
+//                                ttsManager.speak(item.title)
+//                            },
+//                        )
+//                    }else {
+//                        ReadySymbol(modifier = Modifier
+//                            .padding(8.dp)
+//                            .weight(1f)
+//                            .height(250.dp),)
+//                    }
+//                }
+//            }
+//        }
+
+
+
+
     }
 }

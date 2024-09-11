@@ -34,64 +34,32 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
     @Inject lateinit var mainRepository: MainRepository
     private lateinit var videoCallViewModel: VideoCallViewModel
 
-    private val items = listOf(
-        Symbol(1,"1인분주세요", R.drawable.a1),
-        Symbol(2,"2인분주세요", R.drawable.a2),
-        Symbol(3,"3인분주세요", R.drawable.a3),
-        Symbol(4,"가르쳐주세요", R.drawable.a4),
-        Symbol(5,"간식", R.drawable.a5),
-        Symbol(6,"과자", R.drawable.a6),
-        Symbol(7,"과자주세요", R.drawable.a7),
-        Symbol(8,"그만먹을래요", R.drawable.a8),
-        Symbol(9,"배고파요", R.drawable.a9),
-        Symbol(10,"배달음식", R.drawable.a10),
-        Symbol(11,"배불러요", R.drawable.a11),
-        Symbol(12,"식혀주세요", R.drawable.a12),
-        Symbol(13,"양념치킨", R.drawable.a13),
-        Symbol(14,"양념해주세요", R.drawable.a14),
-        Symbol(15,"어떤 음식 좋아해요", R.drawable.a15),
-        Symbol(16,"오늘의 음식은 무엇인가요", R.drawable.a16),
-        Symbol(17,"음식", R.drawable.a17),
-        Symbol(18,"음식값이 싸요", R.drawable.a18),
-        Symbol(19,"이거 먹을래요", R.drawable.a19),
-        Symbol(20,"잘라주세요", R.drawable.a20),
-        Symbol(21,"정리해주세요", R.drawable.a21),
-        Symbol(22,"집에서 먹을래요", R.drawable.a22),
-        Symbol(23,"치킨", R.drawable.a23),
-        Symbol(24,"치킨 시켜주세요", R.drawable.a24),
-        Symbol(25,"피자", R.drawable.a25),
-        Symbol(26,"가요", R.drawable.e1),
-        Symbol(27,"감격하다", R.drawable.e2),
-        Symbol(28,"놀라다", R.drawable.e3),
-        Symbol(29,"따분하다", R.drawable.e4),
-        Symbol(30,"떨리다", R.drawable.e5),
-        Symbol(31,"미안하다", R.drawable.e6),
-        Symbol(32,"민망하다", R.drawable.e7),
-        Symbol(33,"반가워요", R.drawable.e8),
-        Symbol(34,"밥", R.drawable.e9),
-        Symbol(35,"배고파요", R.drawable.e10),
-        Symbol(36,"부끄러워요", R.drawable.e11),
-        Symbol(37,"부담스럽다", R.drawable.e12),
-        Symbol(38,"부럽다", R.drawable.e13),
-        Symbol(39,"뿌듯하다", R.drawable.e14),
-        Symbol(40,"상처받다", R.drawable.e15),
-        Symbol(41,"속상해요", R.drawable.e16),
-        Symbol(42,"시작", R.drawable.e17),
-        Symbol(43,"신나요", R.drawable.e18),
-        Symbol(44,"어리둥절하다", R.drawable.e19),
-        Symbol(45,"우울해요", R.drawable.e20),
-        Symbol(46,"자랑스럽다", R.drawable.e21),
-        Symbol(47,"짜증나다", R.drawable.e22),
-        Symbol(48,"화나요", R.drawable.e23),
-        Symbol(49,"흥미롭다", R.drawable.e24)
+    private val symbolList = listOf(
+        Symbol(0,"가요", R.drawable.e1),
+        Symbol(1,"감격하다", R.drawable.e2),
+        Symbol(2,"놀라다", R.drawable.e3),
+        Symbol(4,"따분하다", R.drawable.e4),
+        Symbol(5,"떨리다", R.drawable.e5),
+        Symbol(6,"미안하다", R.drawable.e6),
+        Symbol(7,"민망하다", R.drawable.e7),
+        Symbol(8,"반가워요", R.drawable.e8),
+        Symbol(9,"밥", R.drawable.e9),
+        Symbol(10,"배고파요", R.drawable.e10),
+        Symbol(11,"부끄러워요", R.drawable.e11),
+        Symbol(12,"부담스럽다", R.drawable.e12),
+        Symbol(13,"부럽다", R.drawable.e13),
+        Symbol(14,"뿌듯하다", R.drawable.e14),
+        Symbol(15,"상처받다", R.drawable.e15),
+        Symbol(16,"속상해요", R.drawable.e16),
+        Symbol(17,"시작", R.drawable.e17),
+        Symbol(18,"신나요", R.drawable.e18),
+        Symbol(19,"어리둥절하다", R.drawable.e19),
+        Symbol(20,"우울해요", R.drawable.e20),
+        Symbol(21,"자랑스럽다", R.drawable.e21),
+        Symbol(22,"짜증나다", R.drawable.e22),
+        Symbol(23,"화나요", R.drawable.e23),
+        Symbol(24,"흥미롭다", R.drawable.e24)
     )  // 임시로 10개의 아이템을 생성
-
-    private val symbolSet : List<List<Symbol>> = listOf(
-        listOf(items[0]),
-        listOf(items[1], items[2]),
-        listOf(items[3],items[4],items[5],items[6]),
-        listOf(items[7],items[8],items[9],items[10],items[11],items[12],items[13],items[14],items[15],items[16],)
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,16 +68,14 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
 
         videoCallViewModel =  ViewModelProvider(this).get(VideoCallViewModel::class.java)
 
+
         init()
         setContent {
             VideoCallView(
                 videoCallViewModel = videoCallViewModel,
-                saveClickLog = {col, index ->
-                    saveClickLog(symbolSet[col].getOrNull(index))
-                },
                 onClickBack = {finish()},
                 ttsManager = ttsManager,
-                symbolSet = symbolSet,
+                symbolSet = symbolList,
                 greetClick = {
                     videoCallViewModel.localGreeting()
                     mainRepository.sendTextToDataChannel(GREETING.name)
@@ -135,7 +101,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
         serviceRepository.setupViews(isCaller, target!!)
 
         //초기화
-        videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolSet.size, symbolSet)
+        videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolList.size, symbolList)
         MainService.endCallListener = this
     }
 

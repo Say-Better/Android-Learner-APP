@@ -163,16 +163,16 @@ class MainService : Service(), MainRepository.Listener {
                         interactionListener?.onSwitchToLearning()
                     }
                     SWITCH_TO_LAYOUT_1.name -> {
-
+                        interactionListener?.onSwitchToLayout1()
                     }
                     SWITCH_TO_LAYOUT_2.name -> {
-
+                        interactionListener?.onSwitchToLayout2()
                     }
                     SWITCH_TO_LAYOUT_4.name -> {
-
+                        interactionListener?.onSwitchToLayout4()
                     }
                     SWITCH_TO_LAYOUT_ALL.name -> {
-
+                        interactionListener?.onSwitchToLayoutAll()
                     }
                     SYMBOL_HIGHLIGHT.name -> {
 

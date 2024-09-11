@@ -24,11 +24,10 @@ import kotlinx.coroutines.delay
 @Composable
 fun VideoCallView(
     videoCallViewModel: VideoCallViewModel,
-    symbolSet : List<List<Symbol>>,
+    symbolSet : List<Symbol>,
     ttsManager: TTSManager,
-    saveClickLog:(Int, Int) -> Unit,
     onClickBack:()->Unit,
-    greetClick: () -> Unit
+    greetClick: () -> Unit,
 ) {
 
 //    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
@@ -48,6 +47,8 @@ fun VideoCallView(
     val isStartLearning by videoCallViewModel.isStartLearning.collectAsState()
     val greetState by videoCallViewModel.greetState.collectAsState()
     val localGreetState by videoCallViewModel.localGreetState.collectAsState()
+    val selectedSymbolList by videoCallViewModel.selectedSymbolList.collectAsState()
+    val layoutState by videoCallViewModel.layoutState.collectAsState()
 
     if (isStartLearning && ready) { //솔루션 시작 + 대기 아닐시
         LaunchedEffect(Unit) {
@@ -62,8 +63,8 @@ fun VideoCallView(
                 Log.d("clickLog", symbolRecord.toString())
             }
             ready = false
-            val selectedIndex = selectedItemIndex.value// 클릭 로그 저장
-            saveClickLog(cnt.value - commOptCnt, selectedIndex!!)
+//            val selectedIndex = selectedItemIndex.value// 클릭 로그 저장
+//            saveClickLog(cnt.value - commOptCnt, selectedIndex!!)
             selectedItemIndex.value = null
         }
     }
@@ -107,7 +108,10 @@ fun VideoCallView(
                     commOptCnt = commOptCnt,
                     ready = ready,
                     selectedItemIndex = selectedItemIndex,
-                    cnt = cnt.value)
+                    selectedSymbolList = selectedSymbolList,
+                    cnt = cnt.value,
+                    layoutState = layoutState
+                    )
                 StartBottomMenuBar(
                     micClick = {},
                     cameraClick = {
