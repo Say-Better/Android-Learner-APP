@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.core.app.NotificationCompat
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataConverter
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.*
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.*
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import org.webrtc.DataChannel
@@ -36,6 +38,7 @@ class MainService : Service(), MainRepository.Listener {
     companion object {
         var listener : CallEventListener? = null
         var endCallListener : EndCallListener? = null
+        var interactionListener : InteractionListener? = null
         var localSurfaceView : SurfaceViewRenderer? = null
         var remoteSurfaceView : SurfaceViewRenderer? = null
     }
@@ -150,14 +153,35 @@ class MainService : Service(), MainRepository.Listener {
         // 여기서 case 나누어 처리
         val model = DataConverter.convertToModel(it)
         model?.let {
-            when(it.first) {
-                "TEXT" -> {
-                    Log.d("DataChannel", it.second.toString())
-                }
+            if(it.first == "TEXT") {
+                when(it.second) {
+                    GREETING.name -> {
 
-                else -> {
-                    Log.d("DataChannel", "not text")
+                    }
+                    SWITCH_TO_LEARNING.name -> {
+                        Log.d("DataChannel", SWITCH_TO_LEARNING.name)
+                        interactionListener?.onSwitchToLearning()
+                    }
+                    SWITCH_TO_LAYOUT_1.name -> {
+
+                    }
+                    SWITCH_TO_LAYOUT_2.name -> {
+
+                    }
+                    SWITCH_TO_LAYOUT_4.name -> {
+
+                    }
+                    SWITCH_TO_LAYOUT_ALL.name -> {
+
+                    }
+                    SYMBOL_HIGHLIGHT.name -> {
+
+                    }
+
+                    else -> {}
                 }
+            } else {
+                Toast.makeText(this, "received data is wrong", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -174,6 +198,16 @@ class MainService : Service(), MainRepository.Listener {
 
     interface EndCallListener {
         fun onCallEnded()
+    }
+
+    interface InteractionListener {
+        fun onGreeting()
+        fun onSwitchToLearning()
+        fun onSwitchToLayout1()
+        fun onSwitchToLayout2()
+        fun onSwitchToLayout4()
+        fun onSwitchToLayoutAll()
+        fun onSymbolHighlight(/* symbol id send */)
     }
 
 

@@ -18,7 +18,7 @@ import javax.inject.Inject
 const val TAG = "VideoCall"
 
 @AndroidEntryPoint
-class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener {
+class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallListener, MainService.InteractionListener {
 
     private lateinit var ttsManager: TTSManager
 
@@ -126,7 +126,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
         //초기화
         videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolSet.size, symbolSet)
         MainService.endCallListener = this
-
+        MainService.interactionListener = this
     }
 
     private fun saveClickLog(symbol : Symbol?) {
@@ -158,5 +158,28 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
 
         MainService.localSurfaceView?.release()
         MainService.localSurfaceView = null
+    }
+
+    override fun onGreeting() {
+
+    }
+
+    override fun onSwitchToLearning() {
+        videoCallViewModel.setIsStartLearning(true)
+    }
+
+    override fun onSwitchToLayout1() {
+    }
+
+    override fun onSwitchToLayout2() {
+    }
+
+    override fun onSwitchToLayout4() {
+    }
+
+    override fun onSwitchToLayoutAll() {
+    }
+
+    override fun onSymbolHighlight() {
     }
 }

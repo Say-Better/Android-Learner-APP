@@ -35,8 +35,15 @@ class VideoCallViewModel:ViewModel() {
     private val _iconState = MutableStateFlow(false)
     val iconState: StateFlow<Boolean> = _iconState
 
+    private val _isStartLearning = MutableStateFlow<Boolean>(false)
+    val isStartLearning: StateFlow<Boolean> = _isStartLearning
+
     fun setIconState(value: Boolean) {
         _iconState.value = value
+    }
+
+    fun setIsStartLearning(value: Boolean) {
+        _isStartLearning.value = value
     }
 
     fun initVideoCall(title : String,

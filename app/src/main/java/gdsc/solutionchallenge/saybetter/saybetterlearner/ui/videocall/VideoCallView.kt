@@ -29,7 +29,7 @@ fun VideoCallView(
     saveClickLog:(Int, Int) -> Unit,
     onClickBack:()->Unit) {
 
-    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
+//    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
     var ready by remember { mutableStateOf(false) } //대기 시간
     var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
     var isCameraOn by remember {
@@ -43,7 +43,9 @@ fun VideoCallView(
 
     val symbolRecord = videoCallViewModel.symbolRecord.collectAsState()
 
-    if (isStart && ready) { //솔루션 시작 + 대기 아닐시
+    val isStartLearning by videoCallViewModel.isStartLearning.collectAsState()
+
+    if (isStartLearning && ready) { //솔루션 시작 + 대기 아닐시
         LaunchedEffect(Unit) {
             while (commOptTimes > 0) {
                 delay(1000L) // 1초 지연
@@ -71,11 +73,11 @@ fun VideoCallView(
                 videoCallViewModel = videoCallViewModel,
                 clickBack = { onClickBack() },
                 clickDeatil = { ready = true },
-                isStart = isStart,
+                isStart = isStartLearning,
                 commOptCnt = commOptCnt,
                 commOptTimes = commOptTimes
             )
-            if (!isStart) {
+            if (!isStartLearning) {
                 ReadyMainView(isCameraOn = isCameraOn)
                 ReadyBottomMenuBar(
                     micClick = {},
@@ -89,7 +91,9 @@ fun VideoCallView(
                         else
                             CameraSelector.DEFAULT_BACK_CAMERA
                     },
-                    greetClick = {isStart = true})
+                    greetClick = {
+
+                    })
             }else {
                 StartMainView(
                     symbolSet = symbolSet,
@@ -105,7 +109,6 @@ fun VideoCallView(
                         else true
                     },
                     reverseClick = {
-                        isStart = false
                         cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
                             CameraSelector.DEFAULT_FRONT_CAMERA
                         else
