@@ -21,16 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.menu
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun MenuItem(menuEntity : MenuItemModel, onClickMenu: () -> Unit) {
     Column (horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable (
-            interactionSource = remember{ MutableInteractionSource() },
-            indication = CustomClickEvent
-        ) {
-            onClickMenu()
-        }){
+        modifier = Modifier
+            .clickWithScaleAnimation(onClickMenu)
+    ){
         Image(
             painter = painterResource(id = menuEntity.iconRes),
             contentDescription = null,

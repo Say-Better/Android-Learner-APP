@@ -47,8 +47,8 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _isStartLearning = MutableStateFlow<Boolean>(false)
     val isStartLearning: StateFlow<Boolean> = _isStartLearning
 
-    private val _greetState = MutableStateFlow<Boolean>(false)
-    val greetState: StateFlow<Boolean> = _greetState
+    private val _remoteGreetState = MutableStateFlow<Boolean>(false)
+    val remoteGreetState: StateFlow<Boolean> = _remoteGreetState
 
     private val _localGreetState = MutableStateFlow<Boolean>(false)
     val localGreetState: StateFlow<Boolean> = _localGreetState
@@ -64,8 +64,8 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
         _isStartLearning.value = value
     }
 
-    fun setGreetState(value: Boolean) {
-        _greetState.value = value
+    fun setRemoteGreetState(value: Boolean) {
+        _remoteGreetState.value = value
     }
 
     fun setLocalGreetState(value: Boolean) {
@@ -120,11 +120,11 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
         return Timestamp(System.currentTimeMillis())
     }
 
-    override fun onGreeting() {
-        setGreetState(true)
+    override fun onRemoteGreeting() {
+        setRemoteGreetState(true)
         viewModelScope.launch {
             delay(1000) // 1초 동안 표시
-            setGreetState(false)
+            setRemoteGreetState(false)
         }
     }
 

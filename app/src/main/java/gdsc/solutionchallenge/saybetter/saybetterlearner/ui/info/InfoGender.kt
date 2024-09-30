@@ -24,6 +24,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun InfoGender(
@@ -48,9 +49,7 @@ fun InfoGender(
                 )
                 .weight(1f)
                 .height(70.dp)
-                .clickable {
-                    clickMale()
-                },
+                .clickWithScaleAnimation(clickMale),
                 contentAlignment = Alignment.Center
 
             ){
@@ -69,9 +68,7 @@ fun InfoGender(
                 )
                 .weight(1f)
                 .height(70.dp)
-                .clickable {
-                    clickFemale()
-                },
+                .clickWithScaleAnimation(clickFemale),
                 contentAlignment = Alignment.Center
 
             ){

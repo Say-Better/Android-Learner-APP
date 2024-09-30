@@ -27,6 +27,7 @@ import coil.compose.AsyncImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.InfoViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.BoxBackground
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.imageSelect.GetImageUri
 
 @Composable
@@ -49,9 +50,7 @@ fun InfoImageView(viewModel: InfoViewModel, context: Context) {
                 .background(BoxBackground, RoundedCornerShape(50.dp))
                 .width(320.dp)
                 .height(60.dp)
-                .clickable {
-                    viewModel.setShowBottomSheet(true)
-                },
+                .clickWithScaleAnimation({viewModel.setShowBottomSheet(true)}),
             contentAlignment = Alignment.Center
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -69,6 +68,6 @@ fun InfoImageView(viewModel: InfoViewModel, context: Context) {
         }
         Text(text = "기본 이미지 사용",
             modifier = Modifier
-                .clickable { viewModel.setImageUri(GetImageUri().getDrawableUri(context, R.drawable.info_img)!! )})
+                .clickWithScaleAnimation({viewModel.setImageUri(GetImageUri().getDrawableUri(context, R.drawable.info_img)!! )}))
     }
 }

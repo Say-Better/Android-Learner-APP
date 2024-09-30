@@ -32,6 +32,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainBlue
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun ChatBubble(
@@ -67,9 +68,8 @@ fun ChatBubble(
                     Text(
                         text = "다시 듣기",
                         fontSize = 12.sp,
-                        modifier = Modifier.clickable {
-                            onClickReListen()
-                        }
+                        modifier = Modifier
+                            .clickWithScaleAnimation(onClickReListen)
                     )
                 }
             }
@@ -103,9 +103,8 @@ fun ChatBubble(
                     Text(
                         text = "다시 듣기",
                         fontSize = 12.sp,
-                        modifier = Modifier.clickable {
-                            onClickReListen()
-                        }
+                        modifier = Modifier
+                            .clickWithScaleAnimation(onClickReListen)
                     )
                 }
             }

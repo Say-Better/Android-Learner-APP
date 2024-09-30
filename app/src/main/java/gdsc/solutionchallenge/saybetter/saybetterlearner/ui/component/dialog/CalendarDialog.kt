@@ -39,6 +39,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.YearMonth
@@ -128,7 +129,7 @@ class CalendarDialog {
         Box(
             modifier = Modifier
                 .aspectRatio(1f)
-                .clickable{onDateClick(day)} ,// This is important for square sizing!
+                .clickWithScaleAnimation({onDateClick(day)}),
             contentAlignment = Alignment.Center
         ) {
             androidx.compose.material.Text(text = day.date.dayOfMonth.toString(),
@@ -174,13 +175,13 @@ class CalendarDialog {
                     contentDescription = null,
                     modifier = Modifier
                         .size(25.dp)
-                        .clickable { goBack() })
+                        .clickWithScaleAnimation(goBack))
                 Spacer(modifier = Modifier.width(20.dp))
                 Image(painter = painterResource(id = R.drawable.ic_calendar_right),
                     contentDescription = null,
                     modifier = Modifier
                         .size(25.dp)
-                        .clickable { goForward() })
+                        .clickWithScaleAnimation(goForward))
             }
         }
     }

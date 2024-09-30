@@ -156,7 +156,7 @@ class MainService : Service(), MainRepository.Listener {
             if(it.first == "TEXT") {
                 when(it.second) {
                     GREETING.name -> {
-                        interactionListener?.onGreeting()
+                        interactionListener?.onRemoteGreeting()
                     }
                     SWITCH_TO_LEARNING.name -> {
                         Log.d("DataChannel", SWITCH_TO_LEARNING.name)
@@ -201,7 +201,7 @@ class MainService : Service(), MainRepository.Listener {
     }
 
     interface InteractionListener {
-        fun onGreeting()
+        fun onRemoteGreeting()
         fun onSwitchToLearning()
         fun onSwitchToLayout1()
         fun onSwitchToLayout2()

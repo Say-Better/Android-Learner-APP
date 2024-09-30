@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
@@ -30,6 +32,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Black
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.SubGrey
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 import kotlinx.coroutines.launch
 
 @Composable
@@ -100,21 +103,19 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
 
     Row(
         modifier = modifier
-            .fillMaxWidth(0.83f)
-            .fillMaxHeight()
+            .fillMaxWidth()
     ) {
         Box(
             modifier = modifier
                 .background(SubGrey, RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
-                .fillMaxHeight()
-                .clickable(
-                ) {
+                .height(330.dp)
+                .clickWithScaleAnimation({
                     scope.launch {
                         if (pagerState.currentPage > 0) {
                             pagerState.animateScrollToPage(pagerState.currentPage - 1)
                         }
                     }
-                },
+                }),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -126,13 +127,14 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
         Box(
             modifier = modifier
                 .background(DarkGray)
-                .fillMaxHeight()
                 .weight(1f)
+                .height(330.dp)
         ) {
             HorizontalPager(
                 state = pagerState,
                 modifier = modifier
                     .fillMaxSize()
+                    .height(300.dp)
                     .padding(horizontal = 10.dp, vertical = 10.dp)) {
                 SymbolLayout(modifier, pagerState.currentPage, items, itemsPerPage, SymbolClick,)
             }
@@ -140,15 +142,14 @@ fun InputSymbol(modifier: Modifier, SymbolClick: (String) -> Unit) {
         Box(
             modifier = modifier
                 .background(SubGrey, RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
-                .fillMaxHeight()
-                .clickable(
-                ) {
+                .height(330.dp)
+                .clickWithScaleAnimation({
                     scope.launch {
                         if (pagerState.currentPage < totalPages - 1) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
                     }
-                },
+                }),
             contentAlignment = Alignment.Center
         ) {
             Image(
@@ -170,7 +171,7 @@ fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPag
     LazyVerticalGrid(
             columns = GridCells.Fixed(5),
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement .spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -178,17 +179,15 @@ fun SymbolLayout(modifier: Modifier, page: Int, items: List<Symbol>, itemsPerPag
                 Box (modifier = Modifier
                     .background(White, RoundedCornerShape(7.dp))
                     .padding(vertical = 10.dp)
-                    .clickable {
-                        SymbolClick(pageItems[index].title)
-                    }){
-                    Column (Modifier.fillMaxSize(),
+                    .clickWithScaleAnimation({SymbolClick(pageItems[index].title)})){
+                    Column (Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally){
                         Image(
                             painter = painterResource(id = pageItems[index].img),
                             contentDescription = null,
                             Modifier
                                 .size(100.dp)
-                                .padding(end = 10.dp)
+                                .padding()
                         )
                         Text(text = pageItems[index].title,
                             color = Black)

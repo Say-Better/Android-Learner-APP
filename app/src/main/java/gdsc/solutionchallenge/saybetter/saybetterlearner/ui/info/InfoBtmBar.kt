@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Composable
 fun FinishBtmBar(onClickFinish:() ->Unit) {
@@ -29,9 +30,7 @@ fun FinishBtmBar(onClickFinish:() ->Unit) {
             .border((1.5).dp, Color.Black, RoundedCornerShape(100.dp))
             .background(White)
             .weight(1f)
-            .clickable {
-                onClickFinish()
-            },
+            .clickWithScaleAnimation(onClickFinish),
             contentAlignment = Alignment.Center){
             Text(text = "다음",
                 fontSize = 25.sp,
@@ -49,9 +48,7 @@ fun LoginFinishBtmBar(onClickFinish:() ->Unit) {
             .height(70.dp)
             .background(MainGreen, RoundedCornerShape(100.dp))
             .weight(1f)
-            .clickable {
-                onClickFinish()
-            },
+            .clickWithScaleAnimation(onClickFinish),
             contentAlignment = Alignment.Center){
             Text(text = "시작하기",
                 fontSize = 25.sp,

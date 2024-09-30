@@ -29,6 +29,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray200
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 
 @Composable
@@ -57,9 +58,7 @@ fun InputKeyboard(modifier: Modifier,
                         .height(50.dp)
                         .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                         .background(Gray200, RoundedCornerShape(7.dp))
-                        .clickable {
-                            onCharacterClick(key)
-                        }
+                        .clickWithScaleAnimation({onCharacterClick(key)})
                 ) {
                     androidx.compose.material3.Text(
                         text = key.toString(),
@@ -83,9 +82,7 @@ fun InputKeyboard(modifier: Modifier,
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .height(60.dp)
                             .background(White, RoundedCornerShape(7.dp))
-                            .clickable {
-                                onCharacterClick(latter)
-                            },
+                            .clickWithScaleAnimation({onCharacterClick(latter)}),
                     ) {
                         androidx.compose.material3.Text(
                             text = latter.toString(),
@@ -102,9 +99,7 @@ fun InputKeyboard(modifier: Modifier,
                             .height(60.dp)
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .background(MainGreen, RoundedCornerShape(7.dp))
-                            .clickable {
-                                onBackClick()
-                            },
+                            .clickWithScaleAnimation(onBackClick),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(painter = painterResource(id = R.drawable.ic_keyboard_back),
@@ -123,9 +118,7 @@ fun InputKeyboard(modifier: Modifier,
                         .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                         .height(60.dp)
                         .background(White, RoundedCornerShape(7.dp))
-                        .clickable {
-                            onCharacterClick(latter)
-                        },
+                        .clickWithScaleAnimation({onCharacterClick(latter)}),
                 ) {
                     androidx.compose.material3.Text(
                         text = latter.toString(),
@@ -159,9 +152,7 @@ fun InputKeyboard(modifier: Modifier,
                             .height(60.dp)
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .background(White, RoundedCornerShape(7.dp))
-                            .clickable {
-                                onCharacterClick(latter)
-                            },
+                            .clickWithScaleAnimation({onCharacterClick(latter)}),
                         contentAlignment = Alignment.Center
                     ) {
                         androidx.compose.material3.Text(
@@ -186,9 +177,7 @@ fun InputKeyboard(modifier: Modifier,
                             .width(140.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .height(60.dp)
                             .background(White, RoundedCornerShape(7.dp))
-                            .clickable {
-                                onSpaceClick()
-                            },
+                            .clickWithScaleAnimation(onSpaceClick),
                     ) {
                         androidx.compose.material3.Text(
                             text = "스페이스",
@@ -205,9 +194,7 @@ fun InputKeyboard(modifier: Modifier,
                             .height(60.dp)
                             .width(70.dp) // 아이템의 너비를 최소로 설정하여 필요한 공간만 차지하도록 합니다.
                             .background(White, RoundedCornerShape(7.dp))
-                            .clickable {
-                                onCharacterClick(latter)
-                            },
+                            .clickWithScaleAnimation({onCharacterClick(latter)}),
                         contentAlignment = Alignment.Center
                     ) {
                         androidx.compose.material3.Text(

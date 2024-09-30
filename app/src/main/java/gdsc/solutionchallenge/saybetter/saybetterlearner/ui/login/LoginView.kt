@@ -34,6 +34,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.MainGreen
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.clickWithScaleAnimation
 
 @Preview(widthDp = 1280, heightDp = 800)
 @Composable
@@ -75,10 +76,7 @@ fun LoginView(login: () -> Unit) {
                     .height(70.dp)
                     .border((1.5).dp, Color.Black, RoundedCornerShape(100.dp))
                     .background(White)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = CustomClickEvent
-                    ) { login() }
+                    .clickWithScaleAnimation(login)
                 ){
                     Row (modifier = Modifier
                         .fillMaxSize(),

@@ -34,6 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCallViewModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.imageView.localShakingImage
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.imageView.remoteShakingImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray5B50
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
@@ -41,11 +44,13 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractio
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.delay
 
+const val LOCAL = "local"
+const val REMOTE = "remote"
+
 @Composable
 fun ReadyMainView(
-    isCameraOn: Boolean,
-    greetState: Boolean,
-    localGreetState: Boolean
+    isCameraOn : Boolean,
+    videoCallViewModel: VideoCallViewModel
 ) {
     Box (modifier = Modifier
         .fillMaxWidth()
@@ -71,48 +76,25 @@ fun ReadyMainView(
                             .size(width = 622.dp, height = 370.dp)
                             .clip(RoundedCornerShape(12.dp))
                     )
-                    if (localGreetState) { // 내 인사는 내 캠에 띄움
-                        var targetRotation by remember { mutableFloatStateOf(0f) }
 
-                        val rotationAnimation by animateFloatAsState(
-                            targetValue = targetRotation,
-                            animationSpec = tween(durationMillis = 200), label = ""
-                        )
-
-                        LaunchedEffect(Unit) {
-                            while (true) { // 상태가 true일 때 계속 반복
-                                targetRotation = 5f // 오른쪽으로 회전
-                                delay(200)
-                                targetRotation = -5f // 왼쪽으로 회전
-                                delay(200)
-                            }
-                            targetRotation = 0f // 원래 위치로 돌아옴
-                        }
-
-
-                        Box(
-                            modifier = Modifier
-                                .size(width = 622.dp, height = 370.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Gray5B50)
-                                .graphicsLayer(
-                                    rotationZ = rotationAnimation
-                                )
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_hello),
-                                contentDescription = "Hello Image",
-                                modifier = Modifier.align(Alignment.Center).size(64.dp)
-                            )
-                        }
-                    }
+                    localShakingImage(videoCallViewModel)    //videocallviewmodel에 greetstate로 알수있음!
                 }
             }else {
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .weight(1f)
-                )
+                        .size(width = 622.dp, height = 370.dp)
+                        .background(
+                            color = DarkGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.rectangle_1638),
+                        contentDescription = null,
+                    )
+                    localShakingImage(videoCallViewModel)
+                }
             }
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -132,41 +114,7 @@ fun ReadyMainView(
                             .size(width = 622.dp, height = 370.dp)
                             .clip(RoundedCornerShape(12.dp))
                     )
-                    if (greetState) { // 상대방 인사는 상대방 캠에 띄움
-                        var targetRotation by remember { mutableFloatStateOf(0f) }
-
-                        val rotationAnimation by animateFloatAsState(
-                            targetValue = targetRotation,
-                            animationSpec = tween(durationMillis = 200), label = ""
-                        )
-
-                        LaunchedEffect(Unit) {
-                            while (true) { // 상태가 true일 때 계속 반복
-                                targetRotation = 5f // 오른쪽으로 회전
-                                delay(200)
-                                targetRotation = -5f // 왼쪽으로 회전
-                                delay(200)
-                            }
-                            targetRotation = 0f // 원래 위치로 돌아옴
-                        }
-
-
-                        Box(
-                            modifier = Modifier
-                                .size(width = 622.dp, height = 370.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Gray5B50)
-                                .graphicsLayer(
-                                    rotationZ = rotationAnimation
-                                )
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_hello),
-                                contentDescription = "Hello Image",
-                                modifier = Modifier.align(Alignment.Center).size(64.dp)
-                            )
-                        }
-                    }
+                    remoteShakingImage(videoCallViewModel)
                 }
             }else {
                 Image(painter = painterResource(id = R.drawable.rectangle_1638),
@@ -174,6 +122,7 @@ fun ReadyMainView(
                     modifier = Modifier
                         .weight(1f)
                 )
+                remoteShakingImage(videoCallViewModel)
             }
         }
     }

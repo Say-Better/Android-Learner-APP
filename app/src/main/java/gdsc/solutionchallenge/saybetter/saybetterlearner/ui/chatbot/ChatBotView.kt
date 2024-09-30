@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatMessage
+import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.remote.service.ChatService
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.ChatBotViewModel
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.navibar.NaviMenu
@@ -40,29 +41,9 @@ fun ChatBatPreview(
 
 
     val chatRoomList = listOf(
-        gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom(
-            "학교에 등교하기 위해 밥 먹고 가는 상황입니다",
-            "최근 방문 1일전",
-            R.drawable.symbol
-        ),
-        gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom(
-            "학교에 등교하기 위해 밥 먹고 가는 상황입니다",
-            "최근 방문 1일전",
-            R.drawable.symbol
-        ),
-        gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom(
-            "학교에 등교하기 위해 밥 먹고 가는 상황입니다",
-            "최근 방문 1일전",
-            R.drawable.symbol
-        ),
-        gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom(
-            "학교에 등교하기 위해 밥 먹고 가는 상황입니다",
-            "최근 방문 1일전",
-            R.drawable.symbol
-        ),
-        gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.ChatRoom(
-            "학교에 등교하기 위해 밥 먹고 가는 상황입니다",
-            "최근 방문 1일전",
+        ChatRoom(
+            "승아의 채팅방",
+            "감정표현 상황",
             R.drawable.symbol
         )
     )
@@ -77,7 +58,7 @@ fun ChatBatPreview(
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxHeight(0.45f),
+                    modifier = Modifier.weight(1f),
                     state = lazyListState
                 ) {
                     itemsIndexed(chatMessageList.value) { index, chatmessage ->

@@ -45,8 +45,8 @@ fun VideoCallView(
     val symbolRecord = videoCallViewModel.symbolRecord.collectAsState()
 
     val isStartLearning by videoCallViewModel.isStartLearning.collectAsState()
-    val greetState by videoCallViewModel.greetState.collectAsState()
     val localGreetState by videoCallViewModel.localGreetState.collectAsState()
+    val remoteGreetState by videoCallViewModel.remoteGreetState.collectAsState()
     val selectedSymbolList by videoCallViewModel.selectedSymbolList.collectAsState()
     val layoutState by videoCallViewModel.layoutState.collectAsState()
 
@@ -82,12 +82,13 @@ fun VideoCallView(
                 commOptCnt = commOptCnt,
                 commOptTimes = commOptTimes
             )
+
             if (!isStartLearning) {
                 ReadyMainView(
-                    localGreetState = localGreetState,
-                    greetState = greetState,
-                    isCameraOn = isCameraOn
+                    isCameraOn = isCameraOn,
+                    videoCallViewModel = videoCallViewModel
                 )
+
                 ReadyBottomMenuBar(
                     micClick = {},
                     cameraClick = {
@@ -100,7 +101,9 @@ fun VideoCallView(
                         else
                             CameraSelector.DEFAULT_BACK_CAMERA
                     },
-                    greetClick = { greetClick() })
+                    greetClick = { greetClick() }
+                )
+
             }else {
                 StartMainView(
                     symbolSet = symbolSet,
