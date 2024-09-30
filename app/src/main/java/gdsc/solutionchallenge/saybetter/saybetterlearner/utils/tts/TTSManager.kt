@@ -25,6 +25,7 @@ class TTSManager(context: Context) : TextToSpeech.OnInitListener {
             tts.setSpeechRate(0.8f)
             val result = tts.setLanguage(Locale.KOREA)
             isInitialized = !(result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED)
+            Log.d("isInitialized",result.toString())
 
             if (isInitialized) {
                 tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
