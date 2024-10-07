@@ -18,6 +18,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.remote.dto.DataMo
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.DataConverter
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.*
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainServiceActions.*
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.RTCAudioManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.webrtcClient.VideoTextureViewRenderer
 import org.webrtc.DataChannel
 import org.webrtc.SurfaceViewRenderer
@@ -32,6 +33,7 @@ class MainService : Service(), MainRepository.Listener {
     private var userid : String? = null
 
     private lateinit var notificationManager : NotificationManager
+    private lateinit var rtcAudioManager : RTCAudioManager
 
     @Inject lateinit var mainRepository : MainRepository
 
@@ -47,6 +49,10 @@ class MainService : Service(), MainRepository.Listener {
     //생성되면 NotificationManager 가져오기
     override fun onCreate() {
         super.onCreate()
+
+        rtcAudioManager = RTCAudioManager.create(this)
+        rtcAudioManager.setDefaultAudioDevice(RTCAudioManager.AudioDevice.SPEAKER_PHONE)
+
         notificationManager = getSystemService(
             NotificationManager::class.java
         )
