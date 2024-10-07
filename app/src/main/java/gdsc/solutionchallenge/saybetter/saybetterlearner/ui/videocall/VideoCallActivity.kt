@@ -3,6 +3,9 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.lifecycle.ViewModelProvider
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
@@ -68,17 +71,27 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
 
         videoCallViewModel =  ViewModelProvider(this).get(VideoCallViewModel::class.java)
 
-
         init()
         setContent {
             VideoCallView(
                 videoCallViewModel = videoCallViewModel,
-                onClickBack = {finish()},
+                onClickBack = {
+                    serviceRepository.sendEndCall()
+                },
                 ttsManager = ttsManager,
                 symbolSet = symbolList,
                 greetClick = {
                     videoCallViewModel.localGreeting()
                     mainRepository.sendTextToDataChannel(GREETING.name)
+                },
+                switchCamera = { serviceRepository.switchCamera() },
+                toggleCamera = { toggle ->
+                    serviceRepository.toggleVideo(toggle)
+                    videoCallViewModel.setVideoState(toggle)
+                               },
+                toggleAudio = { toggle ->
+                    serviceRepository.toggleAudio(toggle)
+                    videoCallViewModel.setAudioState(toggle)
                 }
             )
         }
@@ -101,7 +114,7 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
         serviceRepository.setupViews(isCaller, target!!)
 
         //초기화
-        videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolList.size, symbolList)
+        videoCallViewModel.initVideoCall("TV 보는 상황 솔루션", "", "중재 단계 5회기", 5, symbolList.size, symbolList, ttsManager)
         MainService.endCallListener = this
     }
 

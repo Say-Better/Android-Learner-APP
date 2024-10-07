@@ -4,7 +4,7 @@ import java.sql.Timestamp
 
 
 data class SymbolRecord (
-    val symbolId:Long,
+    val symbolId:Int,
     val touchOrder:Long,
     val touchTime : Timestamp,
 )

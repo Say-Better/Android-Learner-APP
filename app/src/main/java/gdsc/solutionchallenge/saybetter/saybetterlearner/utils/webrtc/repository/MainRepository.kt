@@ -202,6 +202,14 @@ class MainRepository @Inject constructor(
         webRTCClient.switchCamera()
     }
 
+    fun toggleAudio(shouldBeMuted : Boolean) {
+        webRTCClient.toggleAudio(shouldBeMuted)
+    }
+
+    fun toggleVideo(shouldBeMuted: Boolean) {
+        webRTCClient.toggleVideo(shouldBeMuted)
+    }
+
     override fun onDataReceived(it: DataChannel.Buffer) {
         Log.d("DataChannel", "data receive in mainRepo")
         listener?.onDataReceivedFromChannel(it)

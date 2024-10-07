@@ -52,7 +52,6 @@ class MainService : Service(), MainRepository.Listener {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let { incomingIntent ->
             when(incomingIntent.action) {
@@ -60,10 +59,22 @@ class MainService : Service(), MainRepository.Listener {
                 SETUP_VIEWS.name -> handleSetupViews(incomingIntent)
                 END_CALL.name -> handleEndCall()
                 SWITCH_CAMERA.name -> handleSwitchCamera()
+                TOGGLE_AUDIO.name -> handleToggleAudio(incomingIntent)
+                TOGGLE_VIDEO.name -> handleToggleVideo(incomingIntent)
                 else -> Unit
             }
         }
         return START_STICKY
+    }
+
+    private fun handleToggleVideo(incomingIntent: Intent) {
+        val shouldBeMuted = incomingIntent.getBooleanExtra("shouldBeMuted", true)
+        mainRepository.toggleVideo(shouldBeMuted)
+    }
+
+    private fun handleToggleAudio(incomingIntent: Intent) {
+        val shouldBeMuted = incomingIntent.getBooleanExtra("shouldBeMuted", true)
+        mainRepository.toggleAudio(shouldBeMuted)
     }
 
     private fun handleSwitchCamera() {
@@ -101,7 +112,6 @@ class MainService : Service(), MainRepository.Listener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun handleStartService(incomingIntent: Intent) {
         //Service 시작 시점에서 toggle on
         if(!isServiceRunning) {
@@ -117,7 +127,6 @@ class MainService : Service(), MainRepository.Listener {
     }
 
     //Notification Manager에게 정의한 notificationChannel 전달하여 생성하기
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun startServiceWithNotification() {
         val notificationChannel = NotificationChannel(
             "channel1", "foreground", NotificationManager.IMPORTANCE_HIGH
@@ -174,11 +183,30 @@ class MainService : Service(), MainRepository.Listener {
                     SWITCH_TO_LAYOUT_ALL.name -> {
                         interactionListener?.onSwitchToLayoutAll()
                     }
-                    SYMBOL_HIGHLIGHT.name -> {
 
+                    else -> {
+                        val chunkedMessage: List<String> = it.second.toString().split(' ')
+                        val action: String = chunkedMessage[0]
+                        val symbolId: Int = chunkedMessage[1].toInt()
+
+                        when(action){
+                            SYMBOL_SELECT.name -> {
+                                Log.d("DataChannel", "Action: SYMBOL_SELECT, id: $symbolId")
+                                interactionListener?.onSymbolSelect(symbolId)
+                            }
+                            SYMBOL_DELETE.name -> {
+                                Log.d("DataChannel", "Action: SYMBOL_DELETE, id: $symbolId")
+                                interactionListener?.onSymbolDelete(symbolId)
+                            }
+                            SYMBOL_HIGHLIGHT.name -> {
+                                Log.d("DataChannel", "Action: SYMBOL_HIGHLIGHT, id: $symbolId")
+                                interactionListener?.onSymbolHighlight(symbolId)
+                            }
+                            else -> {
+                                Log.d("DataChannel", "something wrong action")
+                            }
+                        }
                     }
-
-                    else -> {}
                 }
             } else {
                 Toast.makeText(this, "received data is wrong", Toast.LENGTH_SHORT).show()
@@ -207,7 +235,9 @@ class MainService : Service(), MainRepository.Listener {
         fun onSwitchToLayout2()
         fun onSwitchToLayout4()
         fun onSwitchToLayoutAll()
-        fun onSymbolHighlight(/* symbol id send */)
+        fun onSymbolSelect(symbolId: Int)
+        fun onSymbolDelete(symbolId: Int)
+        fun onSymbolHighlight(symbolId: Int)
     }
 
 

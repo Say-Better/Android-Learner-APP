@@ -7,5 +7,7 @@ enum class InstantInteractionType {
     SWITCH_TO_LAYOUT_2,
     SWITCH_TO_LAYOUT_4,
     SWITCH_TO_LAYOUT_ALL,
-    SYMBOL_HIGHLIGHT
+    SYMBOL_HIGHLIGHT,
+    SYMBOL_SELECT,
+    SYMBOL_DELETE
 }

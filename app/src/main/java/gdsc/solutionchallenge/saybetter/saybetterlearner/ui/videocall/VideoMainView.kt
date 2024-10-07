@@ -1,7 +1,5 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,16 +18,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
@@ -38,11 +30,9 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCa
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.imageView.localShakingImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.component.imageView.remoteShakingImage
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.DarkGray
-import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Gray5B50
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.Transparent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.*
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
-import kotlinx.coroutines.delay
 
 const val LOCAL = "local"
 const val REMOTE = "remote"
@@ -137,7 +127,8 @@ fun StartMainView(
     selectedItemIndex: MutableState<Int?>,
     cnt: Int,
     layoutState: String,
-    selectedSymbolList: List<Symbol>
+    selectedSymbolList: List<Symbol>,
+    selectedSymbolIdState: Int
 ) {
 
     Row (modifier = Modifier
@@ -153,7 +144,7 @@ fun StartMainView(
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(1f),
-                        isSelected = 0 == selectedItemIndex.value,
+                        isSelected = (0 == selectedItemIndex.value) || (symbol.id == selectedSymbolIdState),
                         symbol = symbol,
                         onSymbolClick = {
                             selectedItemIndex.value = 0
@@ -175,7 +166,7 @@ fun StartMainView(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .weight(1f),
-                            isSelected = i == selectedItemIndex.value,
+                            isSelected = (i == selectedItemIndex.value) || (symbol.id == selectedSymbolIdState),
                             symbol = symbol,
                             onSymbolClick = {
                                 selectedItemIndex.value = i
@@ -198,7 +189,8 @@ fun StartMainView(
                                 .padding(8.dp)
                                 .weight(1f)
                                 .height(250.dp),
-                            isSelected = i == selectedItemIndex.value,
+                            // 선택되는 기준: 로컬에서 선택하거나, 원격에서 선택하거나
+                            isSelected = (i == selectedItemIndex.value) || (symbol.id == selectedSymbolIdState),
                             symbol = symbol,
                             onSymbolClick = {
                                 selectedItemIndex.value = i
@@ -227,7 +219,7 @@ fun StartMainView(
                                 .padding(8.dp)
                                 .weight(1f)
                                 .height(250.dp),
-                            isSelected = index == selectedItemIndex.value,
+                            isSelected = (index == selectedItemIndex.value) || (item.id == selectedSymbolIdState),
                             symbol = item,
                             onSymbolClick = {
                                 selectedItemIndex.value = index

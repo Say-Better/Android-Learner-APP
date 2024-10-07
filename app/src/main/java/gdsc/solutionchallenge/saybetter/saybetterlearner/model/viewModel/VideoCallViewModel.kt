@@ -9,6 +9,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialogState
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.*
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.service.MainService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,8 @@ import kotlinx.coroutines.launch
 import java.sql.Timestamp
 
 class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
+    private var ttsManager: TTSManager? = null
+
     private val _symbolList = MutableStateFlow<List<Symbol>>(mutableListOf())
     val symbolList: StateFlow<List<Symbol>> = _symbolList
 
@@ -56,6 +59,27 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _layoutState = MutableStateFlow<String>(SWITCH_TO_LAYOUT_1.name)
     val layoutState: StateFlow<String> = _layoutState
 
+    private val _remoteSelectedSymbolId = MutableStateFlow<Int>(-1)
+    val remoteSelectedSymbolId: StateFlow<Int> = _remoteSelectedSymbolId
+
+    private val _isVideoOn = MutableStateFlow<Boolean>(false)
+    val isVideoOn: StateFlow<Boolean> = _isVideoOn
+
+    private val _isAudioOn = MutableStateFlow<Boolean>(false)
+    val isAudioOn: StateFlow<Boolean> = _isAudioOn
+
+    fun setAudioState(value: Boolean) {
+        _isAudioOn.value = value
+    }
+
+    fun setVideoState(value: Boolean) {
+        _isVideoOn.value = value
+    }
+
+    fun setTTSManager(value: TTSManager) {
+        ttsManager = value
+    }
+
     fun setIconState(value: Boolean) {
         _iconState.value = value
     }
@@ -91,7 +115,8 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
                       description:String,
                       commOptTimes:Int,
                       commOptCnt:Int,
-                      symbolList:List<Symbol>) {
+                      symbolList:List<Symbol>,
+                      ttsManager: TTSManager) {
         _title.value = title
         _educationGoal.value = educationGoal
         _description.value = description
@@ -100,6 +125,7 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
         _symbolList.value = symbolList
 
         MainService.interactionListener = this
+        setTTSManager(ttsManager)
     }
 
     fun minusCnt() {
@@ -156,6 +182,19 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
         setLayoutState(SWITCH_TO_LAYOUT_ALL.name)
     }
 
-    override fun onSymbolHighlight() {
+    override fun onSymbolSelect(symbolId: Int) {
+        val symbol: Symbol = symbolList.value[symbolId]
+        addSelectedSymbolItem(symbol)
+    }
+
+    override fun onSymbolDelete(symbolId: Int) {
+        val symbol: Symbol = symbolList.value[symbolId]
+        deleteSelectedSymbolItem(symbol)
+    }
+
+    override fun onSymbolHighlight(symbolId: Int) {
+        val symbol: Symbol = symbolList.value[symbolId]
+        ttsManager?.speak(symbol.title)
+        _remoteSelectedSymbolId.value = symbolId
     }
 }

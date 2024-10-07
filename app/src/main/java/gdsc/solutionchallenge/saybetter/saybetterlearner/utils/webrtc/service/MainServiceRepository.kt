@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import javax.inject.Inject
 
 
@@ -39,6 +40,20 @@ class MainServiceRepository @Inject constructor(
     fun sendEndCall() {
         val intent = Intent(context, MainService::class.java)
         intent.action = MainServiceActions.END_CALL.name
+        startServiceIntent(intent)
+    }
+
+    fun toggleAudio(shouldBeMuted : Boolean) {
+        val intent = Intent(context, MainService::class.java)
+        intent.action = MainServiceActions.TOGGLE_AUDIO.name
+        intent.putExtra("shouldBeMuted", shouldBeMuted)
+        startServiceIntent(intent)
+    }
+
+    fun toggleVideo(shouldBeMuted: Boolean) {
+        val intent = Intent(context, MainService::class.java)
+        intent.action = MainServiceActions.TOGGLE_VIDEO.name
+        intent.putExtra("shouldBeMuted", shouldBeMuted)
         startServiceIntent(intent)
     }
 

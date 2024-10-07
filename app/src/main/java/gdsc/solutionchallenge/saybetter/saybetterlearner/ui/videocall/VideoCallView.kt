@@ -28,14 +28,17 @@ fun VideoCallView(
     ttsManager: TTSManager,
     onClickBack:()->Unit,
     greetClick: () -> Unit,
+    switchCamera: () -> Unit,
+    toggleCamera: (Boolean) -> Unit,
+    toggleAudio: (Boolean) -> Unit
 ) {
 
 //    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
     var ready by remember { mutableStateOf(false) } //대기 시간
-    var cameraSelectorState by remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
-    var isCameraOn by remember {
-        mutableStateOf(true)
-    }
+
+    val isVideoOn by videoCallViewModel.isVideoOn.collectAsState()
+    val isAudioOn by videoCallViewModel.isAudioOn.collectAsState()
+
     var commOptCnt by remember { mutableStateOf(videoCallViewModel.commOptCnt.value) }
     var commOptTimes by remember { mutableStateOf(videoCallViewModel.commOptTimes.value) }
 
@@ -49,6 +52,7 @@ fun VideoCallView(
     val remoteGreetState by videoCallViewModel.remoteGreetState.collectAsState()
     val selectedSymbolList by videoCallViewModel.selectedSymbolList.collectAsState()
     val layoutState by videoCallViewModel.layoutState.collectAsState()
+    val remoteSelectedSymbolId by videoCallViewModel.remoteSelectedSymbolId.collectAsState()
 
     if (isStartLearning && ready) { //솔루션 시작 + 대기 아닐시
         LaunchedEffect(Unit) {
@@ -85,22 +89,14 @@ fun VideoCallView(
 
             if (!isStartLearning) {
                 ReadyMainView(
-                    isCameraOn = isCameraOn,
+                    isCameraOn = !isVideoOn,
                     videoCallViewModel = videoCallViewModel
                 )
 
                 ReadyBottomMenuBar(
-                    micClick = {},
-                    cameraClick = {
-                        isCameraOn = if(isCameraOn) false
-                        else true
-                    },
-                    reverseClick = {
-                        cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                            CameraSelector.DEFAULT_FRONT_CAMERA
-                        else
-                            CameraSelector.DEFAULT_BACK_CAMERA
-                    },
+                    micClick = { toggleAudio(!isAudioOn) },
+                    cameraClick = { toggleCamera(!isVideoOn) },
+                    reverseClick = { switchCamera() },
                     greetClick = { greetClick() }
                 )
 
@@ -113,21 +109,15 @@ fun VideoCallView(
                     selectedItemIndex = selectedItemIndex,
                     selectedSymbolList = selectedSymbolList,
                     cnt = cnt.value,
-                    layoutState = layoutState
+                    layoutState = layoutState,
+                    selectedSymbolIdState = remoteSelectedSymbolId
                     )
                 StartBottomMenuBar(
-                    micClick = {},
-                    cameraClick = {
-                        isCameraOn = if(isCameraOn) false
-                        else true
-                    },
-                    reverseClick = {
-                        cameraSelectorState = if (cameraSelectorState == CameraSelector.DEFAULT_BACK_CAMERA)
-                            CameraSelector.DEFAULT_FRONT_CAMERA
-                        else
-                            CameraSelector.DEFAULT_BACK_CAMERA
-                    },
-                    isCameraOn = isCameraOn)
+                    micClick = { toggleAudio(!isAudioOn) },
+                    cameraClick = { toggleCamera(!isVideoOn) },
+                    reverseClick = { switchCamera() },
+                    isCameraOn = !isVideoOn
+                )
             }
         }
     }
