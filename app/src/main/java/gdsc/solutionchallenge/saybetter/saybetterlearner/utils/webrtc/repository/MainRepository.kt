@@ -192,6 +192,8 @@ class MainRepository @Inject constructor(
         )
     }
 
+    fun logOff(function: () -> Unit) = firebaseClient.logOff(function)
+
     fun endCall() {
         webRTCClient.closeConnection()
         //통화 종료시 다시 온라인 상태로 돌아감

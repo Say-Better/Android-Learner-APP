@@ -101,6 +101,11 @@ class FirebaseClient @Inject constructor(
         dbRef.child(currentUserid!!).child(LATEST_EVENT).setValue(null)
     }
 
+    fun logOff(function : () -> Unit) {
+        dbRef.child(currentUserid!!).child(STATUS).setValue(UserStatus.OFFLINE)
+            .addOnCompleteListener { function() }
+    }
+
     interface Listener {
         fun onLatestEventReceived(event : DataModel)
     }

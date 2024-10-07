@@ -62,4 +62,10 @@ class MainServiceRepository @Inject constructor(
         intent.action = MainServiceActions.SWITCH_CAMERA.name
         startServiceIntent(intent)
     }
+
+    fun stopService() {
+        val intent = Intent(context, MainService::class.java)
+        intent.action = MainServiceActions.STOP_SERVICE.name
+        startServiceIntent(intent)
+    }
 }

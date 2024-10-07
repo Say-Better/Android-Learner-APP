@@ -52,6 +52,7 @@ import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.info.InfoActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.setting.SettingActivity
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall.VideoCallActivity
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.BackOnPressed
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.CustomAlertDialogState
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.customclick.CustomClickEvent
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.permission.checkAndRequestPermissions
@@ -84,6 +85,9 @@ class MenuActivity: ComponentActivity() , MainService.CallEventListener {
         init()
 
         setContent {
+            BackOnPressed {
+                mainServiceRepository.stopService()
+            }
             MenuView(
                 resetDialogState = {resetDialogState(customAlertDialogState)},
                 startVideoCall = {targetUser, isCaller -> startVideoCall(targetUser, isCaller) },
