@@ -33,6 +33,7 @@ class FirebaseClient @Inject constructor(
                     dbRef.child(userid).child(STATUS).setValue(UserStatus.ONLINE)
                         .addOnCompleteListener {
                             setUserid(userid)
+                            clearLatestEvent()
                             done(true, null)
                         }.addOnFailureListener {
                             done(false, "${it.message}")
@@ -42,6 +43,7 @@ class FirebaseClient @Inject constructor(
                     dbRef.child(userid).child(STATUS).setValue(UserStatus.ONLINE)
                         .addOnCompleteListener {
                             setUserid(userid)
+                            clearLatestEvent()
                             done(true, null)
                         }.addOnFailureListener {
                             done(false, "${it.message}")
