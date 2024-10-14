@@ -50,6 +50,9 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _isStartLearning = MutableStateFlow<Boolean>(false)
     val isStartLearning: StateFlow<Boolean> = _isStartLearning
 
+    private val _isEnding = MutableStateFlow<Boolean>(false)
+    val isEnding: StateFlow<Boolean> = _isEnding
+
     private val _remoteGreetState = MutableStateFlow<Boolean>(false)
     val remoteGreetState: StateFlow<Boolean> = _remoteGreetState
 
@@ -86,6 +89,10 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
 
     fun setIsStartLearning(value: Boolean) {
         _isStartLearning.value = value
+    }
+
+    fun setIsEnding(value: Boolean) {
+        _isEnding.value = value
     }
 
     fun setRemoteGreetState(value: Boolean) {
@@ -164,6 +171,10 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
 
     override fun onSwitchToLearning() {
         setIsStartLearning(true)
+    }
+
+    override fun onSwitchToEnding() {
+        setIsEnding(true)
     }
 
     override fun onSwitchToLayout1() {

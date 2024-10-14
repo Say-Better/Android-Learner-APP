@@ -48,13 +48,16 @@ fun VideoCallView(
     val symbolRecord = videoCallViewModel.symbolRecord.collectAsState()
 
     val isStartLearning by videoCallViewModel.isStartLearning.collectAsState()
+    val isEnding by videoCallViewModel.isEnding.collectAsState()
     val localGreetState by videoCallViewModel.localGreetState.collectAsState()
     val remoteGreetState by videoCallViewModel.remoteGreetState.collectAsState()
     val selectedSymbolList by videoCallViewModel.selectedSymbolList.collectAsState()
     val layoutState by videoCallViewModel.layoutState.collectAsState()
     val remoteSelectedSymbolId by videoCallViewModel.remoteSelectedSymbolId.collectAsState()
 
-    if (isStartLearning && ready) { //솔루션 시작 + 대기 아닐시
+    val isReadyView: Boolean = !(isStartLearning xor isEnding)
+
+    if (!isReadyView && ready) { //솔루션 시작 + 대기 아닐시
         LaunchedEffect(Unit) {
             while (commOptTimes > 0) {
                 delay(1000L) // 1초 지연
@@ -82,12 +85,12 @@ fun VideoCallView(
                 videoCallViewModel = videoCallViewModel,
                 clickBack = { onClickBack() },
                 clickDeatil = { ready = true },
-                isStart = isStartLearning,
+                isStart = !isReadyView,
                 commOptCnt = commOptCnt,
                 commOptTimes = commOptTimes
             )
 
-            if (!isStartLearning) {
+            if (isReadyView) {
                 ReadyMainView(
                     isCameraOn = !isVideoOn,
                     videoCallViewModel = videoCallViewModel

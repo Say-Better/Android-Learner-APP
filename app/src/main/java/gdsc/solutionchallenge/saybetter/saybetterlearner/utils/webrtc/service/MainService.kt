@@ -191,6 +191,9 @@ class MainService : Service(), MainRepository.Listener {
                         Log.d("DataChannel", SWITCH_TO_LEARNING.name)
                         interactionListener?.onSwitchToLearning()
                     }
+                    SWITCH_TO_ENDING.name -> {
+                        interactionListener?.onSwitchToEnding()
+                    }
                     SWITCH_TO_LAYOUT_1.name -> {
                         interactionListener?.onSwitchToLayout1()
                     }
@@ -251,6 +254,7 @@ class MainService : Service(), MainRepository.Listener {
     interface InteractionListener {
         fun onRemoteGreeting()
         fun onSwitchToLearning()
+        fun onSwitchToEnding()
         fun onSwitchToLayout1()
         fun onSwitchToLayout2()
         fun onSwitchToLayout4()
