@@ -48,7 +48,6 @@ fun VideoCallTopbar(
     Row (modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.1f)
-        .padding(bottom = 20.dp)
         .background(DeepDarkGray),
         verticalAlignment = Alignment.CenterVertically){
         Row (

@@ -3,8 +3,10 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,8 +18,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCallViewModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ChatInputBox
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.delay
 
@@ -30,7 +34,8 @@ fun VideoCallView(
     greetClick: () -> Unit,
     switchCamera: () -> Unit,
     toggleCamera: (Boolean) -> Unit,
-    toggleAudio: (Boolean) -> Unit
+    toggleAudio: (Boolean) -> Unit,
+    sendChatToPeer: (String) -> Unit
 ) {
 
 //    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
@@ -54,6 +59,7 @@ fun VideoCallView(
     val selectedSymbolList by videoCallViewModel.selectedSymbolList.collectAsState()
     val layoutState by videoCallViewModel.layoutState.collectAsState()
     val remoteSelectedSymbolId by videoCallViewModel.remoteSelectedSymbolId.collectAsState()
+    val chatState by videoCallViewModel.chatState.collectAsState()
 
     val isReadyView: Boolean = !(isStartLearning xor isEnding)
 
@@ -96,13 +102,18 @@ fun VideoCallView(
                     videoCallViewModel = videoCallViewModel
                 )
 
+                ChatInputBox(
+                    chatState = chatState,
+                    onTextChange = { videoCallViewModel.setChatState(it) },
+                    onChatSend = { sendChatToPeer(chatState) }
+                )
+
                 ReadyBottomMenuBar(
                     micClick = { toggleAudio(!isAudioOn) },
                     cameraClick = { toggleCamera(!isVideoOn) },
                     reverseClick = { switchCamera() },
                     greetClick = { greetClick() }
                 )
-
             }else {
                 StartMainView(
                     symbolSet = symbolSet,
@@ -114,7 +125,8 @@ fun VideoCallView(
                     cnt = cnt.value,
                     layoutState = layoutState,
                     selectedSymbolIdState = remoteSelectedSymbolId
-                    )
+                )
+
                 StartBottomMenuBar(
                     micClick = { toggleAudio(!isAudioOn) },
                     cameraClick = { toggleCamera(!isVideoOn) },

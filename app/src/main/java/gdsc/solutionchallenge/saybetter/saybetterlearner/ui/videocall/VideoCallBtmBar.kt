@@ -49,8 +49,10 @@ fun ReadyBottomMenuBar(
     Row (modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()
-        .padding(top = 30.dp),
-        horizontalArrangement = Arrangement.Center,){
+        .padding(top = 10.dp, bottom = 24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+        ){
         Box (modifier = Modifier
             .background(DarkGray, RoundedCornerShape(36.dp))
             .border(2.dp, GrayW40, RoundedCornerShape(36.dp))

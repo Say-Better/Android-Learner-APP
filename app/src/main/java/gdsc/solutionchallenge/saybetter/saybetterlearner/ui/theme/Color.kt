@@ -34,6 +34,7 @@ val DarkGray = Color(0xFF2B2B2B)
 val GrayW40 = Color(0xFFB4B9B9)
 val DeepDarkGray = Color(0xFF1F1F1F)
 val Gray5B50 = Color(0x805B5B5B)
+val Gray5B = Color(0xFF5B5B5B)
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)

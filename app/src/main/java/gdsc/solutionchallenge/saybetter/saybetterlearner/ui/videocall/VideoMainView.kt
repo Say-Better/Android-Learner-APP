@@ -44,7 +44,7 @@ fun ReadyMainView(
 ) {
     Box (modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight(0.85f),
+        .fillMaxHeight(0.7f),
         contentAlignment = Alignment.Center){
         Row (modifier = Modifier
             .fillMaxSize()

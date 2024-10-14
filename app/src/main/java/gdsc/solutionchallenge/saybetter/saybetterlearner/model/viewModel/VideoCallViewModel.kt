@@ -71,6 +71,13 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _isAudioOn = MutableStateFlow<Boolean>(false)
     val isAudioOn: StateFlow<Boolean> = _isAudioOn
 
+    private val _chatState = MutableStateFlow<String>("")
+    val chatState: StateFlow<String> = _chatState
+
+    fun setChatState(value: String) {
+        _chatState.value = value
+    }
+
     fun setAudioState(value: Boolean) {
         _isAudioOn.value = value
     }

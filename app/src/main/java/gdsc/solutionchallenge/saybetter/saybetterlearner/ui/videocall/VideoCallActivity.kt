@@ -92,6 +92,10 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                 toggleAudio = { toggle ->
                     serviceRepository.toggleAudio(toggle)
                     videoCallViewModel.setAudioState(toggle)
+                },
+                sendChatToPeer = { chatString ->
+                    mainRepository.sendTextToDataChannel(chatString)
+                    videoCallViewModel.setChatState("")
                 }
             )
         }
