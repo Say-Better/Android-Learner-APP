@@ -95,6 +95,8 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                 },
                 sendChatToPeer = { chatString ->
                     mainRepository.sendTextToDataChannel(chatString)
+                    ttsManager.speak(chatString)
+                    videoCallViewModel.setLongChatText(chatString)
                     videoCallViewModel.setChatState("")
                 }
             )

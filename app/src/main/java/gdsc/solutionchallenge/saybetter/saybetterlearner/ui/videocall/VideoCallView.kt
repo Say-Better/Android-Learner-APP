@@ -3,11 +3,19 @@ package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,9 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCallViewModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.pretendardMediumFont
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ChatInputBox
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.delay
@@ -60,6 +72,7 @@ fun VideoCallView(
     val layoutState by videoCallViewModel.layoutState.collectAsState()
     val remoteSelectedSymbolId by videoCallViewModel.remoteSelectedSymbolId.collectAsState()
     val chatState by videoCallViewModel.chatState.collectAsState()
+    val longChatText by videoCallViewModel.longChatText.collectAsState()
 
     val isReadyView: Boolean = !(isStartLearning xor isEnding)
 
@@ -102,11 +115,42 @@ fun VideoCallView(
                     videoCallViewModel = videoCallViewModel
                 )
 
-                ChatInputBox(
-                    chatState = chatState,
-                    onTextChange = { videoCallViewModel.setChatState(it) },
-                    onChatSend = { sendChatToPeer(chatState) }
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    ChatInputBox(
+                        chatState = chatState,
+                        onTextChange = { videoCallViewModel.setChatState(it) },
+                        onChatSend = { sendChatToPeer(chatState) }
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .height(80.dp)
+                            .fillMaxWidth(0.7f)
+                            .verticalScroll(rememberScrollState())
+                            .border(
+                                width = 1.dp,
+                                color = Color.White,
+                                shape = RoundedCornerShape(size = 12.dp)
+                            )
+                    ) {
+                        Text(
+                            text = videoCallViewModel.getLongChatText(),
+                            color = Color.White,
+                            fontFamily = FontFamily(pretendardMediumFont),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(start = 12.dp)
+                        )
+
+                    }
+                }
+
+
 
                 ReadyBottomMenuBar(
                     micClick = { toggleAudio(!isAudioOn) },

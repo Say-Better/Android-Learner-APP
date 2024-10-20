@@ -74,6 +74,17 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _chatState = MutableStateFlow<String>("")
     val chatState: StateFlow<String> = _chatState
 
+    private val _longChatText = MutableStateFlow<String>("test")
+    val longChatText: StateFlow<String> = _longChatText
+
+    fun setLongChatText(value: String) {
+        _longChatText.value = getLongChatText() + "\n" + value
+    }
+
+    fun getLongChatText() : String {
+        return _longChatText.value
+    }
+
     fun setChatState(value: String) {
         _chatState.value = value
     }

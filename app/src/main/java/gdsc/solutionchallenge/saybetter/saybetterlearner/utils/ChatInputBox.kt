@@ -34,7 +34,7 @@ fun ChatInputBox(
         text = "인사말을 입력해 보세요",
         style = PretendardTypography.bodySmall.copy(Color.White),
         fontSize = 20.sp,
-        modifier = Modifier.padding(bottom = 12.dp)
+        modifier = Modifier.padding(bottom = 12.dp, end = 12.dp)
     )
 
     Row(
