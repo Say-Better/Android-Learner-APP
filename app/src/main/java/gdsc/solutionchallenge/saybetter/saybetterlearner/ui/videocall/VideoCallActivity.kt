@@ -20,6 +20,7 @@ import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.GREETING
+import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.InstantInteractionType.SYMBOL_HIGHLIGHT
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.webrtc.repository.MainRepository
 import kotlinx.coroutines.CoroutineScope
 
@@ -98,6 +99,9 @@ class VideoCallActivity : ComponentActivity(), TTSListener, MainService.EndCallL
                     ttsManager.speak(chatString)
                     videoCallViewModel.setLongChatText(chatString)
                     videoCallViewModel.setChatState("")
+                },
+                sendSymbolToPeer = { symbolId ->
+                    mainRepository.sendTextToDataChannel("${SYMBOL_HIGHLIGHT.name} $symbolId")
                 }
             )
         }

@@ -160,11 +160,12 @@ fun StartMainView(
     ttsManager: TTSManager,
     commOptCnt: Int,
     ready: Boolean,
-    selectedItemIndex: MutableState<Int?>,
+    selectedItemIndex: Int?,
     cnt: Int,
     layoutState: String,
     selectedSymbolList: List<Symbol>,
-    selectedSymbolIdState: Int
+    selectedSymbolIdState: Int,
+    onSymbolClicked: (Int, Symbol) -> Unit
 ) {
 
     Row (modifier = Modifier
@@ -180,12 +181,10 @@ fun StartMainView(
                         modifier = Modifier
                             .padding(8.dp)
                             .weight(1f),
-                        isSelected = (0 == selectedItemIndex.value) || (symbol.id == selectedSymbolIdState),
+                        // 로컬에서 선택되었거나, 원격으로 선택되었거나
+                        isSelected = (0 == selectedItemIndex) || (symbol.id == selectedSymbolIdState),
                         symbol = symbol,
-                        onSymbolClick = {
-                            selectedItemIndex.value = 0
-                            ttsManager.speak(symbol.title)
-                        },
+                        onSymbolClick = { onSymbolClicked(0, symbol) }
                     )
                 } else {
                     ReadySymbol(modifier = Modifier
@@ -202,12 +201,9 @@ fun StartMainView(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .weight(1f),
-                            isSelected = (i == selectedItemIndex.value) || (symbol.id == selectedSymbolIdState),
+                            isSelected = (i == selectedItemIndex) || (symbol.id == selectedSymbolIdState),
                             symbol = symbol,
-                            onSymbolClick = {
-                                selectedItemIndex.value = i
-                                ttsManager.speak(symbol.title)
-                            },
+                            onSymbolClick = { onSymbolClicked(i, symbol) },
                         )
                     } else {
                         ReadySymbol(modifier = Modifier
@@ -226,12 +222,9 @@ fun StartMainView(
                                 .weight(1f)
                                 .height(250.dp),
                             // 선택되는 기준: 로컬에서 선택하거나, 원격에서 선택하거나
-                            isSelected = (i == selectedItemIndex.value) || (symbol.id == selectedSymbolIdState),
+                            isSelected = (i == selectedItemIndex) || (symbol.id == selectedSymbolIdState),
                             symbol = symbol,
-                            onSymbolClick = {
-                                selectedItemIndex.value = i
-                                ttsManager.speak(symbol.title)
-                            },
+                            onSymbolClick = { onSymbolClicked(i, symbol) },
                         )
                     } else {
                         ReadySymbol(modifier = Modifier
@@ -255,12 +248,9 @@ fun StartMainView(
                                 .padding(8.dp)
                                 .weight(1f)
                                 .height(250.dp),
-                            isSelected = (index == selectedItemIndex.value) || (item.id == selectedSymbolIdState),
+                            isSelected = (index == selectedItemIndex) || (item.id == selectedSymbolIdState),
                             symbol = item,
-                            onSymbolClick = {
-                                selectedItemIndex.value = index
-                                ttsManager.speak(item.title)
-                            },
+                            onSymbolClick = { onSymbolClicked(index, item) },
                         )
                     }
                 }

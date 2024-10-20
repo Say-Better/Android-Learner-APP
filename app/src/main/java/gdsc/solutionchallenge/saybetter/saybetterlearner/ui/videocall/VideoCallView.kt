@@ -45,7 +45,8 @@ fun VideoCallView(
     switchCamera: () -> Unit,
     toggleCamera: (Boolean) -> Unit,
     toggleAudio: (Boolean) -> Unit,
-    sendChatToPeer: (String) -> Unit
+    sendChatToPeer: (String) -> Unit,
+    sendSymbolToPeer: (Int) -> Unit
 ) {
 
 //    var isStart by remember { mutableStateOf(false) } //솔루션 시작?
@@ -57,7 +58,7 @@ fun VideoCallView(
     var commOptCnt by remember { mutableStateOf(videoCallViewModel.commOptCnt.value) }
     var commOptTimes by remember { mutableStateOf(videoCallViewModel.commOptTimes.value) }
 
-    val selectedItemIndex = remember { mutableStateOf<Int?>(null) }
+    val selectedItemIndex by videoCallViewModel.selectedItemIndex.collectAsState()
     val cnt = videoCallViewModel.commOptCnt.collectAsState()
 
     val symbolRecord = videoCallViewModel.symbolRecord.collectAsState()
@@ -90,7 +91,7 @@ fun VideoCallView(
             ready = false
 //            val selectedIndex = selectedItemIndex.value// 클릭 로그 저장
 //            saveClickLog(cnt.value - commOptCnt, selectedIndex!!)
-            selectedItemIndex.value = null
+            videoCallViewModel.setSelectedItemIndex(null)
         }
     }
 
@@ -174,7 +175,11 @@ fun VideoCallView(
                         selectedSymbolList = selectedSymbolList,
                         cnt = cnt.value,
                         layoutState = layoutState,
-                        selectedSymbolIdState = remoteSelectedSymbolId
+                        selectedSymbolIdState = remoteSelectedSymbolId,
+                        onSymbolClicked = { selectedItemIndex, symbol ->
+                            videoCallViewModel.localSymbolHighlight(selectedItemIndex, symbol.title)
+                            sendSymbolToPeer(symbol.id)
+                        }
                     )
                 }
 

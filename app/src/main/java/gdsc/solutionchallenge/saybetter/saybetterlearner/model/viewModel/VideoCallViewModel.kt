@@ -80,6 +80,13 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _isScreenSharing = MutableStateFlow<Boolean>(false)
     val isScreenSharing: StateFlow<Boolean> = _isScreenSharing
 
+    private val _selectedItemIndex = MutableStateFlow<Int?>(null)
+    val selectedItemIndex: StateFlow<Int?> = _selectedItemIndex
+
+    fun setSelectedItemIndex(value: Int?) {
+        _selectedItemIndex.value = value
+    }
+
     fun setLongChatText(value: String) {
         _longChatText.value = getLongChatText() + "\n" + value
     }
@@ -225,12 +232,26 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     }
 
     override fun onSymbolHighlight(symbolId: Int) {
-        val symbol: Symbol = symbolList.value[symbolId]
-        ttsManager?.speak(symbol.title)
-        _remoteSelectedSymbolId.value = symbolId
+        viewModelScope.launch {
+            val symbol: Symbol = symbolList.value[symbolId]
+            ttsManager?.speak(symbol.title)
+            _remoteSelectedSymbolId.value = symbolId
+            delay(2000)
+            _remoteSelectedSymbolId.value = -1
+        }
     }
 
     override fun onSetScreenSharing(isScreenSharing: Boolean) {
         _isScreenSharing.value = isScreenSharing
+    }
+
+    fun localSymbolHighlight(selectedItemIndex: Int, symbolTitle: String) {
+        viewModelScope.launch {
+            setSelectedItemIndex(selectedItemIndex)
+
+            ttsManager?.speak(symbolTitle)
+            delay(2000)
+            setSelectedItemIndex(null)
+        }
     }
 }
