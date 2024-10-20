@@ -134,8 +134,7 @@ fun ReadyBottomMenuBar(
 fun StartBottomMenuBar(
     micClick:()->Unit,
     cameraClick:()->Unit,
-    reverseClick:()->Unit,
-    isCameraOn : Boolean
+    reverseClick:()->Unit
 ) {
     var micClicked: Boolean by remember{ mutableStateOf(false) }
     var cameraClicked: Boolean by remember{ mutableStateOf(false) }
@@ -272,30 +271,6 @@ fun StartBottomMenuBar(
                     }
                 }
             }
-        }
-        //여기에 의사소통 버튼
-        Row (modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)){
-            //webRTC 넣는 곳
-            if (isCameraOn) {
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight(0.7f)
-                        .width(250.dp))
-            }else {
-                Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight(0.7f)
-                        .width(250.dp))
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Image(painter = painterResource(id = R.drawable.rectangle_1638),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxHeight(0.7f))
         }
     }
 }

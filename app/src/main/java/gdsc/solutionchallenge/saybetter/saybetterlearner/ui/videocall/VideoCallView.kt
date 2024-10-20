@@ -1,11 +1,9 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.ui.videocall
 
 import android.util.Log
-import androidx.camera.core.CameraSelector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -73,6 +71,7 @@ fun VideoCallView(
     val remoteSelectedSymbolId by videoCallViewModel.remoteSelectedSymbolId.collectAsState()
     val chatState by videoCallViewModel.chatState.collectAsState()
     val longChatText by videoCallViewModel.longChatText.collectAsState()
+    val isScreenSharing by videoCallViewModel.isScreenSharing.collectAsState()
 
     val isReadyView: Boolean = !(isStartLearning xor isEnding)
 
@@ -96,10 +95,12 @@ fun VideoCallView(
     }
 
     Surface (){
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.Black),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             VideoCallTopbar(
                 videoCallViewModel = videoCallViewModel,
                 clickBack = { onClickBack() },
@@ -109,48 +110,51 @@ fun VideoCallView(
                 commOptTimes = commOptTimes
             )
 
+            ReadyMainView(
+                isCameraOn = !isVideoOn,
+                videoCallViewModel = videoCallViewModel,
+                isReadyView = isReadyView,
+                isScreenSharing = isScreenSharing
+            )
+
             if (isReadyView) {
-                ReadyMainView(
-                    isCameraOn = !isVideoOn,
-                    videoCallViewModel = videoCallViewModel
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    ChatInputBox(
-                        chatState = chatState,
-                        onTextChange = { videoCallViewModel.setChatState(it) },
-                        onChatSend = { sendChatToPeer(chatState) }
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .height(80.dp)
-                            .fillMaxWidth(0.7f)
-                            .verticalScroll(rememberScrollState())
-                            .border(
-                                width = 1.dp,
-                                color = Color.White,
-                                shape = RoundedCornerShape(size = 12.dp)
-                            )
+                // 화면 공유중일 때는 채팅창 없어짐
+                if (!isScreenSharing) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = videoCallViewModel.getLongChatText(),
-                            color = Color.White,
-                            fontFamily = FontFamily(pretendardMediumFont),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(start = 12.dp)
+                        ChatInputBox(
+                            chatState = chatState,
+                            onTextChange = { videoCallViewModel.setChatState(it) },
+                            onChatSend = { sendChatToPeer(chatState) }
                         )
 
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 12.dp)
+                                .height(80.dp)
+                                .fillMaxWidth(0.7f)
+                                .verticalScroll(rememberScrollState())
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(size = 12.dp)
+                                )
+                        ) {
+                            Text(
+                                text = videoCallViewModel.getLongChatText(),
+                                color = Color.White,
+                                fontFamily = FontFamily(pretendardMediumFont),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .padding(start = 12.dp)
+                            )
+
+                        }
                     }
                 }
-
-
 
                 ReadyBottomMenuBar(
                     micClick = { toggleAudio(!isAudioOn) },
@@ -159,23 +163,25 @@ fun VideoCallView(
                     greetClick = { greetClick() }
                 )
             }else {
-                StartMainView(
-                    symbolSet = symbolSet,
-                    ttsManager = ttsManager,
-                    commOptCnt = commOptCnt,
-                    ready = ready,
-                    selectedItemIndex = selectedItemIndex,
-                    selectedSymbolList = selectedSymbolList,
-                    cnt = cnt.value,
-                    layoutState = layoutState,
-                    selectedSymbolIdState = remoteSelectedSymbolId
-                )
+                // 화면 공유 중일 때는 learning view 안뜸
+                if (!isScreenSharing) {
+                    StartMainView(
+                        symbolSet = symbolSet,
+                        ttsManager = ttsManager,
+                        commOptCnt = commOptCnt,
+                        ready = ready,
+                        selectedItemIndex = selectedItemIndex,
+                        selectedSymbolList = selectedSymbolList,
+                        cnt = cnt.value,
+                        layoutState = layoutState,
+                        selectedSymbolIdState = remoteSelectedSymbolId
+                    )
+                }
 
                 StartBottomMenuBar(
                     micClick = { toggleAudio(!isAudioOn) },
                     cameraClick = { toggleCamera(!isVideoOn) },
-                    reverseClick = { switchCamera() },
-                    isCameraOn = !isVideoOn
+                    reverseClick = { switchCamera() }
                 )
             }
         }

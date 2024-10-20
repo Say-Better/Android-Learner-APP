@@ -39,61 +39,91 @@ const val REMOTE = "remote"
 
 @Composable
 fun ReadyMainView(
-    isCameraOn : Boolean,
-    videoCallViewModel: VideoCallViewModel
+    isCameraOn: Boolean,
+    videoCallViewModel: VideoCallViewModel,
+    isReadyView: Boolean,
+    isScreenSharing: Boolean
 ) {
-    Box (modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(0.7f),
-        contentAlignment = Alignment.Center){
-        Row (modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
-            .background(Transparent, RoundedCornerShape(0.dp)),
-            verticalAlignment = Alignment.CenterVertically){
-            if (isCameraOn) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(width = 622.dp, height = 370.dp)
-                        .background(
-                            color = DarkGray,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                ) {
-                    LocalVideoRenderer(
+    Box (
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(
+                // 준비 화면이거나 화면 공유중에는 큰 영역을 차지하도록 함
+                if(isScreenSharing) 0.8f else if(isReadyView) 0.7f else 0.2f
+            ),
+        contentAlignment = Alignment.TopCenter
+    ){
+        Row (
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp)
+                .background(Transparent, RoundedCornerShape(0.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ){
+            // 화면공유 중이 아닐 때만 local 캠을 띄움
+            if(!isScreenSharing) {
+                if (isCameraOn) {
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .size(width = 622.dp, height = 370.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                    )
-
-                    localShakingImage(videoCallViewModel)    //videocallviewmodel에 greetstate로 알수있음!
-                }
-            }else {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(width = 622.dp, height = 370.dp)
-                        .background(
-                            color = DarkGray,
-                            shape = RoundedCornerShape(12.dp)
+                            .size(
+                                width = if(isReadyView) 622.dp else 182.dp,
+                                height = if(isReadyView) 370.dp else 108.dp
+                            )
+                            .background(
+                                color = DarkGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
+                        LocalVideoRenderer(
+                            modifier = Modifier
+                                .size(
+                                    width = if(isReadyView) 622.dp else 182.dp,
+                                    height = if(isReadyView) 370.dp else 108.dp
+                                )
+                                .clip(RoundedCornerShape(12.dp))
                         )
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.rectangle_1638),
-                        contentDescription = null,
-                    )
-                    localShakingImage(videoCallViewModel)
+
+                        localShakingImage(videoCallViewModel)    //videocallviewmodel에 greetstate로 알수있음!
+                    }
+                }else {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(
+                                width = if(isReadyView) 622.dp else 182.dp,
+                                height = if(isReadyView) 370.dp else 108.dp
+                            )
+                            .background(
+                                color = DarkGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.rectangle_1638),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(
+                                    width = if(isReadyView) 622.dp else 182.dp,
+                                    height = if(isReadyView) 370.dp else 108.dp
+                                )
+                        )
+                        localShakingImage(videoCallViewModel)
+                    }
                 }
+                Spacer(modifier = Modifier.width(10.dp))
             }
-            Spacer(modifier = Modifier.width(10.dp))
 
             if (isCameraOn) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .padding(start = 12.dp)
-                        .size(width = 622.dp, height = 370.dp)
+                        .size(
+                            width = if(isScreenSharing) 969.dp else if(isReadyView) 622.dp else 182.dp,
+                            height = if(isScreenSharing) 575.dp else if(isReadyView) 370.dp else 108.dp
+                        )
                         .background(
                             color = DarkGray,
                             shape = RoundedCornerShape(12.dp)
@@ -101,7 +131,10 @@ fun ReadyMainView(
                 ) {
                     RemoteVideoRenderer(
                         modifier = Modifier
-                            .size(width = 622.dp, height = 370.dp)
+                            .size(
+                                width = if(isScreenSharing) 969.dp else if(isReadyView) 622.dp else 182.dp,
+                                height = if(isScreenSharing) 575.dp else if(isReadyView) 370.dp else 108.dp
+                            )
                             .clip(RoundedCornerShape(12.dp))
                     )
                     remoteShakingImage(videoCallViewModel)
@@ -110,7 +143,10 @@ fun ReadyMainView(
                 Image(painter = painterResource(id = R.drawable.rectangle_1638),
                     contentDescription = null,
                     modifier = Modifier
-                        .weight(1f)
+                        .size(
+                            width = if(isScreenSharing) 969.dp else if(isReadyView) 622.dp else 182.dp,
+                            height = if(isScreenSharing) 575.dp else if(isReadyView) 370.dp else 108.dp
+                        )
                 )
                 remoteShakingImage(videoCallViewModel)
             }

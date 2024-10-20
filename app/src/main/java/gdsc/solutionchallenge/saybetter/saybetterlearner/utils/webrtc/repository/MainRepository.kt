@@ -38,6 +38,9 @@ class MainRepository @Inject constructor(
     private var remoteView: SurfaceViewRenderer? = null
     private var dataChannel: DataChannel? = null
 
+    // webrtc client 초기화할때 init
+    private var mediaStream: MediaStream? = null
+
     val TAG = "DataChannel"
 
 
@@ -102,6 +105,9 @@ class MainRepository @Inject constructor(
                 super.onAddStream(p0)
                 try {
                     p0?.videoTracks?.get(0)?.addSink(remoteView)
+
+                    // 이후 VideoTrack 다시 얻기위해 저장
+                    mediaStream = p0
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

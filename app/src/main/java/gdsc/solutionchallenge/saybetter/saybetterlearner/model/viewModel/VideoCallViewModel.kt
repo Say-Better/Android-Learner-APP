@@ -77,6 +77,9 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private val _longChatText = MutableStateFlow<String>("test")
     val longChatText: StateFlow<String> = _longChatText
 
+    private val _isScreenSharing = MutableStateFlow<Boolean>(false)
+    val isScreenSharing: StateFlow<Boolean> = _isScreenSharing
+
     fun setLongChatText(value: String) {
         _longChatText.value = getLongChatText() + "\n" + value
     }
@@ -225,5 +228,9 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
         val symbol: Symbol = symbolList.value[symbolId]
         ttsManager?.speak(symbol.title)
         _remoteSelectedSymbolId.value = symbolId
+    }
+
+    override fun onSetScreenSharing(isScreenSharing: Boolean) {
+        _isScreenSharing.value = isScreenSharing
     }
 }

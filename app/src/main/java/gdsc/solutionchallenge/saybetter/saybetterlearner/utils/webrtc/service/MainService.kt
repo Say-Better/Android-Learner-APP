@@ -206,6 +206,12 @@ class MainService : Service(), MainRepository.Listener {
                     SWITCH_TO_LAYOUT_ALL.name -> {
                         interactionListener?.onSwitchToLayoutAll()
                     }
+                    SCREEN_SHARE_TOGGLE_TRUE.name -> {
+                        interactionListener?.onSetScreenSharing(true)
+                    }
+                    SCREEN_SHARE_TOGGLE_FALSE.name -> {
+                        interactionListener?.onSetScreenSharing(false)
+                    }
 
                     else -> {
                         val chunkedMessage: List<String> = it.second.toString().split(' ')
@@ -262,6 +268,7 @@ class MainService : Service(), MainRepository.Listener {
         fun onSymbolSelect(symbolId: Int)
         fun onSymbolDelete(symbolId: Int)
         fun onSymbolHighlight(symbolId: Int)
+        fun onSetScreenSharing(isScreenSharing: Boolean)
     }
 
 
