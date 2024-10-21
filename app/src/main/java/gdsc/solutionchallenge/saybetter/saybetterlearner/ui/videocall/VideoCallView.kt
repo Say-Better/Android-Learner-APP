@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,14 +24,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel.VideoCallViewModel
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.White
 import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.pretendardMediumFont
+import gdsc.solutionchallenge.saybetter.saybetterlearner.ui.theme.pretendardRegularFont
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.ChatInputBox
 import gdsc.solutionchallenge.saybetter.saybetterlearner.utils.tts.TTSManager
 import kotlinx.coroutines.delay
@@ -121,39 +126,34 @@ fun VideoCallView(
             if (isReadyView) {
                 // 화면 공유중일 때는 채팅창 없어짐
                 if (!isScreenSharing) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        ChatInputBox(
-                            chatState = chatState,
-                            onTextChange = { videoCallViewModel.setChatState(it) },
-                            onChatSend = { sendChatToPeer(chatState) }
-                        )
-
                         Column(
                             modifier = Modifier
-                                .padding(start = 12.dp)
+                                .padding(horizontal = 15.dp)
                                 .height(80.dp)
-                                .fillMaxWidth(0.7f)
+                                .fillMaxWidth()
                                 .verticalScroll(rememberScrollState())
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(size = 12.dp)
-                                )
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(White)
                         ) {
                             Text(
                                 text = videoCallViewModel.getLongChatText(),
-                                color = Color.White,
-                                fontFamily = FontFamily(pretendardMediumFont),
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                fontFamily = FontFamily(pretendardRegularFont),
+                                fontSize = 18.sp,
                                 modifier = Modifier
                                     .padding(start = 12.dp)
                             )
 
                         }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        ChatInputBox(
+                            chatState = chatState,
+                            onTextChange = { videoCallViewModel.setChatState(it) },
+                            onChatSend = { sendChatToPeer(chatState) }
+                        )
                     }
                 }
 
