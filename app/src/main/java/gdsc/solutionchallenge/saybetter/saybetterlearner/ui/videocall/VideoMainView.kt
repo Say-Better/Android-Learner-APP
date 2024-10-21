@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import gdsc.solutionchallenge.saybetter.saybetterlearner.R
 import gdsc.solutionchallenge.saybetter.saybetterlearner.model.data.local.entity.Symbol
@@ -49,7 +50,7 @@ fun ReadyMainView(
             .fillMaxWidth()
             .fillMaxHeight(
                 // 준비 화면이거나 화면 공유중에는 큰 영역을 차지하도록 함
-                if(isScreenSharing) 0.8f else if(isReadyView) 0.7f else 0.2f
+                if(isScreenSharing) 0.75f else if(isReadyView) 0.65f else 0.2f
             ),
         contentAlignment = Alignment.TopCenter
     ){
@@ -153,6 +154,7 @@ fun ReadyMainView(
         }
     }
 }
+
 
 @Composable
 fun StartMainView(
