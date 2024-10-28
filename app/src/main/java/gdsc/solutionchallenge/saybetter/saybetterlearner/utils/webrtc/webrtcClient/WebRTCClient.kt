@@ -46,20 +46,20 @@ class WebRTCClient @Inject constructor(
     private val iceServers = listOf(
         PeerConnection.IceServer.builder("stun:stun.relay.metered.ca:80").createIceServer(),
         PeerConnection.IceServer.builder("turn:global.relay.metered.ca:80")
-            .setUsername("3034a2e47ead957a5246ff2d")
-            .setPassword("zAyeHrbfgXr6T/sr")
+            .setUsername("962253bb273f9242ce303359")
+            .setPassword("//S9VPjgxRoCNhQe")
             .createIceServer(),
         PeerConnection.IceServer.builder("turn:global.relay.metered.ca:80?transport=tcp")
-            .setUsername("3034a2e47ead957a5246ff2d")
-            .setPassword("zAyeHrbfgXr6T/sr")
+            .setUsername("962253bb273f9242ce303359")
+            .setPassword("//S9VPjgxRoCNhQe")
             .createIceServer(),
         PeerConnection.IceServer.builder("turn:global.relay.metered.ca:443")
-            .setUsername("3034a2e47ead957a5246ff2d")
-            .setPassword("zAyeHrbfgXr6T/sr")
+            .setUsername("962253bb273f9242ce303359")
+            .setPassword("//S9VPjgxRoCNhQe")
             .createIceServer(),
         PeerConnection.IceServer.builder("turns:global.relay.metered.ca:443?transport=tcp")
-            .setUsername("3034a2e47ead957a5246ff2d")
-            .setPassword("zAyeHrbfgXr6T/sr")
+            .setUsername("962253bb273f9242ce303359")
+            .setPassword("//S9VPjgxRoCNhQe")
             .createIceServer()
     )
     private val localVideoSource by lazy { peerConnectionFactory.createVideoSource(false) }

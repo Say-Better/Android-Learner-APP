@@ -67,7 +67,11 @@ fun ChatInputBox(
             .background(if (chatState.length > 0)PaleGreen
             else Gray400) // 배경색 설정
             .width(100.dp)
-            .height(40.dp),
+            .height(40.dp)
+            .clickable {
+                onChatSend(chatState)
+                onTextChange("")
+                       },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
             ){

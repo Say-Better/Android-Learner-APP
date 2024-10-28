@@ -216,20 +216,27 @@ class MainService : Service(), MainRepository.Listener {
                     else -> {
                         val chunkedMessage: List<String> = it.second.toString().split(' ')
                         val action: String = chunkedMessage[0]
-                        val symbolId: Int = chunkedMessage[1].toInt()
 
                         when(action){
                             SYMBOL_SELECT.name -> {
+                                val symbolId: Int = chunkedMessage[1].toInt()
                                 Log.d("DataChannel", "Action: SYMBOL_SELECT, id: $symbolId")
                                 interactionListener?.onSymbolSelect(symbolId)
                             }
                             SYMBOL_DELETE.name -> {
+                                val symbolId: Int = chunkedMessage[1].toInt()
                                 Log.d("DataChannel", "Action: SYMBOL_DELETE, id: $symbolId")
                                 interactionListener?.onSymbolDelete(symbolId)
                             }
                             SYMBOL_HIGHLIGHT.name -> {
+                                val symbolId: Int = chunkedMessage[1].toInt()
                                 Log.d("DataChannel", "Action: SYMBOL_HIGHLIGHT, id: $symbolId")
                                 interactionListener?.onSymbolHighlight(symbolId)
+                            }
+                            ADD_TEXT_SYMBOL.name -> {
+                                val symbolText: String = chunkedMessage[1]
+                                Log.d("textSymbol", "[MainService] symbol text: $symbolText")
+                                interactionListener?.onAddTextSymbol(symbolText)
                             }
                             else -> {
                                 Log.d("DataChannel", "something wrong action")
@@ -269,6 +276,7 @@ class MainService : Service(), MainRepository.Listener {
         fun onSymbolDelete(symbolId: Int)
         fun onSymbolHighlight(symbolId: Int)
         fun onSetScreenSharing(isScreenSharing: Boolean)
+        fun onAddTextSymbol(symbolText: String)
     }
 
 

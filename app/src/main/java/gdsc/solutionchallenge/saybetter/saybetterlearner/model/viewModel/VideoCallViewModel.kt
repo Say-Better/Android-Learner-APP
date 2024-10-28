@@ -1,6 +1,7 @@
 package gdsc.solutionchallenge.saybetter.saybetterlearner.model.viewModel
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.sql.Timestamp
+
+const val TEXT_SYMBOL = -1
 
 class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     private var ttsManager: TTSManager? = null
@@ -136,6 +139,7 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     }
 
     fun addSelectedSymbolItem(symbol: Symbol) {
+        Log.d("textSymbol", "[addSelectedSymbolItem] sym id: ${symbol.id}, sym text: ${symbol.title}")
         val newSelectedSymbols = _selectedSymbolList.value + symbol
         _selectedSymbolList.value = newSelectedSymbols
     }
@@ -222,18 +226,20 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
     }
 
     override fun onSymbolSelect(symbolId: Int) {
-        val symbol: Symbol = symbolList.value[symbolId]
+        Log.d("textSymbol", "[onSymbolSelect] symboliId: $symbolId")
+        val symbol: Symbol = _symbolList.value[symbolId] // 여기서 문제 발생. id가 한칸 밀려나면서 꼬인듯
         addSelectedSymbolItem(symbol)
     }
 
     override fun onSymbolDelete(symbolId: Int) {
-        val symbol: Symbol = symbolList.value[symbolId]
+        val symbol: Symbol = _symbolList.value[symbolId]
         deleteSelectedSymbolItem(symbol)
     }
 
     override fun onSymbolHighlight(symbolId: Int) {
         viewModelScope.launch {
-            val symbol: Symbol = symbolList.value[symbolId]
+            Log.d("textSymbol", "Highlight 시점 심볼id: $symbolId")
+            val symbol: Symbol = _symbolList.value[symbolId]
             ttsManager?.speak(symbol.title)
             _remoteSelectedSymbolId.value = symbolId
             delay(2000)
@@ -243,6 +249,16 @@ class VideoCallViewModel:ViewModel(), MainService.InteractionListener {
 
     override fun onSetScreenSharing(isScreenSharing: Boolean) {
         _isScreenSharing.value = isScreenSharing
+    }
+
+    override fun onAddTextSymbol(symbolText: String) {
+        val newSymbolId: Int = _symbolList.value.lastIndex + 1
+        Log.d("textSymbol", "[onAddTextSymbol] new sym id: $newSymbolId, sym text: $symbolText")
+        val newSymbol = Symbol(newSymbolId, symbolText, TEXT_SYMBOL)
+        _symbolList.value += listOf(newSymbol)
+//        for(item in _symbolList.value) {
+//            Log.d("textSymbol", "[onAddTextSymbol-symList] id: ${item.id}, title: ${item.title} \n")
+//        }
     }
 
     fun localSymbolHighlight(selectedItemIndex: Int, symbolTitle: String) {
